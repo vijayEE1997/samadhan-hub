@@ -1,15 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   ArrowLeft,
   Check,
   Shield,
   Lock,
   Loader2,
-  AlertTriangle
+  AlertTriangle,
+  CreditCard
 } from 'lucide-react';
 
 // Import constants
 import { API_ENDPOINTS } from '@/constants';
+
+// Declare Cashfree global type
+declare global {
+  interface Window {
+    Cashfree: any;
+  }
+}
 
 interface PaymentPageProps {
   onBackToHome: () => void;
@@ -36,12 +44,34 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
   const [paymentConfig, setPaymentConfig] = useState<any>(null);
   const [isLoadingConfig, setIsLoadingConfig] = useState(true);
   const [configError, setConfigError] = useState<string>('');
+  const [orderId, setOrderId] = useState<string | null>(null);
+  const [paymentSessionId, setPaymentSessionId] = useState<string | null>(null);
+  const [cashfreeSDKReady, setCashfreeSDKReady] = useState(false);
 
-  // Load payment configuration on component mount
+  // Load Cashfree SDK and payment configuration on component mount
   useEffect(() => {
+    const loadCashfreeSDK = () => {
+      if (!document.getElementById('cashfree-sdk')) {
+        const script = document.createElement('script');
+        script.id = 'cashfree-sdk';
+        script.src = 'https://sdk.cashfree.com/js/v3/cashfree.js';
+        script.async = true;
+        script.onload = () => {
+          console.log('✅ Cashfree SDK loaded successfully');
+          setCashfreeSDKReady(true);
+        };
+        script.onerror = () => {
+          console.error('❌ Failed to load Cashfree SDK');
+          setCashfreeSDKReady(false);
+        };
+        document.head.appendChild(script);
+      } else {
+        setCashfreeSDKReady(true);
+      }
+    };
+
     const loadPaymentConfig = async () => {
       try {
-        console.log(paymentConfig);
         setIsLoadingConfig(true);
         const response = await fetch(API_ENDPOINTS.CONFIG);
         if (response.ok) {
@@ -59,8 +89,54 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
       }
     };
 
+    loadCashfreeSDK();
     loadPaymentConfig();
   }, []);
+
+  // Open Cashfree checkout using the SDK with fallback
+  const openCashfreeCheckout = useCallback(async (sessionId: string) => {
+    try {
+      console.log('🔄 Opening Cashfree checkout...');
+      
+      // Wait for SDK to be ready
+      if (!cashfreeSDKReady) {
+        console.log('⏳ Waiting for SDK...');
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        if (!cashfreeSDKReady) {
+          throw new Error('Cashfree SDK not ready. Please refresh and try again.');
+        }
+      }
+
+      // Try to use Cashfree SDK first
+      if (window.Cashfree) {
+        const cashfree = window.Cashfree({
+          mode: paymentConfig?.mode || 'production'
+        });
+        
+        const checkoutOptions = {
+          paymentSessionId: sessionId,
+          redirectTarget: '_self',
+        };
+
+        await cashfree.checkout(checkoutOptions);
+        console.log('✅ Checkout opened successfully with SDK');
+      } else {
+        throw new Error('Cashfree SDK not available');
+      }
+
+    } catch (error) {
+      console.error('❌ SDK checkout failed, using fallback:', error);
+      
+      // Fallback: redirect to Cashfree hosted checkout
+      const checkoutUrl = paymentConfig?.mode === 'production'
+        ? `https://checkout.cashfree.com/pg/view/sessions/${sessionId}`
+        : `https://sandbox.cashfree.com/pg/view/sessions/${sessionId}`;
+      
+      console.log('🔄 Redirecting to:', checkoutUrl);
+      window.location.href = checkoutUrl;
+    }
+  }, [cashfreeSDKReady, paymentConfig]);
 
   const validateField = (name: string, value: string) => {
     let error = '';
@@ -149,7 +225,7 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
         setErrors(prev => ({ ...prev, email: '' }));
         setIsRedirecting(true);
 
-        if (result.paymentUrl) {
+        if (result.sessionId) {
           // Store order details in localStorage for tracking
           localStorage.setItem('agnivirya-order', JSON.stringify({
             orderId: result.orderId,
@@ -168,16 +244,28 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
             paymentStatus: 'pending'
           }));
 
-          // Add a small delay to show success message
-          setTimeout(() => {
-            console.log('🔄 Redirecting to Cashfree payment page...');
-            console.log('🔗 Payment URL:', result.paymentUrl);
+          // Set order details in state
+          setOrderId(result.orderId);
+          setPaymentSessionId(result.sessionId);
 
-            // Use direct redirect to Cashfree
-            window.location.href = result.paymentUrl;
+          // Add a small delay to show success message
+          setTimeout(async () => {
+            console.log('🔄 Opening Cashfree checkout...');
+            console.log('🔗 Session ID:', result.sessionId);
+            
+            try {
+              // Try to open Cashfree checkout
+              await openCashfreeCheckout(result.sessionId);
+            } catch (error) {
+              console.error('❌ Failed to open checkout:', error);
+              // Fallback to direct redirect if available
+              if (result.paymentUrl) {
+                window.location.href = result.paymentUrl;
+              }
+            }
           }, 1500);
         } else {
-          throw new Error('Payment URL not received from server');
+          throw new Error('Payment session ID not received from server');
         }
       } else {
         throw new Error(result.message || 'Failed to create payment order');
@@ -314,16 +402,27 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
                 </div>
               )}
 
-              {/* Success Message when Redirecting */}
-              {isRedirecting && (
-                <div className="success-message bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
-                  <div className="flex items-center gap-2 text-green-600 mb-2">
-                    <Check className="w-5 h-5" />
-                    <span className="font-medium">Payment Order Created Successfully!</span>
-                  </div>
-                  <p className="text-green-600 text-sm">Redirecting you to the secure payment gateway...</p>
-                </div>
-              )}
+                             {/* Success Message when Redirecting */}
+               {isRedirecting && (
+                 <div className="success-message bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                   <div className="flex items-center gap-2 text-green-600 mb-2">
+                     <Check className="w-5 h-5" />
+                     <span className="font-medium">Payment Order Created Successfully!</span>
+                   </div>
+                   <p className="text-green-600 text-sm">Opening secure Cashfree payment gateway...</p>
+                 </div>
+               )}
+
+               {/* Cashfree SDK Status */}
+               <div className="cashfree-status bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                 <div className="flex items-center gap-2 text-blue-600 text-sm">
+                   <CreditCard className="w-4 h-4" />
+                   <span>Cashfree SDK: {cashfreeSDKReady ? 'Ready' : 'Loading...'}</span>
+                   {!cashfreeSDKReady && (
+                     <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600"></div>
+                   )}
+                 </div>
+               </div>
 
               <form className={`payment-form ${isLoadingConfig || configError ? 'opacity-50 pointer-events-none' : ''}`} onSubmit={handleSubmit}>
                 <div className="form-group">
@@ -405,31 +504,34 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
                   className="submit-button"
                   disabled={isProcessing || isRedirecting}
                 >
-                  {isProcessing ? (
-                    <>
-                      <Loader2 className="icon animate-spin" />
-                      <span>Creating Order...</span>
-                    </>
-                  ) : isRedirecting ? (
-                    <>
-                      <Loader2 className="icon animate-spin" />
-                      <span>Redirecting to Payment...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Lock className="icon" />
-                      <span>Proceed to Payment</span>
-                      <div className="discount-badge">95% OFF</div>
-                    </>
-                  )}
+                                     {isProcessing ? (
+                     <>
+                       <Loader2 className="icon animate-spin" />
+                       <span>Creating Order...</span>
+                     </>
+                   ) : isRedirecting ? (
+                     <>
+                       <Loader2 className="icon animate-spin" />
+                       <span>Opening Payment Gateway...</span>
+                     </>
+                   ) : (
+                     <>
+                       <CreditCard className="icon" />
+                       <span>Pay with Cashfree</span>
+                       <div className="discount-badge">95% OFF</div>
+                     </>
+                   )}
                 </button>
               </form>
 
-              {/* Security Badge */}
-              <div className="security-badge">
-                <Lock className="icon" />
-                <span>Powered by Cashfree - 100% Secure & Encrypted</span>
-              </div>
+                             {/* Security Badge */}
+               <div className="security-badge">
+                 <CreditCard className="icon" />
+                 <span>Powered by Cashfree - 100% Secure & Encrypted</span>
+                 <div className="text-xs text-gray-500 mt-1">
+                   {cashfreeSDKReady ? 'SDK Ready' : 'SDK Loading...'}
+                 </div>
+               </div>
             </div>
           </div>
         </div>
