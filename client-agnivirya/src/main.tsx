@@ -3,6 +3,14 @@ import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 
+// Extend Window interface for SSR properties
+declare global {
+  interface Window {
+    __SSR_ENABLED__?: boolean;
+    __INITIAL_STATE__?: any;
+  }
+}
+
 // Check if we're in SSR mode
 const isSSR = window.__SSR_ENABLED__ || false;
 const initialState = window.__INITIAL_STATE__ || {};
@@ -31,9 +39,9 @@ if (rootElement) {
 }
 
 // Clean up global variables
-if (window.__INITIAL_STATE__) {
+if ('__INITIAL_STATE__' in window) {
   delete window.__INITIAL_STATE__;
 }
-if (window.__SSR_ENABLED__) {
+if ('__SSR_ENABLED__' in window) {
   delete window.__SSR_ENABLED__;
 }

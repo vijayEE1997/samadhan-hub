@@ -6,9 +6,7 @@ import {
   Shield, 
   Users, 
   Award, 
-  Clock, 
   CheckCircle,
-  TrendingUp,
   Star,
   ArrowRight
 } from 'lucide-react';

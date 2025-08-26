@@ -2,13 +2,11 @@ import React from 'react';
 import { 
   Star, 
   Quote, 
-  Heart, 
   Zap, 
   Users, 
   Award, 
   Shield, 
   CheckCircle,
-  TrendingUp,
   ArrowRight
 } from 'lucide-react';
 
