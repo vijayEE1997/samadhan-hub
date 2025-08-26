@@ -976,21 +976,23 @@ if (mainDistExists && clientDistExists) {
     }
     
     console.log(`📁 Serving static file for route: ${req.path}`);
-    // Serve static files for non-API routes
-    express.static(mainDistPath, {
-      maxAge: '1y',
-      setHeaders: (res, filePath) => {
-        const ext = path.extname(filePath).toLowerCase();
-        if (ext === '.js') {
-          res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-        } else if (ext === '.css') {
-          res.setHeader('Content-Type', 'text/css; charset=utf-8');
-        } else if (ext === '.html') {
-          res.setHeader('Content-Type', 'text/html; charset=utf-8');
-        }
-      }
-    })(req, res, next);
+    next();
   });
+
+  // Serve static files from the dist directory
+  app.use('/', express.static(mainDistPath, {
+    maxAge: '1y',
+    setHeaders: (res, filePath) => {
+      const ext = path.extname(filePath).toLowerCase();
+      if (ext === '.js') {
+        res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+      } else if (ext === '.css') {
+        res.setHeader('Content-Type', 'text/css; charset=utf-8');
+      } else if (ext === '.html') {
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      }
+    }
+  }));
 
   // Catch-all route for SPA - ONLY for non-API routes
   app.get('*', (req, res) => {

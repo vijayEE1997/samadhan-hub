@@ -93,10 +93,13 @@ function App({ initialState }: AppProps) {
       setCurrentRoute(window.location.pathname);
     };
 
+    // Set initial route from current URL
+    setCurrentRoute(window.location.pathname);
+
     // Listen for route changes
     window.addEventListener('popstate', handleRouteChange);
     
-    // Set initial route
+    // Set initial route from props if available
     if (initialState?.currentUrl) {
       setCurrentRoute(initialState.currentUrl);
     }
@@ -105,6 +108,14 @@ function App({ initialState }: AppProps) {
       window.removeEventListener('popstate', handleRouteChange);
     };
   }, [initialState?.currentUrl]);
+
+  // Additional effect to handle URL changes
+  useEffect(() => {
+    const currentPath = window.location.pathname;
+    if (currentPath !== currentRoute) {
+      setCurrentRoute(currentPath);
+    }
+  }, [currentRoute]);
 
   // Navigation handler
   const navigateTo = (route: string) => {
