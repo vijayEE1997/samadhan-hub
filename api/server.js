@@ -196,9 +196,22 @@ app.get(localApi.ENDPOINTS.CONFIG, (req, res) => {
 
 // Test API endpoint
 app.get('/api/test', (req, res) => {
+  console.log('🔍 Test API endpoint hit:', req.path);
   res.json({
     success: true,
     message: 'API is working!',
+    timestamp: new Date().toISOString(),
+    server: 'unified-server',
+    environment: config.nodeEnv
+  });
+});
+
+// Test payment config endpoint
+app.get('/api/payments/test', (req, res) => {
+  console.log('🔍 Test payment endpoint hit:', req.path);
+  res.json({
+    success: true,
+    message: 'Payment test endpoint working!',
     timestamp: new Date().toISOString(),
     server: 'unified-server',
     environment: config.nodeEnv
@@ -271,8 +284,16 @@ if (config.nodeEnv === 'production') {
   app.use('/api/', limiter);
 }
 
-// Middleware
-app.use(compression());
+// Middleware - only apply compression to non-API routes
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api/') || req.path.startsWith('/health')) {
+    // Skip compression for API routes
+    return next();
+  }
+  // Apply compression for non-API routes
+  compression()(req, res, next);
+});
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
@@ -284,12 +305,23 @@ app.use((req, res, next) => {
   const ip = req.ip || req.connection.remoteAddress;
 
   console.log(`[${timestamp}] ${method} ${path} - ${ip}`);
+  
+  // Add additional logging for API routes
+  if (path.startsWith('/api/')) {
+    console.log(`🔍 API Route Request: ${method} ${path}`);
+    console.log(`🔍 Headers:`, req.headers);
+  }
+  
   next();
 });
 
 // Payment API Routes
 app.get('/api/payments/config', async (req, res) => {
   try {
+    console.log('🔍 Payment config endpoint hit:', req.path);
+    console.log('🔍 Request method:', req.method);
+    console.log('🔍 Request headers:', req.headers);
+    
     // Set CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -297,6 +329,7 @@ app.get('/api/payments/config', async (req, res) => {
     res.setHeader('Content-Type', 'application/json');
 
     if (req.method === 'OPTIONS') {
+      console.log('🔍 Handling OPTIONS request');
       res.status(200).end();
       return;
     }
@@ -333,7 +366,7 @@ app.get('/api/payments/config', async (req, res) => {
       dynamicReturnUrl = `${protocol}://${domain}/download`;
     }
 
-    res.status(200).json({
+    const response = {
       mode: config.cashfreeMode,
       clientId: config.cashfreeClientId || 'CONFIGURED',
       product: {
@@ -346,8 +379,16 @@ app.get('/api/payments/config', async (req, res) => {
       returnUrl: dynamicReturnUrl,
       environment: config.nodeEnv,
       domain: config.domain,
-      server: 'unified-server'
-    });
+      server: 'unified-server',
+      debug: {
+        endpoint: req.path,
+        method: req.method,
+        timestamp: new Date().toISOString()
+      }
+    };
+    
+    console.log('🔍 Sending payment config response:', JSON.stringify(response, null, 2));
+    res.status(200).json(response);
   } catch (error) {
     console.error('Payment config error:', error);
     res.status(500).json({ error: 'Failed to get payment config' });
@@ -838,28 +879,43 @@ if (mainDistExists && clientDistExists) {
   console.log('📱 Samadhan Hub app will be served from /');
 
   // Serve built React apps from unified server
-  // Static file serving for main app
-  app.use(express.static(mainDistPath, {
-    maxAge: '1y',
-    setHeaders: (res, filePath) => {
-      const ext = path.extname(filePath).toLowerCase();
-      if (ext === '.js') {
-        res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-      } else if (ext === '.css') {
-        res.setHeader('Content-Type', 'text/css; charset=utf-8');
-      } else if (ext === '.html') {
-        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  // Static file serving for main app - ONLY for non-API routes
+  app.use('/', (req, res, next) => {
+    // Skip static file serving for API routes
+    if (req.path.startsWith('/api/') || req.path.startsWith('/health')) {
+      return next();
+    }
+    
+    // Serve static files for non-API routes
+    express.static(mainDistPath, {
+      maxAge: '1y',
+      setHeaders: (res, filePath) => {
+        const ext = path.extname(filePath).toLowerCase();
+        if (ext === '.js') {
+          res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+        } else if (ext === '.css') {
+          res.setHeader('Content-Type', 'text/css; charset=utf-8');
+        } else if (ext === '.html') {
+          res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        }
       }
-    }
-  }));
+    })(req, res, next);
+  });
 
-
-
+  // Catch-all route for SPA - ONLY for non-API routes
   app.get('*', (req, res) => {
-    // Only serve index.html for routes that don't have file extensions
-    if (!req.path.startsWith('/api/') && !req.path.startsWith('/health')) {
-      res.sendFile(path.join(mainDistPath, 'index.html'));
+    // Skip for API routes
+    if (req.path.startsWith('/api/') || req.path.startsWith('/health')) {
+      return res.status(404).json({
+        error: 'Not Found',
+        message: `Route ${req.path} not found`,
+        timestamp: new Date().toISOString(),
+        server: 'unified-server'
+      });
     }
+    
+    // Serve index.html for SPA routes
+    res.sendFile(path.join(mainDistPath, 'index.html'));
   });
 } else if (isDevelopment) {
   // Development mode - redirect to Vite dev servers
