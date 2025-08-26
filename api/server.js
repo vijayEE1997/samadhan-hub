@@ -111,6 +111,25 @@ if (missingConfig.length > 0) {
 
 const app = express();
 
+// VERCEL SSR CONFIGURATION
+// This is critical for preventing Vercel from intercepting API routes
+if (process.env.VERCEL === '1') {
+  console.log('🚀 Vercel environment detected - configuring SSR bypass for API routes');
+  
+  // Add Vercel-specific middleware to handle SSR routing
+  app.use((req, res, next) => {
+    // Force API routes to be handled by Express, not Vercel SSR
+    if (req.path.startsWith('/api/') || req.path.startsWith('/health')) {
+      console.log(`🚫 VERCEL SSR INTERCEPTION PREVENTED: ${req.path}`);
+      // Set headers that Vercel recognizes to bypass SSR
+      res.setHeader('X-Vercel-SSR-Bypass', 'true');
+      res.setHeader('Content-Type', 'application/json');
+      return next();
+    }
+    next();
+  });
+}
+
 // API Routes
 app.get(localApi.ENDPOINTS.HEALTH, (req, res) => {
   res.json({
@@ -329,6 +348,13 @@ app.get('/api/payments/config', async (req, res) => {
       console.log('✅ Confirmed: This is an API request');
     } else {
       console.log('❌ ERROR: This should not happen - API route being treated as non-API');
+    }
+    
+    // VERCEL SSR BYPASS: Force this to be treated as an API response
+    if (process.env.VERCEL === '1') {
+      console.log('🚫 VERCEL SSR BYPASS: Forcing API response for payment config');
+      res.setHeader('X-Vercel-SSR-Bypass', 'true');
+      res.setHeader('X-API-Route', 'true');
     }
     
     // Set CORS headers
@@ -888,6 +914,24 @@ app.get('/download', (req, res) => {
 });
 
 // ============================================================================
+// SSR BYPASS FOR API ROUTES - CRITICAL FOR VERCEL
+// ============================================================================
+
+// CRITICAL: Vercel SSR intercepts all routes, so we need to explicitly bypass API routes
+// This middleware runs BEFORE any static file serving to ensure API routes work
+app.use((req, res, next) => {
+  // Skip SSR handling for API routes
+  if (req.path.startsWith('/api/') || req.path.startsWith('/health')) {
+    console.log(`🚫 SSR BYPASS: API route ${req.path} - skipping SSR handling`);
+    return next();
+  }
+  
+  // For non-API routes, continue with normal flow
+  console.log(`📱 SSR HANDLING: Non-API route ${req.path} - continuing with SSR`);
+  next();
+});
+
+// ============================================================================
 // STATIC FILE SERVING - MUST COME AFTER ALL API ROUTES
 // ============================================================================
 
@@ -901,11 +945,23 @@ if (mainDistExists && clientDistExists) {
   console.log('🏭 Built files detected - serving React app from unified server');
   console.log('📱 Samadhan Hub app will be served from /');
   
-  // CRITICAL: Add a pre-check middleware to block API routes BEFORE static file serving
+    // CRITICAL: Add a pre-check middleware to block API routes BEFORE static file serving
   app.use((req, res, next) => {
     if (req.path.startsWith('/api/') || req.path.startsWith('/health')) {
       console.log(`🚫 PRE-BLOCKED: API route ${req.path} before static file serving`);
       return next(); // Let the API route handlers deal with it
+    }
+    next();
+  });
+  
+  // VERCEL SSR BYPASS: Ensure API routes are never handled by SSR
+  app.use((req, res, next) => {
+    if (req.path.startsWith('/api/') || req.path.startsWith('/health')) {
+      console.log(`🚫 VERCEL SSR BYPASS: API route ${req.path} - forcing Express handling`);
+      // Set explicit headers to prevent Vercel from intercepting
+      res.setHeader('X-API-Route', 'true');
+      res.setHeader('X-SSR-Bypass', 'true');
+      return next();
     }
     next();
   });
