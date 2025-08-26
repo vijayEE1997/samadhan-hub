@@ -21,11 +21,12 @@
       "destination": "/index.html"
     }
   ],
-  "functions": {
-    "api/server.js": {
-      "runtime": "nodejs18.x"
+  "builds": [
+    {
+      "src": "api/server.js",
+      "use": "@vercel/node"
     }
-  },
+  ],
   "env": {
     "NODE_ENV": "production",
     "APP_MODE": "prod",
