@@ -9,7 +9,7 @@ export const PATHS = {
   UI: './src/components/ui',
   
   // Other directories
-  ASSETS: './src/assets',
+  ASSETS: './assets',
   CONTEXTS: './src/contexts',
   HOOKS: './src/hooks',
   LIB: './src/lib',
@@ -23,7 +23,7 @@ export const PATHS = {
     '@components': './src/components',
     '@sections': './src/components/sections',
     '@ui': './src/components/ui',
-    '@assets': './src/assets',
+    '@assets': './assets',
     '@contexts': './src/contexts',
     '@hooks': './src/hooks',
     '@lib': './src/lib',

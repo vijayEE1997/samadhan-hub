@@ -6,7 +6,7 @@ export const APP_CONFIG = {
   SUBTITLE: 'Ancient Wisdom, Modern Strength',
   DESCRIPTION: 'Ancient Modern Wellness',
   VERSION: '1.0.0',
-  LOGO_PATH: '/src/assets/agnivirya-logo.png',
+  LOGO_PATH: '/assets/agnivirya-logo.png',
 } as const;
 
 // Navigation Constants

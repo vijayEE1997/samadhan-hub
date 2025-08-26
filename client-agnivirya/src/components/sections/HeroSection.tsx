@@ -98,7 +98,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onPaymentClick }) => {
 
           <div className="hero-visual">
             <div className="hero-logo-large">
-              <img src="src/assets/agnivirya-logo.png" alt="AgniVirya" className="logo-image" />
+              <img src="/assets/agnivirya-logo.png" alt="AgniVirya" className="logo-image" />
             </div>
           </div>
         </div>
