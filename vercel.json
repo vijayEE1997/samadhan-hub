@@ -1,0 +1,39 @@
+{
+  "version": 2,
+  "name": "samadhanhub",
+  "alias": ["samadhanhub.com"],
+  "builds": [
+    {
+      "src": "server/index.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "client-agnivirya/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "server/index.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "client-agnivirya/dist/$1"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production",
+    "APP_MODE": "prod",
+    "ENVIRONMENT": "vercel",
+    "PROD_DOMAIN": "samadhanhub.com"
+  },
+  "functions": {
+    "server/index.js": {
+      "maxDuration": 30
+    }
+  }
+}
