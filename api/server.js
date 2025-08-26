@@ -310,6 +310,7 @@ app.use((req, res, next) => {
   if (path.startsWith('/api/')) {
     console.log(`🔍 API Route Request: ${method} ${path}`);
     console.log(`🔍 Headers:`, req.headers);
+    console.log(`🔍 Request ID: ${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
   }
   
   next();
@@ -321,6 +322,14 @@ app.get('/api/payments/config', async (req, res) => {
     console.log('🔍 Payment config endpoint hit:', req.path);
     console.log('🔍 Request method:', req.method);
     console.log('🔍 Request headers:', req.headers);
+    console.log('🔍 Request ID:', Date.now());
+    
+    // CRITICAL: Ensure this is an API request, not a static file request
+    if (req.path.startsWith('/api/')) {
+      console.log('✅ Confirmed: This is an API request');
+    } else {
+      console.log('❌ ERROR: This should not happen - API route being treated as non-API');
+    }
     
     // Set CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -388,6 +397,20 @@ app.get('/api/payments/config', async (req, res) => {
     };
     
     console.log('🔍 Sending payment config response:', JSON.stringify(response, null, 2));
+    
+    // CRITICAL: Double-check response headers
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    
+    console.log('🔍 Response headers set:', {
+      'Content-Type': res.getHeader('Content-Type'),
+      'Cache-Control': res.getHeader('Cache-Control'),
+      'Pragma': res.getHeader('Pragma'),
+      'Expires': res.getHeader('Expires')
+    });
+    
     res.status(200).json(response);
   } catch (error) {
     console.error('Payment config error:', error);
@@ -865,7 +888,7 @@ app.get('/download', (req, res) => {
 });
 
 // ============================================================================
-// STATIC FILE SERVING
+// STATIC FILE SERVING - MUST COME AFTER ALL API ROUTES
 // ============================================================================
 
 // Check environment and build status
@@ -877,15 +900,26 @@ const clientDistExists = fs.existsSync(clientDistPath);
 if (mainDistExists && clientDistExists) {
   console.log('🏭 Built files detected - serving React app from unified server');
   console.log('📱 Samadhan Hub app will be served from /');
+  
+  // CRITICAL: Add a pre-check middleware to block API routes BEFORE static file serving
+  app.use((req, res, next) => {
+    if (req.path.startsWith('/api/') || req.path.startsWith('/health')) {
+      console.log(`🚫 PRE-BLOCKED: API route ${req.path} before static file serving`);
+      return next(); // Let the API route handlers deal with it
+    }
+    next();
+  });
 
   // Serve built React apps from unified server
   // Static file serving for main app - ONLY for non-API routes
   app.use('/', (req, res, next) => {
-    // Skip static file serving for API routes
+    // CRITICAL: Explicitly block API routes from static file serving
     if (req.path.startsWith('/api/') || req.path.startsWith('/health')) {
+      console.log(`🚫 BLOCKED: API route ${req.path} from static file serving`);
       return next();
     }
     
+    console.log(`📁 Serving static file for route: ${req.path}`);
     // Serve static files for non-API routes
     express.static(mainDistPath, {
       maxAge: '1y',
@@ -904,8 +938,9 @@ if (mainDistExists && clientDistExists) {
 
   // Catch-all route for SPA - ONLY for non-API routes
   app.get('*', (req, res) => {
-    // Skip for API routes
+    // CRITICAL: Double-check for API routes to prevent HTML serving
     if (req.path.startsWith('/api/') || req.path.startsWith('/health')) {
+      console.log(`🚫 BLOCKED: API route ${req.path} from being served as HTML`);
       return res.status(404).json({
         error: 'Not Found',
         message: `Route ${req.path} not found`,
@@ -914,6 +949,7 @@ if (mainDistExists && clientDistExists) {
       });
     }
     
+    console.log(`📱 Serving SPA for route: ${req.path}`);
     // Serve index.html for SPA routes
     res.sendFile(path.join(mainDistPath, 'index.html'));
   });
@@ -944,6 +980,12 @@ if (mainDistExists && clientDistExists) {
 // ============================================================================
 // APP ROUTES - Must come AFTER API routes
 // ============================================================================
+
+// CRITICAL: The order of middleware and routes is crucial:
+// 1. API routes are defined FIRST (above this section)
+// 2. Static file serving comes LAST (in the section above)
+// 3. This ensures API routes take precedence over static file serving
+// 4. No API route should ever be served as HTML
 
 // Note: App routes are now handled in the development mode check above
 // In development: redirects to Vite dev server
