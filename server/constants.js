@@ -55,50 +55,6 @@ const SECURITY = {
   HELMET_CSP: ENV.IS_DEV ? false : undefined
 };
 
-// User Management Constants
-const USERS = [
-  {
-    id: 1,
-    username: 'admin',
-    email: 'admin@samadhanhub.com',
-    role: 'admin',
-    permissions: ['read', 'write', 'delete', 'admin']
-  },
-  {
-    id: 2,
-    username: 'user',
-    email: 'user@samadhanhub.com',
-    role: 'user',
-    permissions: ['read']
-  }
-];
-
-// SSR Configuration Constants
-const SSR = {
-  CLIENT_DIST_PATH: '../client-agnivirya/dist/server/App.js',
-  HTML_TEMPLATE_PATH: '../client-agnivirya/dist/index.html',
-  INITIAL_STATE_KEYS: ['currentUrl', 'timestamp', 'ssr', 'mode', 'environment']
-};
-
-// File Path Constants
-const PATHS = {
-  CLIENT_DIST: '../client-agnivirya/dist',
-  STATIC_ASSETS: '../client-agnivirya/dist',
-  UPLOADS: 'uploads'
-};
-
-// HTTP Status Constants
-const HTTP_STATUS = {
-  OK: 200,
-  CREATED: 201,
-  BAD_REQUEST: 400,
-  UNAUTHORIZED: 401,
-  FORBIDDEN: 403,
-  NOT_FOUND: 404,
-  INTERNAL_SERVER_ERROR: 500,
-  SERVICE_UNAVAILABLE: 503
-};
-
 // Response Message Constants
 const MESSAGES = {
   HEALTH: {
@@ -113,14 +69,6 @@ const MESSAGES = {
     INTERNAL_ERROR: 'Internal server error'
   }
 };
-
-// Rate Limiting Constants
-const RATE_LIMIT = {
-  WINDOW_MS: 15 * 60 * 1000, // 15 minutes
-  MAX_REQUESTS: 100,
-  MESSAGE: 'Too many requests from this IP, please try again later.'
-};
-
 // Logging Constants
 const LOGGING = {
   FORMAT: ENV.IS_DEV ? 'dev' : 'combined',
@@ -135,11 +83,6 @@ module.exports = {
   CORS,
   DEPLOYMENT,
   SECURITY,
-  USERS,
-  SSR,
-  PATHS,
-  HTTP_STATUS,
   MESSAGES,
-  RATE_LIMIT,
   LOGGING
 };

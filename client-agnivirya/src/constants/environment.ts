@@ -29,12 +29,10 @@ export const ENV = {
 
 // API endpoints with full URLs
 export const API_ENDPOINTS = {
-  CONFIG: `${SERVER_CONFIG.API_BASE_URL}/config`,
-  HEALTH: `${SERVER_CONFIG.API_BASE_URL}/health`,
-  USERS: `${SERVER_CONFIG.API_BASE_URL}/users`,
+  CONFIG: `${SERVER_CONFIG.API_BASE_URL}/api/config`,
   PAYMENT: {
-    CREATE_ORDER: `${SERVER_CONFIG.API_BASE_URL}/payment/create-order`,
-    VERIFY: `${SERVER_CONFIG.API_BASE_URL}/payment/verify`,
+    CREATE_ORDER: `${SERVER_CONFIG.API_BASE_URL}/api/payments/create-order`,
+    VERIFY: `${SERVER_CONFIG.API_BASE_URL}/api/payments/verify`,
   },
-  WEBHOOK: `${SERVER_CONFIG.API_BASE_URL}/webhook/cashfree`,
+  WEBHOOK: `${SERVER_CONFIG.API_BASE_URL}/api/webhook/cashfree`,
 } as const;

@@ -40,7 +40,7 @@ class CashfreeService {
         },
         order_meta: {
           return_url: orderData.returnUrl || "http://localhost:3000/success",
-          notify_url: process.env.CASHFREE_WEBHOOK_URL || "http://localhost:5000/api/webhook/cashfree",
+          notify_url: process.env.CASHFREE_WEBHOOK_URL || `${process.env.VERCEL_URL || 'http://localhost:5000'}/api/webhook/cashfree`,
         },
         order_note: "AgniVirya Ancient Modern Wellness eBook",
       };
