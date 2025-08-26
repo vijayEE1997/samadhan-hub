@@ -7,6 +7,11 @@
   "buildCommand": "npm run vercel-build",
   "outputDirectory": "client-agnivirya/dist",
   "installCommand": "npm run install:all",
+  "functions": {
+    "api/server.js": {
+      "maxDuration": 30
+    }
+  },
   "rewrites": [
     {
       "source": "/api/(.*)",
@@ -17,14 +22,12 @@
       "destination": "/api/server.js"
     },
     {
+      "source": "/",
+      "destination": "/index.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
-    }
-  ],
-  "builds": [
-    {
-      "src": "api/server.js",
-      "use": "@vercel/node"
     }
   ],
   "env": {
