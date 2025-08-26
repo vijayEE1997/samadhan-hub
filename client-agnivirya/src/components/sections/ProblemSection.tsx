@@ -1,10 +1,7 @@
 // @// Icons & Visual Elements
-import { AlertTriangle, DollarSign, Clock, XCircle, Zap Heart } from "lucide-react";
+import { AlertTriangle, DollarSign, Clock, XCircle, Zap, Heart } from "lucide-react";
 
-interface ProblemSectionProps {
-  }
-
-const ProblemSection = ({ onPaymentClick }: ProblemSectionProps) => {
+const ProblemSection = () => {
   const problems = [
     {
       icon: DollarSign,
@@ -45,7 +42,7 @@ const ProblemSection = ({ onPaymentClick }: ProblemSectionProps) => {
       {/* Background Elements */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_70%,rgba(120,119,198,0.1),transparent_50%)]"></div>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(120,119,198,0.1),transparent_50%)]"></div>
-      
+
       {/* Floating Elements */}
       <div className="absolute top-20 right-20 w-24 h-24 bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-full blur-2xl animate-float"></div>
       <div className="absolute bottom-20 left-20 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-full blur-2xl animate-float" style={{ animationDelay: '2s' }}></div>
@@ -56,11 +53,11 @@ const ProblemSection = ({ onPaymentClick }: ProblemSectionProps) => {
           <h2 className="text-5xl md:text-7xl font-black mb-8 bg-gradient-to-r from-red-400 via-orange-400 to-red-400 bg-clip-text text-transparent drop-shadow-2xl">
             आधुनिक दवाइयों की समस्याएँ / Problems with Modern Medicine
           </h2>
-          
+
           <p className="text-2xl md:text-3xl text-gray-300 max-w-4xl mx-auto leading-relaxed font-medium">
             Why traditional approaches often fail and leave you frustrated
           </p>
-          
+
           {/* Decorative Line */}
           <div className="w-32 h-1 bg-gradient-to-r from-red-500 via-orange-500 to-red-500 mx-auto rounded-full mt-8"></div>
         </div>
@@ -104,7 +101,7 @@ const ProblemSection = ({ onPaymentClick }: ProblemSectionProps) => {
               <p className="text-xl text-amber-200 font-medium">
                 "There is an ancient way that has been forgotten..."
               </p>
-              
+
               {/* Decorative Line */}
               <div className="w-24 h-1 bg-gradient-to-r from-amber-400 to-orange-400 mx-auto rounded-full mt-6"></div>
             </div>

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { 
-  ChevronDown, 
-  HelpCircle, 
-  BookOpen, 
-  Target, 
-  Zap 
+import {
+  ChevronDown,
+  HelpCircle,
+  BookOpen,
+  Target,
+  Zap,
   Users,
   MessageCircle,
   FileText,
@@ -66,13 +66,13 @@ const FAQSection: React.FC = () => {
     { id: 'support', label: 'Support', icon: Users }
   ];
 
-  const filteredFAQs = activeCategory === 'all' 
-    ? faqData 
+  const filteredFAQs = activeCategory === 'all'
+    ? faqData
     : faqData.filter(item => item.category === activeCategory);
 
   const toggleItem = (index: number) => {
-    setOpenItems(prev => 
-      prev.includes(index) 
+    setOpenItems(prev =>
+      prev.includes(index)
         ? prev.filter(i => i !== index)
         : [...prev, index]
     );
@@ -87,14 +87,14 @@ const FAQSection: React.FC = () => {
             <HelpCircle className="icon" />
             <span>Got Questions?</span>
           </div>
-          
+
           <h2 className="faq-title">
             Everything You Need to
             <span className="title-highlight"> Know</span>
           </h2>
-          
+
           <p className="faq-description">
-            Get answers to the most common questions about our comprehensive success guide. 
+            Get answers to the most common questions about our comprehensive success guide.
             Everything you need to know before starting your transformation journey.
           </p>
         </div>
@@ -126,8 +126,8 @@ const FAQSection: React.FC = () => {
                 aria-expanded={openItems.includes(index)}
               >
                 <span>{item.question}</span>
-                <ChevronDown 
-                  className={`chevron ${openItems.includes(index) ? 'open' : ''}`} 
+                <ChevronDown
+                  className={`chevron ${openItems.includes(index) ? 'open' : ''}`}
                 />
               </button>
               <div className={`faq-answer ${openItems.includes(index) ? 'open' : ''}`}>
@@ -143,7 +143,7 @@ const FAQSection: React.FC = () => {
             <h3>Still Have Questions?</h3>
             <p>Our success experts are here to help you on your journey</p>
           </div>
-          
+
           <div className="support-options">
             <div className="support-option">
               <div className="support-icon">
@@ -154,7 +154,7 @@ const FAQSection: React.FC = () => {
                 <p>Get instant answers from our experts</p>
               </div>
             </div>
-            
+
             <div className="support-option">
               <div className="support-icon">
                 <FileText className="icon" />
@@ -164,7 +164,7 @@ const FAQSection: React.FC = () => {
                 <p>Comprehensive program documentation</p>
               </div>
             </div>
-            
+
             <div className="support-option">
               <div className="support-icon">
                 <Users className="icon" />
@@ -182,7 +182,7 @@ const FAQSection: React.FC = () => {
           <div className="cta-content">
             <h3>Ready to Start Your Success Journey?</h3>
             <p>Join thousands who have already transformed their lives</p>
-            <button 
+            <button
               className="cta-button"
               onClick={() => {
                 window.history.pushState({}, '', '/payment');
