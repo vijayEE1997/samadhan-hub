@@ -137,6 +137,9 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
       window.location.href = checkoutUrl;
     }
   }, [cashfreeSDKReady, paymentConfig]);
+  
+  console.log(orderId);
+  console.log(paymentSessionId);
 
   const validateField = (name: string, value: string) => {
     let error = '';
