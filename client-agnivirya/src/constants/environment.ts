@@ -15,8 +15,8 @@ const isProduction = (import.meta as any).env?.PROD || false;
 export const SERVER_CONFIG = {
   // In development, the client runs on port 3000 and server on port 5000
   // In production, they might be on the same domain
-  BASE_URL: isDevelopment ? 'http://localhost:5000' : '',
-  API_BASE_URL: isDevelopment ? 'http://localhost:5000/api' : '/api',
+  BASE_URL: isDevelopment ? 'http://localhost:5000' : 'https://samadhanhub-git-master-vijay-dhakads-projects.vercel.app',
+  API_BASE_URL: isDevelopment ? 'http://localhost:5000/api' : 'https://samadhanhub-git-master-vijay-dhakads-projects.vercel.app/api',
   PORT: isDevelopment ? 5000 : undefined,
 } as const;
 
@@ -29,10 +29,10 @@ export const ENV = {
 
 // API endpoints with full URLs
 export const API_ENDPOINTS = {
-  CONFIG: `${SERVER_CONFIG.API_BASE_URL}/api/config`,
+  CONFIG: `${SERVER_CONFIG.API_BASE_URL}/config`,
   PAYMENT: {
-    CREATE_ORDER: `${SERVER_CONFIG.API_BASE_URL}/api/payments/create-order`,
-    VERIFY: `${SERVER_CONFIG.API_BASE_URL}/api/payments/verify`,
+    CREATE_ORDER: `${SERVER_CONFIG.API_BASE_URL}/payments/create-order`,
+    VERIFY: `${SERVER_CONFIG.API_BASE_URL}/payments/verify`,
   },
-  WEBHOOK: `${SERVER_CONFIG.API_BASE_URL}/api/webhook/cashfree`,
+  WEBHOOK: `${SERVER_CONFIG.API_BASE_URL}/webhook/cashfree`,
 } as const;
