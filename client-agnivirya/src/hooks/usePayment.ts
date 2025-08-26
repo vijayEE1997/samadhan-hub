@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 export const usePayment = () => {
   const [isPaymentVerified, setIsPaymentVerified] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
 
-  const verifyPayment = async (orderId: string): Promise<boolean> => {
+  const verifyPayment = useCallback(async (orderId: string): Promise<boolean> => {
     if (isVerifying) return false;
 
     console.log('🔍 Starting payment verification...', { orderId });
@@ -33,7 +33,7 @@ export const usePayment = () => {
     } finally {
       setIsVerifying(false);
     }
-  };
+  }, [isVerifying]);
 
   return {
     verifyPayment,
