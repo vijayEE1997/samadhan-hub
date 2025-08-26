@@ -2,11 +2,12 @@
   "version": 2,
   "name": "samadhanhub",
   "alias": ["samadhanhub.com"],
-  "functions": {
-    "server/index.js": {
-      "maxDuration": 30
+  "builds": [
+    {
+      "src": "server/index.js",
+      "use": "@vercel/node"
     }
-  },
+  ],
   "routes": [
     {
       "src": "/api/(.*)",
