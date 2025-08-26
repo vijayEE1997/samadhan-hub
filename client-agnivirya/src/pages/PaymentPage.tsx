@@ -25,17 +25,14 @@ interface PaymentPageProps {
 
 const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
   const [formData, setFormData] = useState({
-    customerName: '',
     email: ''
   });
 
   const [errors, setErrors] = useState({
-    customerName: '',
     email: ''
   });
 
   const [touched, setTouched] = useState({
-    customerName: false,
     email: false
   });
 
@@ -97,12 +94,12 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
   const openCashfreeCheckout = useCallback(async (sessionId: string) => {
     try {
       console.log('🔄 Opening Cashfree checkout...');
-      
+
       // Wait for SDK to be ready
       if (!cashfreeSDKReady) {
         console.log('⏳ Waiting for SDK...');
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
+
         if (!cashfreeSDKReady) {
           throw new Error('Cashfree SDK not ready. Please refresh and try again.');
         }
@@ -113,7 +110,7 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
         const cashfree = window.Cashfree({
           mode: paymentConfig?.mode || 'production'
         });
-        
+
         const checkoutOptions = {
           paymentSessionId: sessionId,
           redirectTarget: '_self',
@@ -127,30 +124,24 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
 
     } catch (error) {
       console.error('❌ SDK checkout failed, using fallback:', error);
-      
+
       // Fallback: redirect to Cashfree hosted checkout
       const checkoutUrl = paymentConfig?.mode === 'production'
         ? `https://checkout.cashfree.com/pg/view/sessions/${sessionId}`
         : `https://sandbox.cashfree.com/pg/view/sessions/${sessionId}`;
-      
+
       console.log('🔄 Redirecting to:', checkoutUrl);
       window.location.href = checkoutUrl;
     }
   }, [cashfreeSDKReady, paymentConfig]);
-  
+
   console.log(orderId);
   console.log(paymentSessionId);
 
   const validateField = (name: string, value: string) => {
     let error = '';
 
-    if (name === 'customerName') {
-      if (!value.trim()) {
-        error = 'Customer name is required';
-      } else if (value.trim().length < 2) {
-        error = 'Customer name must be at least 2 characters';
-      }
-    } else if (name === 'email') {
+    if (name === 'email') {
       if (!value.trim()) {
         error = 'Email address is required';
       } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
@@ -184,13 +175,11 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
 
     // Validate all fields
     const newErrors = {
-      customerName: validateField('customerName', formData.customerName),
       email: validateField('email', formData.email)
     };
 
     setErrors(newErrors);
     setTouched({
-      customerName: true,
       email: true
     });
 
@@ -202,6 +191,9 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
     setIsProcessing(true);
 
     try {
+      // Extract customer name from email prefix
+      const customerName = formData.email.split('@')[0];
+
       // Create payment order with Cashfree
       const response = await fetch(API_ENDPOINTS.PAYMENT.INITIATE, {
         method: 'POST',
@@ -209,7 +201,7 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          customerName: formData.customerName,
+          customerName: customerName,
           customerEmail: formData.email,
           customerPhone: '8305940684',
           amount: 99,
@@ -223,8 +215,8 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
       }
 
       const result = await response.json();
-      
-             if (result.success) {
+
+      if (result.success) {
         // Show success message and prepare for redirect
         setErrors(prev => ({ ...prev, email: '' }));
         setIsRedirecting(true);
@@ -235,7 +227,10 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
             orderId: result.orderId,
             cfOrderId: result.cfOrderId,
             sessionId: result.sessionId,
-            customerData: formData,
+            customerData: {
+              customerName: customerName,
+              customerEmail: formData.email
+            },
             timestamp: Date.now(),
             config: {
               mode: result.mode,
@@ -256,7 +251,7 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
           setTimeout(async () => {
             console.log('🔄 Opening Cashfree checkout...');
             console.log('🔗 Session ID:', result.sessionId);
-            
+
             try {
               // Try to open Cashfree checkout
               await openCashfreeCheckout(result.sessionId);
@@ -286,22 +281,22 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
   return (
     <div className="payment-container">
       <div className="content-wrapper">
-                 {/* Page Header - Wondershare Style */}
-         <div className="page-header">
-           <div className="header-top">
-             <div className="header-left">
-               <button onClick={onBackToHome} className="back-button">
-                 <ArrowLeft className="icon" />
-                 <span>Back to Home</span>
-               </button>
-             </div>
-             <div className="header-right">
-               <div className="header-logo">
+        {/* Page Header - Wondershare Style */}
+        <div className="page-header">
+          <div className="header-top">
+            <div className="header-left">
+              <button onClick={onBackToHome} className="back-button">
+                <ArrowLeft className="icon" />
+                <span>Back to Home</span>
+              </button>
+            </div>
+            <div className="header-right">
+              <div className="header-logo">
                 <img src="/assets/agnivirya-logo.png" alt="AgniVirya" className="logo-image" />
-               </div>
-             </div>
-           </div>
-         </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Two-Column Layout - Inspired by Wondershare */}
         <div className="payment-layout">
@@ -385,7 +380,7 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
             <div className="form-container">
               <div className="form-header">
                 <h2>Complete Your Purchase</h2>
-                <p>Enter your details to proceed to secure Cashfree payment gateway</p>
+                <p>Enter your email address to proceed to secure Cashfree payment gateway</p>
               </div>
 
               {/* Configuration Loading/Error States */}
@@ -406,60 +401,27 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
                 </div>
               )}
 
-                             {/* Success Message when Redirecting */}
-               {isRedirecting && (
-                 <div className="success-message bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
-                   <div className="flex items-center gap-2 text-green-600 mb-2">
-                     <Check className="w-5 h-5" />
-                     <span className="font-medium">Payment Order Created Successfully!</span>
-                   </div>
-                   <p className="text-green-600 text-sm">Opening secure Cashfree payment gateway...</p>
-                 </div>
-               )}
+              {/* Success Message when Redirecting */}
+              {isRedirecting && (
+                <div className="success-message bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                  <div className="flex items-center gap-2 text-green-600 mb-2">
+                    <Check className="w-5 h-5" />
+                    <span className="font-medium">Payment Order Created Successfully!</span>
+                  </div>
+                  <p className="text-green-600 text-sm">Opening secure Cashfree payment gateway...</p>
+                </div>
+              )}
 
-               {/* Cashfree SDK Status */}
-               <div className="cashfree-status bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-                 <div className="flex items-center gap-2 text-blue-600 text-sm">
-                   <CreditCard className="w-4 h-4" />
-                   <span>Cashfree SDK: {cashfreeSDKReady ? 'Ready' : 'Loading...'}</span>
-                   {!cashfreeSDKReady && (
-                     <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600"></div>
-                   )}
-                 </div>
-               </div>
+              {/* Cashfree SDK Status */}
+              <div className="cashfree-status bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                <div className="flex items-center gap-2 text-blue-600 text-sm">
+                  {!cashfreeSDKReady && (
+                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600"></div>
+                  )}
+                </div>
+              </div>
 
               <form className={`payment-form ${isLoadingConfig || configError ? 'opacity-50 pointer-events-none' : ''}`} onSubmit={handleSubmit}>
-                <div className="form-group">
-                  <label htmlFor="customerName" className={`form-label ${touched.customerName && errors.customerName ? 'error' : ''}`}>
-                    Full Name *
-                  </label>
-                  <div className="input-wrapper">
-                    <input
-                      type="text"
-                      id="customerName"
-                      name="customerName"
-                      value={formData.customerName}
-                      onChange={handleInputChange}
-                      onBlur={handleInputBlur}
-                      className={`form-input ${touched.customerName && errors.customerName ? 'error' : ''} ${touched.customerName && !errors.customerName ? 'success' : ''}`}
-                      placeholder="Enter your full name"
-                      required
-                    />
-                    {touched.customerName && !errors.customerName && (
-                      <div className="input-icon success">
-                        <Check className="icon" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="message-container">
-                    {touched.customerName && errors.customerName && (
-                      <div className="error-message">
-                        <Shield className="icon" />
-                        <span>{errors.customerName}</span>
-                      </div>
-                    )}
-                  </div>
-              </div>
 
                 <div className="form-group">
                   <label htmlFor="email" className={`form-label ${touched.email && errors.email ? 'error' : ''}`}>
@@ -503,8 +465,8 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
                   </p>
                 </div>
 
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   className="submit-button"
                   disabled={isProcessing || isRedirecting}
                 >
@@ -513,15 +475,15 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
                       <Loader2 className="icon animate-spin" />
                       <span>Creating Order...</span>
                     </>
-                   ) : isRedirecting ? (
-                     <>
-                       <Loader2 className="icon animate-spin" />
-                       <span>Opening Payment Gateway...</span>
-                     </>
+                  ) : isRedirecting ? (
+                    <>
+                      <Loader2 className="icon animate-spin" />
+                      <span>Opening Payment Gateway...</span>
+                    </>
                   ) : (
                     <>
-                       <CreditCard className="icon" />
-                       <span>Pay with Cashfree</span>
+                      <CreditCard className="icon" />
+                      <span>Pay with Cashfree</span>
                       <div className="discount-badge">95% OFF</div>
                     </>
                   )}
@@ -530,11 +492,11 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
 
               {/* Security Badge */}
               <div className="security-badge">
-                 <CreditCard className="icon" />
+                <CreditCard className="icon" />
                 <span>Powered by Cashfree - 100% Secure & Encrypted</span>
-                 <div className="text-xs text-gray-500 mt-1">
-                   {cashfreeSDKReady ? 'SDK Ready' : 'SDK Loading...'}
-                 </div>
+                <div className="text-xs text-gray-500 mt-1">
+                  {cashfreeSDKReady ? 'SDK Ready' : 'SDK Loading...'}
+                </div>
               </div>
             </div>
           </div>
