@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  base: './', // Use relative paths for assets
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -22,6 +23,7 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true,
+    assetsDir: 'assets',
     rollupOptions: {
       input: {
         main: './index.html',
@@ -30,6 +32,15 @@ export default defineConfig({
         manualChunks: {
           vendor: ['react', 'react-dom'],
           utils: ['axios'],
+        },
+        assetFileNames: (assetInfo) => {
+          // Keep original asset names for easier debugging
+          const info = assetInfo.name?.split('.') || [];
+          const ext = info[info.length - 1];
+          if (/\.(png|jpe?g|svg|gif|tiff|bmp|ico|webp)$/i.test(assetInfo.name || '')) {
+            return `assets/[name].[ext]`;
+          }
+          return `assets/[name]-[hash].[ext]`;
         },
       },
     },

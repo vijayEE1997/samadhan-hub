@@ -861,34 +861,28 @@
 }
 
 .retry-payment-button {
-  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
   color: white;
   border: none;
-  padding: 1rem 2rem;
+  padding: 0.75rem 1.5rem;
   border-radius: 0.75rem;
   font-weight: 600;
+  font-size: 0.875rem;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+  box-shadow: 0 2px 10px rgba(217, 119, 6, 0.3);
+  cursor: pointer;
 }
 
 .retry-payment-button:hover {
+  background: linear-gradient(135deg, #b45309 0%, #92400e 100%);
   transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(220, 38, 38, 0.4);
+  box-shadow: 0 4px 20px rgba(217, 119, 6, 0.4);
 }
 
-.back-home-button {
-  border-color: rgba(107, 114, 128, 0.3);
-  color: #6b7280;
-  padding: 1rem 2rem;
-  border-radius: 0.75rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.back-home-button:hover {
-  border-color: rgba(107, 114, 128, 0.5);
-  background: rgba(107, 114, 128, 0.1);
-  transform: translateY(-2px);
+.retry-payment-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .order-details-failed {
@@ -1303,29 +1297,11 @@
 /* Navigation */
 .navigation-improved {
   display: flex;
-  gap: 1rem;
   justify-content: center;
 }
 
-.nav-button-improved {
-  flex: 1;
-  border-color: rgba(156, 163, 175, 0.3);
-  color: #6b7280;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.75rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.nav-button-improved:hover:not(:disabled) {
-  background: rgba(156, 163, 175, 0.1);
-  border-color: rgba(156, 163, 175, 0.5);
-  transform: translateY(-2px);
-}
-
-.nav-button-improved:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.navigation-improved .back-button-improved {
+  margin: 0 auto;
 }
 
 /* Animations */

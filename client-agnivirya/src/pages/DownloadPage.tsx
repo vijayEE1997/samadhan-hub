@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Download as DownloadIcon, CheckCircle, Star, AlertCircle, Loader2, ArrowLeft, Gift } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { usePayment } from "@/hooks/usePayment";
+import { getImagePath, getPdfPath } from "@/utils/assetUtils";
 
 interface DownloadPageProps {
   onBackToHome?: () => void;
@@ -156,7 +157,7 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
     setDownloadError(null);
     
     try {
-      const response = await fetch(`/agnivirya/${pdfFileName}`);
+      const response = await fetch(getPdfPath(pdfFileName));
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
@@ -229,23 +230,20 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
           </p>
           
           <div className="failed-actions">
-            <Button
+            <button
               onClick={handleBackToPayment}
-              className="retry-payment-button"
-              size="lg"
+              className="back-button-improved retry-payment-button"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Try Payment Again
-            </Button>
-            <Button
+            </button>
+            <button
               onClick={handleBackToHome}
-              variant="outline"
-              className="back-home-button"
-              size="lg"
+              className="back-button-improved"
             >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Home
-            </Button>
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to Home</span>
+            </button>
           </div>
 
           {orderDetails && (
@@ -434,24 +432,14 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
 
             {/* Navigation */}
             <div className="navigation-improved">
-              <Button
-                onClick={handleBackToPayment}
-                variant="outline"
-                className="nav-button-improved"
-                disabled={isDownloading}
-              >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Payment
-              </Button>
-              <Button
+              <button
                 onClick={handleBackToHome}
-                variant="outline"
-                className="nav-button-improved"
+                className="back-button-improved"
                 disabled={isDownloading}
               >
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Home
-              </Button>
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back to Home</span>
+              </button>
             </div>
           </div>
         </div>
@@ -469,7 +457,7 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
             <span>Back to Home</span>
           </button>
           <div className="header-logo-improved">
-            <img src="/assets/agnivirya-logo.png" alt="AgniVirya" className="logo-image-improved" />
+            <img src={getImagePath('agnivirya-logo.png')} alt="AgniVirya" className="logo-image-improved" />
           </div>
         </div>
 

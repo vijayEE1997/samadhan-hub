@@ -9,6 +9,7 @@ import {
   Gift,
   ArrowRight
 } from 'lucide-react';
+import { getImagePath } from '@/utils/assetUtils';
 
 interface HeroSectionProps {
   onPaymentClick: () => void;
@@ -98,7 +99,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onPaymentClick }) => {
 
           <div className="hero-visual">
             <div className="hero-logo-large">
-              <img src="/assets/agnivirya-logo.png" alt="AgniVirya" className="logo-image" />
+              <img src={getImagePath('agnivirya-logo.png')} alt="AgniVirya" className="logo-image" />
             </div>
           </div>
         </div>

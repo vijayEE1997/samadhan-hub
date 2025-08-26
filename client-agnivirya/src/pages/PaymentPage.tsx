@@ -11,6 +11,7 @@ import {
 
 // Import constants
 import { API_ENDPOINTS } from '@/constants';
+import { getImagePath } from '@/utils/assetUtils';
 
 // Declare Cashfree global type
 declare global {
@@ -292,7 +293,7 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
             </div>
             <div className="header-right">
               <div className="header-logo">
-                <img src="/assets/agnivirya-logo.png" alt="AgniVirya" className="logo-image" />
+                <img src={getImagePath('agnivirya-logo.png')} alt="AgniVirya" className="logo-image" />
               </div>
             </div>
           </div>
