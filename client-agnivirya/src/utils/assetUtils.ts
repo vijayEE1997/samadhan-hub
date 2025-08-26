@@ -16,7 +16,9 @@ export const getAssetPath = (assetPath: string): string => {
   // Always use absolute path - this works in both development and production
   // In development, Vite dev server handles this
   // In production, our Express server serves the /assets route
-  return `/${cleanPath}`;
+  const finalPath = `/${cleanPath}`;
+  console.log(`🔍 Asset path generated: ${assetPath} -> ${finalPath}`);
+  return finalPath;
 };
 
 /**
@@ -25,7 +27,9 @@ export const getAssetPath = (assetPath: string): string => {
  * @returns The correct image path
  */
 export const getImagePath = (imageName: string): string => {
-  return getAssetPath(`assets/${imageName}`);
+  const imagePath = getAssetPath(`assets/${imageName}`);
+  console.log(`🖼️ Image path generated: ${imageName} -> ${imagePath}`);
+  return imagePath;
 };
 
 /**

@@ -11,17 +11,19 @@ export const usePayment = () => {
     
     setIsVerifying(true);
     try {
-      const response = await fetch(`${window.location.origin}/api/payments/verify`, {
-        method: 'POST',
+      // Updated to use GET request with orderId as URL parameter
+      const response = await fetch(`${window.location.origin}/api/payments/verify/${orderId}`, {
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ orderId }),
+        // Removed body since GET requests don't have a body
       });
 
       if (response.ok) {
         const result = await response.json();
-        if (result.success && result.isPaymentCompleted) {
+        // Updated to check the correct success property from server response
+        if (result.success && result.status === 'PAID') {
           setIsPaymentVerified(true);
           return true;
         }
