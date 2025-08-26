@@ -16,14 +16,17 @@ interface PaymentPageProps {
 
 const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
   const [formData, setFormData] = useState({
+    customerName: '',
     email: ''
   });
 
   const [errors, setErrors] = useState({
+    customerName: '',
     email: ''
   });
 
   const [touched, setTouched] = useState({
+    customerName: false,
     email: false
   });
 
@@ -32,7 +35,13 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
   const validateField = (name: string, value: string) => {
     let error = '';
 
-    if (name === 'email') {
+    if (name === 'customerName') {
+      if (!value.trim()) {
+        error = 'Customer name is required';
+      } else if (value.trim().length < 2) {
+        error = 'Customer name must be at least 2 characters';
+      }
+    } else if (name === 'email') {
       if (!value.trim()) {
         error = 'Email address is required';
       } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
@@ -64,13 +73,15 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate email field
+    // Validate all fields
     const newErrors = {
+      customerName: validateField('customerName', formData.customerName),
       email: validateField('email', formData.email)
     };
 
     setErrors(newErrors);
     setTouched({
+      customerName: true,
       email: true
     });
 
@@ -83,13 +94,15 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
 
     try {
       // Create payment order with Cashfree
-      const response = await fetch(API_ENDPOINTS.PAYMENT.CREATE_ORDER, {
+      const response = await fetch(API_ENDPOINTS.PAYMENT.INITIATE, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email: formData.email,
+          customerName: formData.customerName,
+          customerEmail: formData.email,
+          customerPhone: '8305940684',
           amount: 99,
           currency: 'INR'
         }),
@@ -101,20 +114,13 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
 
       const result = await response.json();
       
-             if (result.success) {
-         // Initialize Cashfree checkout
-        const cashfree = (window as any).Cashfree({
-          mode: 'sandbox' // Use sandbox for development
-        });
-
-        const checkoutOptions = {
-          paymentSessionId: result.data.paymentSessionId,
-          redirectTarget: '_self',
-        };
-
-        // Open Cashfree checkout
-        cashfree.checkout(checkoutOptions);
-        
+                   if (result.success) {
+        // Redirect to Cashfree payment page
+        if (result.paymentUrl) {
+          window.location.href = result.paymentUrl;
+        } else {
+          throw new Error('Payment URL not received from server');
+        }
       } else {
         throw new Error(result.message || 'Failed to create payment order');
       }
@@ -227,71 +233,103 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
           {/* Right Column - Payment Form */}
           <div className="payment-form-column">
             <div className="form-container">
-              <div className="form-header">
-                <h2>Complete Your Purchase</h2>
-                <p>Enter your email address to proceed to secure Cashfree payment gateway</p>
-              </div>
+                             <div className="form-header">
+                 <h2>Complete Your Purchase</h2>
+                 <p>Enter your details to proceed to secure Cashfree payment gateway</p>
+               </div>
 
-              <form className="payment-form" onSubmit={handleSubmit}>
-                <div className="form-group">
-                  <label htmlFor="email" className={`form-label ${touched.email && errors.email ? 'error' : ''}`}>
-                    Email Address *
-                  </label>
-                  <div className="input-wrapper">
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      onBlur={handleInputBlur}
-                      className={`form-input ${touched.email && errors.email ? 'error' : ''} ${touched.email && !errors.email ? 'success' : ''}`}
-                      placeholder="Enter your email address"
-                      required
-                    />
-                    {touched.email && !errors.email && (
-                      <div className="input-icon success">
-                        <Check className="icon" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="message-container">
-                    {touched.email && errors.email && (
-                      <div className="error-message">
-                        <Shield className="icon" />
-                        <span>{errors.email}</span>
-                      </div>
-                    )}
-                  </div>
-                  <small className="form-help">We'll create an account if you're new, or ask you to sign in.</small>
-                </div>
+                             <form className="payment-form" onSubmit={handleSubmit}>
+                 <div className="form-group">
+                   <label htmlFor="customerName" className={`form-label ${touched.customerName && errors.customerName ? 'error' : ''}`}>
+                     Full Name *
+                   </label>
+                   <div className="input-wrapper">
+                     <input
+                       type="text"
+                       id="customerName"
+                       name="customerName"
+                       value={formData.customerName}
+                       onChange={handleInputChange}
+                       onBlur={handleInputBlur}
+                       className={`form-input ${touched.customerName && errors.customerName ? 'error' : ''} ${touched.customerName && !errors.customerName ? 'success' : ''}`}
+                       placeholder="Enter your full name"
+                       required
+                     />
+                     {touched.customerName && !errors.customerName && (
+                       <div className="input-icon success">
+                         <Check className="icon" />
+                       </div>
+                     )}
+                   </div>
+                   <div className="message-container">
+                     {touched.customerName && errors.customerName && (
+                       <div className="error-message">
+                         <Shield className="icon" />
+                         <span>{errors.customerName}</span>
+                       </div>
+                     )}
+                   </div>
+                 </div>
+
+                 <div className="form-group">
+                   <label htmlFor="email" className={`form-label ${touched.email && errors.email ? 'error' : ''}`}>
+                     Email Address *
+                   </label>
+                   <div className="input-wrapper">
+                     <input
+                       type="email"
+                       id="email"
+                       name="email"
+                       value={formData.email}
+                       onChange={handleInputChange}
+                       onBlur={handleInputBlur}
+                       className={`form-input ${touched.email && errors.email ? 'error' : ''} ${touched.email && !errors.email ? 'success' : ''}`}
+                       placeholder="Enter your email address"
+                       required
+                     />
+                     {touched.email && !errors.email && (
+                       <div className="input-icon success">
+                         <Check className="icon" />
+                       </div>
+                     )}
+                   </div>
+                   <div className="message-container">
+                     {touched.email && errors.email && (
+                       <div className="error-message">
+                         <Shield className="icon" />
+                         <span>{errors.email}</span>
+                       </div>
+                     )}
+                   </div>
+                   <small className="form-help">We'll create an account if you're new, or ask you to sign in.</small>
+                 </div>
 
 
 
-                {/* Consent Section */}
-                <div className="consent-section">
-                  <p className="consent-text">
-                    By clicking "Proceed to Cashfree", I agree that AgniVirya can keep me informed by sending personalized emails about products and services. See our <a href="#" className="privacy-link">Privacy Policy</a> for details.
-                  </p>
-                </div>
+                                 {/* Consent Section */}
+                 <div className="consent-section">
+                   <p className="consent-text">
+                     By clicking "Proceed to Payment", I agree that AgniVirya can keep me informed by sending personalized emails about products and services. See our <a href="#" className="privacy-link">Privacy Policy</a> for details.
+                   </p>
+                 </div>
 
                 <button 
                   type="submit" 
                   className="submit-button"
                   disabled={isProcessing}
                 >
-                  {isProcessing ? (
-                    <>
-                      <Loader2 className="icon animate-spin" />
-                      <span>Creating Order...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Lock className="icon" />
-                      <span>Proceed to Cashfree</span>
-                      <div className="discount-badge">95% OFF</div>
-                    </>
-                  )}
+                                     {isProcessing ? (
+                     <>
+                       <Loader2 className="icon animate-spin" />
+                       <span>Creating Order...</span>
+                     </>
+                   ) : (
+                     <>
+                       <Lock className="icon" />
+                       <span>Proceed to Payment</span>
+                       <div className="discount-badge">95% OFF</div>
+                     </>
+                   )}
                 </button>
               </form>
 

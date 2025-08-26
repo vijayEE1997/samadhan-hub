@@ -31,7 +31,7 @@ export const ENV = {
 export const API_ENDPOINTS = {
   CONFIG: `${SERVER_CONFIG.API_BASE_URL}/payments/config`,
   PAYMENT: {
-    CREATE_ORDER: `${SERVER_CONFIG.API_BASE_URL}/payments/create-order`,
+    INITIATE: `${SERVER_CONFIG.API_BASE_URL}/payments/initiate`,
     VERIFY: `${SERVER_CONFIG.API_BASE_URL}/payments/verify`,
   },
   WEBHOOK: `${SERVER_CONFIG.API_BASE_URL}/webhook/cashfree`,
