@@ -213,7 +213,8 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
           customerEmail: formData.email,
           customerPhone: '8305940684',
           amount: 99,
-          currency: 'INR'
+          currency: 'INR',
+          returnUrl: `${window.location.origin}/download`
         }),
       });
 

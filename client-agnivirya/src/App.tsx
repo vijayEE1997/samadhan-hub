@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react'
 // @// Contexts & Providers
 import { LanguageProvider } from '@/contexts/LanguageContext'
 
+// @// UI Components
+import { Toaster } from '@/components/ui/toaster'
+
 // @// Constants
 import { ERROR_PAGE, UI, API_ENDPOINTS } from '@/constants'
 
@@ -39,6 +42,7 @@ import AboutSection from './components/sections/AboutSection'
 import Footer from './components/Footer'
 import PaymentPage from './pages/PaymentPage'
 import SuccessPage from './pages/SuccessPage'
+import DownloadPage from './pages/DownloadPage'
 import MetricsBubble from './components/sections/MetricsBubble';
 
 interface AppProps {
@@ -120,6 +124,8 @@ function App({ initialState }: AppProps) {
         return <PaymentPage onBackToHome={() => navigateTo('/')}/>;
       case '/success':
         return <SuccessPage onBackToHome={() => navigateTo('/')} />;
+      case '/download':
+        return <DownloadPage />;
       case '/':
       default:
         return (
@@ -219,6 +225,7 @@ export default function AppWithProviders(props: AppProps) {
   return (
     <LanguageProvider>
       <App {...props} />
+      <Toaster />
     </LanguageProvider>
   );
 }
