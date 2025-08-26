@@ -7,7 +7,7 @@ const path = require('path');
 const fs = require('fs');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
-require('dotenv').config();
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 
 // Import constants and services
 const {

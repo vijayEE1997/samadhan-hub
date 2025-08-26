@@ -9,10 +9,6 @@
   "installCommand": "npm run install:all",
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/server"
-    },
-    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
