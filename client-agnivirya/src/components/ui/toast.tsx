@@ -20,10 +20,10 @@ const ToastViewport = React.forwardRef<
 ))
 ToastViewport.displayName = "ToastViewport"
 
-const toastVariants = React.useMemo(() => ({
+const toastVariants = {
   default: "border-purple-500/30 bg-gradient-to-br from-slate-800/90 to-purple-900/60 text-white backdrop-blur-sm shadow-2xl",
   destructive: "border-red-500/50 bg-gradient-to-br from-red-900/90 to-red-800/60 text-red-100 backdrop-blur-sm shadow-2xl",
-}), [])
+} as const
 
 const Toast = React.forwardRef<
   HTMLDivElement,
