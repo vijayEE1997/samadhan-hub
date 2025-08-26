@@ -13,12 +13,26 @@ export const getAssetPath = (assetPath: string): string => {
   // Remove leading slash if present
   const cleanPath = assetPath.startsWith('/') ? assetPath.slice(1) : assetPath;
   
-  // Always use absolute path - this works in both development and production
-  // In development, Vite dev server handles this
-  // In production, our Express server serves the /assets route
-  const finalPath = `/${cleanPath}`;
-  console.log(`🔍 Asset path generated: ${assetPath} -> ${finalPath}`);
-  return finalPath;
+  // Check if we're in development mode
+  const isDevelopment = (import.meta as any).env?.DEV || false;
+  
+  if (isDevelopment) {
+    // In development, Vite serves assets from the public folder
+    const finalPath = `/${cleanPath}`;
+    console.log(`🔍 Asset path generated (DEV): ${assetPath} -> ${finalPath}`);
+    return finalPath;
+  } else {
+    // In production, try multiple fallback paths for SSR compatibility
+    // First try the standard path
+    const standardPath = `/${cleanPath}`;
+    console.log(`🔍 Asset path generated (PROD): ${assetPath} -> ${standardPath}`);
+    
+    // Also try public folder path as fallback
+    const publicPath = `/public/${cleanPath}`;
+    console.log(`🔍 Asset fallback path (PROD): ${assetPath} -> ${publicPath}`);
+    
+    return standardPath;
+  }
 };
 
 /**

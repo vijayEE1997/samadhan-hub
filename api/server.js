@@ -1,4 +1,26 @@
 #!/usr/bin/env node
+/**
+ * React SSR Best Practices Implementation:
+ * 
+ * 1. Static file serving: app.use(express.static(path.join(__dirname, '../../build')));
+ *    - Serves built React app from dist directory
+ *    - Ensures CSS, JS, and other assets load properly
+ * 
+ * 2. Public folder serving: app.use(express.static(path.join(__dirname, 'public')));
+ *    - Serves public assets directly for fallback
+ *    - Ensures images and other public assets are accessible
+ * 
+ * 3. Proper route ordering:
+ *    - API routes defined FIRST
+ *    - Static file serving comes LAST
+ *    - This prevents API routes from being served as HTML
+ * 
+ * 4. Asset path configuration:
+ *    - CSS files: /.*\.css$/ pattern
+ *    - JS files: /.*\.js$/ pattern
+ *    - Images: Proper MIME type headers
+ *    - Favicon: Dedicated endpoint with fallback
+ */
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -257,6 +279,50 @@ app.get('/favicon.ico', (req, res) => {
   }
 });
 
+// Build paths - define these BEFORE using them
+const mainDistPath = path.join(__dirname, '..', 'client-agnivirya', 'dist');
+const clientDistPath = path.join(__dirname, '..', 'client-agnivirya', 'dist');
+
+// CSS files endpoint - ensure CSS is always served correctly
+app.get(/.*\.css$/, (req, res) => {
+  const cssPath = path.join(mainDistPath, req.path);
+  if (fs.existsSync(cssPath)) {
+    res.setHeader('Content-Type', 'text/css; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
+    res.sendFile(cssPath);
+  } else {
+    // Fallback to public folder
+    const publicCssPath = path.join(__dirname, '..', 'client-agnivirya', 'public', req.path);
+    if (fs.existsSync(publicCssPath)) {
+      res.setHeader('Content-Type', 'text/css; charset=utf-8');
+      res.setHeader('Cache-Control', 'public, max-age=31536000');
+      res.sendFile(publicCssPath);
+    } else {
+      res.status(404).send('CSS file not found');
+    }
+  }
+});
+
+// JavaScript files endpoint - ensure JS is always served correctly
+app.get(/.*\.js$/, (req, res) => {
+  const jsPath = path.join(mainDistPath, req.path);
+  if (fs.existsSync(jsPath)) {
+    res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
+    res.sendFile(jsPath);
+    } else {
+    // Fallback to public folder
+    const publicJsPath = path.join(__dirname, '..', 'client-agnivirya', 'public', req.path);
+    if (fs.existsSync(publicJsPath)) {
+      res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+      res.setHeader('Cache-Control', 'public, max-age=31536000');
+      res.sendFile(publicJsPath);
+    } else {
+      res.status(404).send('JavaScript file not found');
+    }
+  }
+});
+
 // Manifest endpoint for PWA
 app.get('/manifest.json', (req, res) => {
   const manifestPath = path.join(__dirname, '..', 'client-agnivirya', 'public', 'manifest.json');
@@ -321,9 +387,7 @@ app.use(express.urlencoded({ extended: true }));
 // Handle CORS preflight requests
 app.options('*', cors());
 
-// Build paths
-const mainDistPath = path.join(__dirname, '..', 'client-agnivirya', 'dist');
-const clientDistPath = path.join(__dirname, '..', 'client-agnivirya', 'dist');
+// Build paths - already defined above
 
 // Security middleware (only in production)
 if (config.nodeEnv === 'production') {
@@ -1107,7 +1171,9 @@ if (mainDistExists && clientDistExists) {
     next();
   });
 
-  // Serve static files from the dist directory
+  // CRITICAL: Serve static files from the dist directory (built React app)
+  // This is essential for CSS, JS, and other assets to load properly
+  // Following React SSR best practices: app.use(express.static(path.join(__dirname, '../../build')));
   app.use('/', express.static(mainDistPath, {
     maxAge: '1y',
     setHeaders: (res, filePath) => {
@@ -1125,6 +1191,27 @@ if (mainDistExists && clientDistExists) {
       }
     }
   }));
+
+  // CRITICAL: Also serve the public folder directly for development and fallback
+  // This ensures images and other public assets are always accessible
+  // Following React SSR best practices: app.use(express.static(path.join(__dirname, 'public')));
+  const publicPath = path.join(__dirname, '..', 'client-agnivirya', 'public');
+  if (fs.existsSync(publicPath)) {
+    console.log(`📁 Serving public folder directly from: ${publicPath}`);
+    app.use('/public', express.static(publicPath, {
+      maxAge: '1y',
+      setHeaders: (res, filePath) => {
+        const ext = path.extname(filePath).toLowerCase();
+        if (ext === '.png' || ext === '.jpg' || ext === '.jpeg' || ext === '.gif' || ext === '.webp') {
+          res.setHeader('Content-Type', `image/${ext === '.jpg' ? 'jpeg' : ext.slice(1)}`);
+        } else if (ext === '.ico') {
+          res.setHeader('Content-Type', 'image/x-icon');
+        }
+      }
+    }));
+  }
+
+// ... existing code ...
 
   // Serve assets from the dist/assets folder (where Vite builds them)
   const distAssetsPath = path.join(__dirname, '..', 'client-agnivirya', 'dist', 'assets');

@@ -479,14 +479,6 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
           <p className="failed-description">
             {verificationState.message}
           </p>
-
-          {verificationState.error && (
-            <div className="error-details">
-              <h3>Error Details:</h3>
-              <p className="error-message">{verificationState.error}</p>
-            </div>
-          )}
-
           <div className="failed-actions">
             <button
               onClick={handleRetryVerification}
@@ -526,16 +518,6 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
               </div>
             </div>
           )}
-
-          <div className="troubleshooting-tips">
-            <h3>Troubleshooting Tips:</h3>
-            <ul>
-              <li>Check if your payment was actually completed</li>
-              <li>Verify your internet connection is stable</li>
-              <li>Try refreshing the page</li>
-              <li>Contact support if the issue persists</li>
-            </ul>
-          </div>
         </div>
       );
     }
@@ -596,9 +578,9 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
                 <div className="dot active"></div>
                 <div className="dot active"></div>
               </div>
-              <p className="verification-status-text">
-                Actively checking payment status every 3 seconds...
-              </p>
+                             <p className="verification-status-text">
+                 Actively checking payment status every 2 seconds...
+               </p>
 
               {/* Polling Status Indicator */}
               <div className="polling-status">
@@ -864,9 +846,9 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
             <ArrowLeft className="w-4 h-4" />
             <span>Back to Home</span>
           </button>
-          <div className="header-logo-improved">
-            <img src={getImagePath('agnivirya-logo.png')} alt="AgniVirya" className="logo-image-improved" />
-          </div>
+                     <div className="header-logo-improved">
+             <img src={getImagePath('agnivirya-logo.png')} alt="AgniVirya" className="logo-image-improved" />
+           </div>
         </div>
 
         {/* Main Content */}

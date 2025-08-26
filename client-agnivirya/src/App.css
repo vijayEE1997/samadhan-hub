@@ -905,11 +905,119 @@
   color: #6b7280;
 }
 
+/* Error Details */
+.error-details {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin: 1.5rem 0;
+  text-align: left;
+}
+
+.error-details h3 {
+  color: #dc2626;
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.error-message {
+  color: #dc2626;
+  font-size: 0.875rem;
+  font-family: 'Courier New', monospace;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Troubleshooting Tips */
+.troubleshooting-tips {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.troubleshooting-tips h3 {
+  color: #374151;
+  margin-bottom: 1rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.troubleshooting-tips ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.troubleshooting-tips li {
+  color: #6b7280;
+  margin: 0.75rem 0;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(156, 163, 175, 0.2);
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.troubleshooting-tips li:before {
+  content: "💡";
+  position: absolute;
+  left: 0;
+  top: 0.5rem;
+  font-size: 1rem;
+}
+
+.troubleshooting-tips li:last-child {
+  border-bottom: none;
+}
+
 /* Pending Verification State */
 .pending-verification-container {
   text-align: center;
   max-width: 600px;
   width: 100%;
+}
+
+/* Verifying Payment State */
+.verifying-payment-container {
+  text-align: center;
+  max-width: 600px;
+  width: 100%;
+}
+
+/* Timeout Verification State */
+.timeout-verification-container {
+  text-align: center;
+  max-width: 600px;
+  width: 100%;
+}
+
+.timeout-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #dc2626;
+  margin-bottom: 1rem;
+}
+
+.timeout-description {
+  font-size: 1.125rem;
+  color: #6b7280;
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+}
+
+.timeout-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 2rem;
 }
 
 .verification-status-card {
@@ -967,6 +1075,82 @@
   color: #f59e0b;
   font-weight: 600;
   font-size: 0.875rem;
+}
+
+/* Polling Status */
+.polling-status {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: rgba(59, 130, 246, 0.1);
+  border-radius: 0.75rem;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.polling-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.pulse-dot {
+  width: 12px;
+  height: 12px;
+  background: #3b82f6;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.polling-details {
+  text-align: center;
+  color: #6b7280;
+  font-size: 0.75rem;
+}
+
+/* Manual Retry Section */
+.manual-retry-section {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: rgba(249, 250, 251, 0.8);
+  border-radius: 1rem;
+  border: 1px solid rgba(156, 163, 175, 0.2);
+}
+
+.retry-button-improved {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.retry-button-improved:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+}
+
+.retry-button-improved:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.retry-note {
+  margin-top: 0.75rem;
+  color: #6b7280;
+  font-size: 0.875rem;
+  font-style: italic;
 }
 
 .order-preview {
@@ -1149,6 +1333,55 @@
   font-size: 1.5rem;
   font-weight: 600;
   color: #1f2937;
+}
+
+/* Language Selector */
+.language-selector {
+  margin-bottom: 1.5rem;
+}
+
+.language-label {
+  display: block;
+  color: #374151;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.language-options {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.language-option {
+  padding: 0.75rem 1.25rem;
+  border: 2px solid rgba(156, 163, 175, 0.3);
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.8);
+  color: #6b7280;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.875rem;
+}
+
+.language-option:hover {
+  border-color: rgba(59, 130, 246, 0.5);
+  background: rgba(255, 255, 255, 1);
+  color: #374151;
+}
+
+.language-option.active {
+  border-color: #3b82f6;
+  background: #3b82f6;
+  color: white;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.language-option:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .download-button-improved {
@@ -9714,6 +9947,37 @@
   .language-option {
     width: 100%;
     max-width: 200px;
+  }
+}
+
+/* Missing Animations */
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes progressAnimation {
+  0% {
+    width: 0%;
+  }
+  50% {
+    width: 70%;
+  }
+  100% {
+    width: 100%;
   }
 }
 
