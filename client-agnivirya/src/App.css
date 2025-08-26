@@ -399,6 +399,1015 @@
   font-style: italic;
 }
 
+/* Compact Download Page Styles */
+.download-page-compact {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #fefce8 0%, #fef3c7 50%, #fde68a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.download-container-compact {
+  max-width: 1440px;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.download-header-compact {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  margin-bottom: 2rem;
+}
+
+.back-button-compact {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(217, 119, 6, 0.2);
+  border-radius: 0.5rem;
+  color: #d97706;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+.back-button-compact:hover {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(217, 119, 6, 0.4);
+  transform: translateY(-1px);
+}
+
+.logo-image-compact {
+  height: 2.5rem;
+  width: auto;
+}
+
+.download-layout-compact {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  flex: 1;
+  align-items: start;
+}
+
+.success-summary-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.success-card {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 1rem;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.success-icon {
+  margin-bottom: 1rem;
+}
+
+.success-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.success-description {
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.verification-status {
+  margin-bottom: 1.5rem;
+}
+
+.status-pending-compact,
+.status-success-compact,
+.status-failed-compact {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.status-pending-compact {
+  background: rgba(245, 158, 11, 0.1);
+  color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.status-success-compact {
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.status-failed-compact {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.order-details-compact {
+  background: rgba(249, 250, 251, 0.8);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.order-details-compact p {
+  margin: 0.25rem 0;
+}
+
+.download-actions-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.actions-container {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  height: fit-content;
+}
+
+.product-info-compact {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.product-info-compact h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.product-info-compact p {
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.download-section-compact {
+  margin-bottom: 1.5rem;
+}
+
+.download-button-compact {
+  width: 100%;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+  border: none;
+  padding: 1rem 1.5rem;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+}
+
+.download-button-compact:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+}
+
+.download-button-compact:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.status-message-compact {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.status-message-compact.pending {
+  background: rgba(245, 158, 11, 0.1);
+  color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.status-message-compact.success {
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.status-message-compact.failed {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  flex-direction: column;
+  text-align: center;
+}
+
+.download-progress-compact {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 0.5rem;
+  background: rgba(245, 158, 11, 0.2);
+  border-radius: 0.25rem;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f59e0b, #d97706);
+  border-radius: 0.25rem;
+  animation: progressAnimation 2s ease-in-out infinite;
+}
+
+@keyframes progressAnimation {
+  0%, 100% { width: 0%; }
+  50% { width: 100%; }
+}
+
+.download-error-compact,
+.download-completion-compact {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  flex-direction: column;
+  text-align: center;
+}
+
+.download-error-compact {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.download-completion-compact {
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.bonus-content-compact {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.bonus-content-compact h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.75rem;
+}
+
+.bonus-items-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.navigation-buttons-compact {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.nav-button-compact {
+  flex: 1;
+  border-color: rgba(217, 119, 6, 0.3);
+  color: #d97706;
+  transition: all 0.2s ease;
+}
+
+.nav-button-compact:hover:not(:disabled) {
+  background: rgba(217, 119, 6, 0.1);
+  border-color: rgba(217, 119, 6, 0.5);
+  transform: translateY(-1px);
+}
+
+.nav-button-compact:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive Design for Compact Download Page */
+@media (max-width: 1024px) {
+  .download-layout-compact {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .download-container-compact {
+    height: auto;
+    min-height: 100vh;
+  }
+}
+
+@media (max-width: 768px) {
+  .download-page-compact {
+    padding: 0.5rem;
+  }
+  
+  .download-header-compact {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .success-card,
+  .actions-container {
+    padding: 1.5rem;
+  }
+  
+  .navigation-buttons-compact {
+    flex-direction: column;
+  }
+  
+  .success-title {
+    font-size: 1.5rem;
+  }
+}
+
+/* Improved Download Page Styles */
+.download-page-improved {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #fefce8 0%, #fef3c7 50%, #fde68a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.download-container-improved {
+  max-width: 1440px;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.download-header-improved {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  margin-bottom: 2rem;
+}
+
+.back-button-improved {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(217, 119, 6, 0.3);
+  border-radius: 0.75rem;
+  color: #d97706;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.back-button-improved:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(217, 119, 6, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.logo-image-improved {
+  height: 3rem;
+  width: auto;
+  filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.1));
+}
+
+.main-content-improved {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Failed Payment State */
+.failed-payment-container {
+  text-align: center;
+  max-width: 600px;
+  width: 100%;
+}
+
+.failed-icon {
+  margin-bottom: 2rem;
+  animation: pulse 2s infinite;
+}
+
+.failed-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #dc2626;
+  margin-bottom: 1rem;
+}
+
+.failed-description {
+  font-size: 1.125rem;
+  color: #6b7280;
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+}
+
+.failed-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.retry-payment-button {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+}
+
+.retry-payment-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(220, 38, 38, 0.4);
+}
+
+.back-home-button {
+  border-color: rgba(107, 114, 128, 0.3);
+  color: #6b7280;
+  padding: 1rem 2rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.back-home-button:hover {
+  border-color: rgba(107, 114, 128, 0.5);
+  background: rgba(107, 114, 128, 0.1);
+  transform: translateY(-2px);
+}
+
+.order-details-failed {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.order-details-failed h3 {
+  color: #374151;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+}
+
+.order-info p {
+  margin: 0.5rem 0;
+  color: #6b7280;
+}
+
+/* Pending Verification State */
+.pending-verification-container {
+  text-align: center;
+  max-width: 600px;
+  width: 100%;
+}
+
+.verification-status-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 1.5rem;
+  padding: 3rem 2rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.verification-icon {
+  margin-bottom: 2rem;
+}
+
+.verification-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.verification-description {
+  font-size: 1.125rem;
+  color: #6b7280;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.verification-progress {
+  margin-bottom: 2rem;
+}
+
+.progress-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(156, 163, 175, 0.3);
+  transition: all 0.3s ease;
+}
+
+.dot.active {
+  background: #f59e0b;
+  transform: scale(1.2);
+}
+
+.verification-status-text {
+  color: #f59e0b;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.order-preview {
+  background: rgba(249, 250, 251, 0.8);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  border: 1px solid rgba(156, 163, 175, 0.2);
+}
+
+.order-preview h3 {
+  color: #374151;
+  margin-bottom: 1rem;
+  font-size: 1.125rem;
+}
+
+.order-summary p {
+  margin: 0.5rem 0;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+/* Success Download State */
+.success-download-container {
+  width: 100%;
+  max-width: 1200px;
+}
+
+.download-layout-improved {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+.success-summary-improved {
+  display: flex;
+  flex-direction: column;
+}
+
+.success-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.success-icon-large {
+  margin-bottom: 1.5rem;
+  animation: bounceIn 0.8s ease-out;
+}
+
+.success-title-improved {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #16a34a;
+  margin-bottom: 0.5rem;
+}
+
+.success-subtitle {
+  font-size: 1.125rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.product-details-improved {
+  margin-bottom: 2rem;
+}
+
+.product-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.product-icon {
+  flex-shrink: 0;
+}
+
+.product-info h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+
+.product-info p {
+  color: #6b7280;
+  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.product-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.order-details-improved {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.order-details-improved h4 {
+  color: #374151;
+  margin-bottom: 1rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.order-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(156, 163, 175, 0.2);
+}
+
+.order-item:last-child {
+  border-bottom: none;
+}
+
+.order-item .label {
+  font-weight: 600;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+.order-item .value {
+  color: #1f2937;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+/* Download Actions */
+.download-actions-improved {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.download-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.download-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  justify-content: center;
+}
+
+.download-header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.download-button-improved {
+  width: 100%;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  border: none;
+  padding: 1.25rem 2rem;
+  border-radius: 1rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 25px rgba(59, 130, 246, 0.3);
+  margin-bottom: 1.5rem;
+}
+
+.download-button-improved:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 35px rgba(59, 130, 246, 0.4);
+}
+
+.download-button-improved:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.download-progress-improved {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.progress-bar-improved {
+  width: 100%;
+  height: 0.75rem;
+  background: rgba(59, 130, 246, 0.2);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+.progress-fill-improved {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+  border-radius: 0.5rem;
+  animation: progressAnimation 2s ease-in-out infinite;
+}
+
+.progress-text {
+  color: #3b82f6;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.download-error-improved {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 0.75rem;
+  text-align: center;
+}
+
+.download-error-improved span {
+  color: #dc2626;
+  font-weight: 500;
+}
+
+.retry-button {
+  border-color: rgba(220, 38, 38, 0.3);
+  color: #dc2626;
+  transition: all 0.2s ease;
+}
+
+.retry-button:hover {
+  background: rgba(220, 38, 38, 0.1);
+  border-color: rgba(220, 38, 38, 0.5);
+}
+
+.download-completion-improved {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  border-radius: 0.75rem;
+  color: #16a34a;
+  font-weight: 500;
+}
+
+/* Bonus Content */
+.bonus-content-improved {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.bonus-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  justify-content: center;
+}
+
+.bonus-header h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.bonus-items-improved {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.bonus-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  background: rgba(249, 250, 251, 0.8);
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.bonus-item:hover {
+  background: rgba(249, 250, 251, 1);
+  transform: translateX(4px);
+}
+
+.bonus-item span {
+  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Navigation */
+.navigation-improved {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.nav-button-improved {
+  flex: 1;
+  border-color: rgba(156, 163, 175, 0.3);
+  color: #6b7280;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.nav-button-improved:hover:not(:disabled) {
+  background: rgba(156, 163, 175, 0.1);
+  border-color: rgba(156, 163, 175, 0.5);
+  transform: translateY(-2px);
+}
+
+.nav-button-improved:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Animations */
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Responsive Design for Improved Download Page */
+@media (max-width: 1024px) {
+  .download-layout-improved {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .download-container-improved {
+    height: auto;
+    min-height: 100vh;
+  }
+}
+
+@media (max-width: 768px) {
+  .download-page-improved {
+    padding: 0.5rem;
+  }
+  
+  .download-header-improved {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .verification-status-card,
+  .download-card,
+  .bonus-content-improved {
+    padding: 1.5rem;
+  }
+  
+  .navigation-improved {
+    flex-direction: column;
+  }
+  
+  .failed-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .success-title-improved {
+    font-size: 2rem;
+  }
+  
+  .failed-title {
+    font-size: 2rem;
+  }
+  
+  .verification-title {
+    font-size: 1.5rem;
+  }
+}
+
 /* Enhanced Back Button Hover */
 .download-page .back-button {
   position: relative;

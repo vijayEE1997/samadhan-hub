@@ -8,29 +8,10 @@ import { LanguageProvider } from '@/contexts/LanguageContext'
 import { Toaster } from '@/components/ui/toaster'
 
 // @// Constants
-import { ERROR_PAGE, UI, API_ENDPOINTS } from '@/constants'
+import { UI } from '@/constants'
 
 // @// Styles
 import './App.css'
-
-// Types for config API
-interface ConfigData {
-  environment: string
-  mode: string
-  server: {
-    port: number
-    host: string
-  }
-  deployment: {
-    domain: string
-    isVercel: boolean
-    isProduction: boolean
-  }
-  features: {
-    ssr: boolean
-    api: boolean
-  }
-}
 
 // Import all Agnivirya components
 import Header from './components/Header'
@@ -57,35 +38,7 @@ interface AppProps {
 
 function App({ initialState }: AppProps) {
   const [currentRoute, setCurrentRoute] = useState(initialState?.currentUrl || '/')
-  const [config, setConfig] = useState<ConfigData | null>(null)
-  const [configLoading, setConfigLoading] = useState(true)
-  const [configError, setConfigError] = useState<string | null>(null)
 
-  // Fetch config from server on component mount
-  useEffect(() => {
-    const fetchConfig = async () => {
-      try {
-        setConfigLoading(true)
-        setConfigError(null)
-        
-        const response = await fetch(API_ENDPOINTS.CONFIG)
-        if (!response.ok) {
-          throw new Error(`Failed to fetch config: ${response.status}`)
-        }
-        
-        const configData: ConfigData = await response.json()
-        setConfig(configData)
-        console.log('🔧 Config loaded:', config)
-      } catch (error) {
-        console.error('❌ Error fetching config:', error)
-        setConfigError(error instanceof Error ? error.message : 'Unknown error')
-      } finally {
-        setConfigLoading(false)
-      }
-    }
-
-    fetchConfig()
-  }, [])
 
   useEffect(() => {
     // Handle client-side routing
@@ -98,7 +51,7 @@ function App({ initialState }: AppProps) {
 
     // Listen for route changes
     window.addEventListener('popstate', handleRouteChange);
-    
+
     // Set initial route from props if available
     if (initialState?.currentUrl) {
       setCurrentRoute(initialState.currentUrl);
@@ -132,7 +85,7 @@ function App({ initialState }: AppProps) {
   const renderRouteContent = () => {
     switch (currentRoute) {
       case '/payment':
-        return <PaymentPage onBackToHome={() => navigateTo('/')}/>;
+        return <PaymentPage onBackToHome={() => navigateTo('/')} />;
       case '/success':
         return <SuccessPage onBackToHome={() => navigateTo('/')} />;
       case '/download':
@@ -170,14 +123,14 @@ function App({ initialState }: AppProps) {
                 <div className="fab-price">₹99</div>
                 <div className="fab-original">₹1,980</div>
               </div>
-              <button 
+              <button
                 className="fab-cta"
                 onClick={handlePaymentClick}
                 aria-label="Get E-Book Now"
               >
                 Get E-Book Now
               </button>
-              <button 
+              <button
                 className="fab-scroll-top"
                 onClick={() => window.scrollTo({ top: 0, behavior: UI.ANIMATIONS.SCROLL_BEHAVIOR })}
                 aria-label="Scroll to top"
@@ -189,38 +142,6 @@ function App({ initialState }: AppProps) {
         );
     }
   };
-
-  // Show error page if config fails to load
-  if (configError) {
-    return (
-      <div className="error-page">
-        <div className="error-container">
-          <div className="error-card">
-            <h1 className="error-title">{ERROR_PAGE.NOT_FOUND.TITLE}</h1>
-            <p className="error-message">
-              {ERROR_PAGE.NOT_FOUND.MESSAGE}
-            </p>
-            <button 
-              className="error-button"
-              onClick={() => window.location.reload()}
-            >
-              {ERROR_PAGE.NOT_FOUND.BUTTON_TEXT}
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Show loading state while config is loading
-  if (configLoading) {
-    return (
-      <div className="loading-container">
-        <div className="loading-spinner"></div>
-        <p>Loading configuration...</p>
-      </div>
-    );
-  }
 
   return (
     <div className="app">
