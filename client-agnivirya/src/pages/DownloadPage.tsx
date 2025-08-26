@@ -187,7 +187,7 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `AgniVirya-Wellness-Guide-${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)}.pdf`;
+        a.download = `${pdfFileName}-${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)}.pdf`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);

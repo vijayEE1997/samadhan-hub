@@ -115,7 +115,7 @@ const app = express();
 // This is critical for preventing Vercel from intercepting API routes
 if (process.env.VERCEL === '1') {
   console.log('🚀 Vercel environment detected - configuring SSR bypass for API routes');
-  
+
   // Add Vercel-specific middleware to handle SSR routing
   app.use((req, res, next) => {
     // Force API routes to be handled by Express, not Vercel SSR
@@ -324,14 +324,14 @@ app.use((req, res, next) => {
   const ip = req.ip || req.connection.remoteAddress;
 
   console.log(`[${timestamp}] ${method} ${path} - ${ip}`);
-  
+
   // Add additional logging for API routes
   if (path.startsWith('/api/')) {
     console.log(`🔍 API Route Request: ${method} ${path}`);
     console.log(`🔍 Headers:`, req.headers);
     console.log(`🔍 Request ID: ${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
   }
-  
+
   next();
 });
 
@@ -342,21 +342,21 @@ app.get('/api/payments/config', async (req, res) => {
     console.log('🔍 Request method:', req.method);
     console.log('🔍 Request headers:', req.headers);
     console.log('🔍 Request ID:', Date.now());
-    
+
     // CRITICAL: Ensure this is an API request, not a static file request
     if (req.path.startsWith('/api/')) {
       console.log('✅ Confirmed: This is an API request');
     } else {
       console.log('❌ ERROR: This should not happen - API route being treated as non-API');
     }
-    
+
     // VERCEL SSR BYPASS: Force this to be treated as an API response
     if (process.env.VERCEL === '1') {
       console.log('🚫 VERCEL SSR BYPASS: Forcing API response for payment config');
       res.setHeader('X-Vercel-SSR-Bypass', 'true');
       res.setHeader('X-API-Route', 'true');
     }
-    
+
     // Set CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -421,22 +421,22 @@ app.get('/api/payments/config', async (req, res) => {
         timestamp: new Date().toISOString()
       }
     };
-    
+
     console.log('🔍 Sending payment config response:', JSON.stringify(response, null, 2));
-    
+
     // CRITICAL: Double-check response headers
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
-    
+
     console.log('🔍 Response headers set:', {
       'Content-Type': res.getHeader('Content-Type'),
       'Cache-Control': res.getHeader('Cache-Control'),
       'Pragma': res.getHeader('Pragma'),
       'Expires': res.getHeader('Expires')
     });
-    
+
     res.status(200).json(response);
   } catch (error) {
     console.error('Payment config error:', error);
@@ -535,11 +535,11 @@ app.post('/api/payments/initiate', async (req, res) => {
       // Local development
       notifyDomain = 'localhost:5000';
       console.log(`🏠 Using localhost for notify: ${notifyDomain}`);
-          } else {
-        // Production fallback
-        notifyDomain = 'samadhanhub.com';
-        console.log(`🌍 Using production fallback for notify: ${notifyDomain}`);
-      }
+    } else {
+      // Production fallback
+      notifyDomain = 'samadhanhub.com';
+      console.log(`🌍 Using production fallback for notify: ${notifyDomain}`);
+    }
 
     const notifyProtocol = isVercel ? 'https' : (isLocal ? 'http' : 'https');
     const dynamicNotifyUrl = `${notifyProtocol}://${notifyDomain}/api/payments/webhook`;
@@ -913,6 +913,86 @@ app.get('/download', (req, res) => {
   }
 });
 
+// PDF Download API endpoint
+app.get('/api/download', (req, res) => {
+  try {
+    const { language } = req.query;
+
+    // Validate language parameter
+    if (!language || !['english', 'hindi'].includes(language.toLowerCase())) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid language parameter',
+        message: 'Please specify language as "english" or "hindi"',
+        example: '/api/download?language=english'
+      });
+    }
+
+    // Determine file path based on language
+    let fileName, filePath;
+    if (language.toLowerCase() === 'english') {
+      fileName = 'English.pdf';
+      filePath = path.join(__dirname, 'assest', 'English.pdf');
+    } else {
+      fileName = 'Hindi.pdf';
+      filePath = path.join(__dirname, 'assest', 'Hindi.pdf');
+    }
+
+    // Check if file exists
+    if (!fs.existsSync(filePath)) {
+      console.error(`File not found: ${filePath}`);
+      return res.status(404).json({
+        success: false,
+        error: 'File not found',
+        message: `${language} PDF not available`
+      });
+    }
+
+    // Get file stats for content length
+    const stats = fs.statSync(filePath);
+
+    // Set appropriate headers for PDF download
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+    res.setHeader('Content-Length', stats.size);
+    res.setHeader('Cache-Control', 'no-cache');
+
+    // Create read stream and pipe to response
+    const fileStream = fs.createReadStream(filePath);
+
+    fileStream.on('error', (error) => {
+      console.error('File stream error:', error);
+      if (!res.headersSent) {
+        res.status(500).json({
+          success: false,
+          error: 'File streaming failed',
+          details: error.message
+        });
+      }
+    });
+
+    // Handle client disconnect
+    req.on('close', () => {
+      fileStream.destroy();
+    });
+
+    // Pipe the file to response
+    fileStream.pipe(res);
+
+    console.log(`✅ PDF download initiated: ${fileName} (${language})`);
+
+  } catch (error) {
+    console.error('PDF download API error:', error);
+    if (!res.headersSent) {
+      res.status(500).json({
+        success: false,
+        error: 'Download failed',
+        details: error.message
+      });
+    }
+  }
+});
+
 // ============================================================================
 // SSR BYPASS FOR API ROUTES - CRITICAL FOR VERCEL
 // ============================================================================
@@ -925,7 +1005,7 @@ app.use((req, res, next) => {
     console.log(`🚫 SSR BYPASS: API route ${req.path} - skipping SSR handling`);
     return next();
   }
-  
+
   // For non-API routes, continue with normal flow
   console.log(`📱 SSR HANDLING: Non-API route ${req.path} - continuing with SSR`);
   next();
@@ -944,8 +1024,8 @@ const clientDistExists = fs.existsSync(clientDistPath);
 if (mainDistExists && clientDistExists) {
   console.log('🏭 Built files detected - serving React app from unified server');
   console.log('📱 Samadhan Hub app will be served from /');
-  
-    // CRITICAL: Add a pre-check middleware to block API routes BEFORE static file serving
+
+  // CRITICAL: Add a pre-check middleware to block API routes BEFORE static file serving
   app.use((req, res, next) => {
     if (req.path.startsWith('/api/') || req.path.startsWith('/health')) {
       console.log(`🚫 PRE-BLOCKED: API route ${req.path} before static file serving`);
@@ -953,7 +1033,7 @@ if (mainDistExists && clientDistExists) {
     }
     next();
   });
-  
+
   // VERCEL SSR BYPASS: Ensure API routes are never handled by SSR
   app.use((req, res, next) => {
     if (req.path.startsWith('/api/') || req.path.startsWith('/health')) {
@@ -974,7 +1054,7 @@ if (mainDistExists && clientDistExists) {
       console.log(`🚫 BLOCKED: API route ${req.path} from static file serving`);
       return next();
     }
-    
+
     console.log(`📁 Serving static file for route: ${req.path}`);
     next();
   });
@@ -1006,7 +1086,7 @@ if (mainDistExists && clientDistExists) {
         server: 'unified-server'
       });
     }
-    
+
     console.log(`📱 Serving SPA for route: ${req.path}`);
     // Serve index.html for SPA routes
     res.sendFile(path.join(mainDistPath, 'index.html'));
