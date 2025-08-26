@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   ArrowLeft,
   Check,
   Shield,
   Lock,
-  Loader2
+  Loader2,
+  AlertTriangle
 } from 'lucide-react';
 
 // Import constants
@@ -31,6 +32,34 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
   });
 
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const [paymentConfig, setPaymentConfig] = useState<any>(null);
+  const [isLoadingConfig, setIsLoadingConfig] = useState(true);
+  const [configError, setConfigError] = useState<string>('');
+
+  // Load payment configuration on component mount
+  useEffect(() => {
+    const loadPaymentConfig = async () => {
+      try {
+        setIsLoadingConfig(true);
+        const response = await fetch(API_ENDPOINTS.CONFIG);
+        if (response.ok) {
+          const config = await response.json();
+          setPaymentConfig(config);
+          setConfigError('');
+        } else {
+          throw new Error('Failed to load payment configuration');
+        }
+      } catch (error) {
+        console.error('Failed to load payment config:', error);
+        setConfigError('Unable to load payment configuration. Please refresh the page.');
+      } finally {
+        setIsLoadingConfig(false);
+      }
+    };
+
+    loadPaymentConfig();
+  }, []);
 
   const validateField = (name: string, value: string) => {
     let error = '';
@@ -115,9 +144,37 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
       const result = await response.json();
       
                    if (result.success) {
-        // Redirect to Cashfree payment page
+        // Show success message and prepare for redirect
+        setErrors(prev => ({ ...prev, email: '' }));
+        setIsRedirecting(true);
+        
         if (result.paymentUrl) {
-          window.location.href = result.paymentUrl;
+          // Store order details in localStorage for tracking
+          localStorage.setItem('agnivirya-order', JSON.stringify({
+            orderId: result.orderId,
+            cfOrderId: result.cfOrderId,
+            sessionId: result.sessionId,
+            customerData: formData,
+            timestamp: Date.now(),
+            config: {
+              mode: result.mode,
+              product: result.product?.name || 'AgniVirya Complete Guide',
+              price: result.product?.price || '99.00',
+              currency: result.product?.currency || 'INR',
+            },
+            amount: 99,
+            paymentVerified: false,
+            paymentStatus: 'pending'
+          }));
+
+          // Add a small delay to show success message
+          setTimeout(() => {
+            console.log('🔄 Redirecting to Cashfree payment page...');
+            console.log('🔗 Payment URL:', result.paymentUrl);
+            
+            // Use direct redirect to Cashfree
+            window.location.href = result.paymentUrl;
+          }, 1500);
         } else {
           throw new Error('Payment URL not received from server');
         }
@@ -238,7 +295,36 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
                  <p>Enter your details to proceed to secure Cashfree payment gateway</p>
                </div>
 
-                             <form className="payment-form" onSubmit={handleSubmit}>
+               {/* Configuration Loading/Error States */}
+               {isLoadingConfig && (
+                 <div className="config-loading">
+                   <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-500 mx-auto mb-4"></div>
+                   <p className="text-center text-gray-600">Loading payment configuration...</p>
+                 </div>
+               )}
+
+               {configError && (
+                 <div className="config-error bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                   <div className="flex items-center gap-2 text-red-600 mb-2">
+                     <AlertTriangle className="w-5 h-5" />
+                     <span className="font-medium">Configuration Error</span>
+                   </div>
+                   <p className="text-red-600 text-sm">{configError}</p>
+                 </div>
+               )}
+
+               {/* Success Message when Redirecting */}
+               {isRedirecting && (
+                 <div className="success-message bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                   <div className="flex items-center gap-2 text-green-600 mb-2">
+                     <Check className="w-5 h-5" />
+                     <span className="font-medium">Payment Order Created Successfully!</span>
+                   </div>
+                   <p className="text-green-600 text-sm">Redirecting you to the secure payment gateway...</p>
+                 </div>
+               )}
+
+                             <form className={`payment-form ${isLoadingConfig || configError ? 'opacity-50 pointer-events-none' : ''}`} onSubmit={handleSubmit}>
                  <div className="form-group">
                    <label htmlFor="customerName" className={`form-label ${touched.customerName && errors.customerName ? 'error' : ''}`}>
                      Full Name *
@@ -313,15 +399,20 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
                    </p>
                  </div>
 
-                <button 
-                  type="submit" 
-                  className="submit-button"
-                  disabled={isProcessing}
-                >
-                                     {isProcessing ? (
+                                 <button 
+                   type="submit" 
+                   className="submit-button"
+                   disabled={isProcessing || isRedirecting}
+                 >
+                   {isProcessing ? (
                      <>
                        <Loader2 className="icon animate-spin" />
                        <span>Creating Order...</span>
+                     </>
+                   ) : isRedirecting ? (
+                     <>
+                       <Loader2 className="icon animate-spin" />
+                       <span>Redirecting to Payment...</span>
                      </>
                    ) : (
                      <>
@@ -330,7 +421,7 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
                        <div className="discount-badge">95% OFF</div>
                      </>
                    )}
-                </button>
+                 </button>
               </form>
 
               {/* Security Badge */}
