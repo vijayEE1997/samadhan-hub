@@ -4,8 +4,7 @@ import {
   HelpCircle, 
   BookOpen, 
   Target, 
-  Zap, 
-  Shield, 
+  Zap 
   Users,
   MessageCircle,
   FileText,

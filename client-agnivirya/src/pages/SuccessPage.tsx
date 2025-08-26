@@ -12,7 +12,6 @@ import {
 import { 
   CheckCircle, 
   Download, 
-  BookOpen, 
   ArrowLeft 
 } from 'lucide-react'
 

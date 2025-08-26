@@ -7,10 +7,7 @@ import {
   Star, 
   Shield, 
   CheckCircle, 
-  Zap,
-  Clock,
-  TrendingUp
-} from 'lucide-react';
+  Zap} from 'lucide-react';
 
 const AboutSection: React.FC = () => {
   return (

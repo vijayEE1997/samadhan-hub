@@ -53,7 +53,6 @@ interface AppProps {
 
 function App({ initialState }: AppProps) {
   const [currentRoute, setCurrentRoute] = useState(initialState?.currentUrl || '/')
-  const [ssrInfo] = useState(initialState)
   const [config, setConfig] = useState<ConfigData | null>(null)
   const [configLoading, setConfigLoading] = useState(true)
   const [configError, setConfigError] = useState<string | null>(null)
@@ -72,7 +71,7 @@ function App({ initialState }: AppProps) {
         
         const configData: ConfigData = await response.json()
         setConfig(configData)
-        console.log('🔧 Config loaded:', configData)
+        console.log('🔧 Config loaded:', config)
       } catch (error) {
         console.error('❌ Error fetching config:', error)
         setConfigError(error instanceof Error ? error.message : 'Unknown error')
@@ -114,15 +113,11 @@ function App({ initialState }: AppProps) {
     navigateTo('/payment');
   };
 
-  const handlePaymentSuccess = () => {
-    navigateTo('/success');
-  };
-
   // Render route content based on current route
   const renderRouteContent = () => {
     switch (currentRoute) {
       case '/payment':
-        return <PaymentPage onBackToHome={() => navigateTo('/')} onPaymentSuccess={handlePaymentSuccess} />;
+        return <PaymentPage onBackToHome={() => navigateTo('/')}/>;
       case '/success':
         return <SuccessPage onBackToHome={() => navigateTo('/')} />;
       case '/':

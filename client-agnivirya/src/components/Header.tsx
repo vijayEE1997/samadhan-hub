@@ -5,17 +5,17 @@ import { useState, useEffect } from 'react'
 import { useLanguage } from '@/contexts/LanguageContext'
 
 // @// Constants
-import { NAVIGATION, APP_CONFIG, LANGUAGES } from '@/constants'
+import { NAVIGATION, APP_CONFIG } from '@/constants'
 
 // @// Icons
 import { Menu, X, Globe, ShoppingCart } from 'lucide-react'
 
 // @// Types
 interface HeaderProps {
-  className?: string
+  // className?: string
 }
 
-export default function Header({ className = '' }: HeaderProps) {
+export default function Header({ }: HeaderProps) {
   const { language, setLanguage } = useLanguage()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)

@@ -1,5 +1,5 @@
 // @// Contexts & Hooks
-import { useLanguage } from "@/contexts/LanguageContext";
+import { } from "@/contexts/LanguageContext";
 
 // @// Icons & Visual Elements
 import { ShoppingCart, Home, TrendingUp } from "lucide-react";

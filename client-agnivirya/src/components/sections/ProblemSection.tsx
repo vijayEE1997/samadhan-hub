@@ -1,9 +1,8 @@
 // @// Icons & Visual Elements
-import { AlertTriangle, DollarSign, Clock, XCircle, Zap, Shield, Heart } from "lucide-react";
+import { AlertTriangle, DollarSign, Clock, XCircle, Zap Heart } from "lucide-react";
 
 interface ProblemSectionProps {
-  onPaymentClick: () => void;
-}
+  }
 
 const ProblemSection = ({ onPaymentClick }: ProblemSectionProps) => {
   const problems = [

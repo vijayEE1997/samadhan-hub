@@ -12,10 +12,9 @@ import { API_ENDPOINTS } from '@/constants';
 
 interface PaymentPageProps {
   onBackToHome: () => void;
-  onPaymentSuccess: () => void;
 }
 
-const PaymentPage = ({ onBackToHome, onPaymentSuccess }: PaymentPageProps) => {
+const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
   const [formData, setFormData] = useState({
     email: ''
   });
@@ -29,7 +28,6 @@ const PaymentPage = ({ onBackToHome, onPaymentSuccess }: PaymentPageProps) => {
   });
 
   const [isProcessing, setIsProcessing] = useState(false);
-  const [paymentData, setPaymentData] = useState(null);
 
   const validateField = (name: string, value: string) => {
     let error = '';
@@ -103,10 +101,8 @@ const PaymentPage = ({ onBackToHome, onPaymentSuccess }: PaymentPageProps) => {
 
       const result = await response.json();
       
-      if (result.success) {
-        setPaymentData(result.data);
-        
-        // Initialize Cashfree checkout
+             if (result.success) {
+         // Initialize Cashfree checkout
         const cashfree = (window as any).Cashfree({
           mode: 'sandbox' // Use sandbox for development
         });

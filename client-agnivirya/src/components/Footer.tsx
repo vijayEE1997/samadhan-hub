@@ -1,6 +1,3 @@
-// @// React Hooks
-import { useState } from 'react'
-
 // @// Constants
 import { FOOTER, APP_CONFIG } from '@/constants'
 
@@ -10,10 +7,7 @@ import {
   Phone, 
   MapPin, 
   Clock, 
-  Shield, 
-  Award, 
-  Users, 
-  Heart 
+  Shield
 } from 'lucide-react'
 
 export default function Footer() {
