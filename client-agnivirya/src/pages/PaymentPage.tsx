@@ -426,7 +426,7 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
                 <div className="form-group">
                   <label htmlFor="email" className={`form-label ${touched.email && errors.email ? 'error' : ''}`}>
                     Email Address *
-                  </label>
+                  </label> 
                   <div className="input-wrapper">
                     <input
                       type="email"
