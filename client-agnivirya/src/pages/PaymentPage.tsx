@@ -41,6 +41,7 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
   useEffect(() => {
     const loadPaymentConfig = async () => {
       try {
+        console.log(paymentConfig);
         setIsLoadingConfig(true);
         const response = await fetch(API_ENDPOINTS.CONFIG);
         if (response.ok) {
@@ -142,12 +143,12 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
       }
 
       const result = await response.json();
-      
-                   if (result.success) {
+
+      if (result.success) {
         // Show success message and prepare for redirect
         setErrors(prev => ({ ...prev, email: '' }));
         setIsRedirecting(true);
-        
+
         if (result.paymentUrl) {
           // Store order details in localStorage for tracking
           localStorage.setItem('agnivirya-order', JSON.stringify({
@@ -171,7 +172,7 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
           setTimeout(() => {
             console.log('🔄 Redirecting to Cashfree payment page...');
             console.log('🔗 Payment URL:', result.paymentUrl);
-            
+
             // Use direct redirect to Cashfree
             window.location.href = result.paymentUrl;
           }, 1500);
@@ -193,22 +194,22 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
   return (
     <div className="payment-container">
       <div className="content-wrapper">
-                 {/* Page Header - Wondershare Style */}
-         <div className="page-header">
-           <div className="header-top">
-             <div className="header-left">
-               <button onClick={onBackToHome} className="back-button">
-                 <ArrowLeft className="icon" />
-                 <span>Back to Home</span>
-               </button>
-             </div>
-             <div className="header-right">
-               <div className="header-logo">
-                 <img src="/assets/agnivirya-logo.png" alt="AgniVirya" className="logo-image" />
-               </div>
-             </div>
-           </div>
-         </div>
+        {/* Page Header - Wondershare Style */}
+        <div className="page-header">
+          <div className="header-top">
+            <div className="header-left">
+              <button onClick={onBackToHome} className="back-button">
+                <ArrowLeft className="icon" />
+                <span>Back to Home</span>
+              </button>
+            </div>
+            <div className="header-right">
+              <div className="header-logo">
+                <img src="/assets/agnivirya-logo.png" alt="AgniVirya" className="logo-image" />
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Two-Column Layout - Inspired by Wondershare */}
         <div className="payment-layout">
@@ -290,138 +291,138 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
           {/* Right Column - Payment Form */}
           <div className="payment-form-column">
             <div className="form-container">
-                             <div className="form-header">
-                 <h2>Complete Your Purchase</h2>
-                 <p>Enter your details to proceed to secure Cashfree payment gateway</p>
-               </div>
+              <div className="form-header">
+                <h2>Complete Your Purchase</h2>
+                <p>Enter your details to proceed to secure Cashfree payment gateway</p>
+              </div>
 
-               {/* Configuration Loading/Error States */}
-               {isLoadingConfig && (
-                 <div className="config-loading">
-                   <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-500 mx-auto mb-4"></div>
-                   <p className="text-center text-gray-600">Loading payment configuration...</p>
-                 </div>
-               )}
+              {/* Configuration Loading/Error States */}
+              {isLoadingConfig && (
+                <div className="config-loading">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-500 mx-auto mb-4"></div>
+                  <p className="text-center text-gray-600">Loading payment configuration...</p>
+                </div>
+              )}
 
-               {configError && (
-                 <div className="config-error bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-                   <div className="flex items-center gap-2 text-red-600 mb-2">
-                     <AlertTriangle className="w-5 h-5" />
-                     <span className="font-medium">Configuration Error</span>
-                   </div>
-                   <p className="text-red-600 text-sm">{configError}</p>
-                 </div>
-               )}
+              {configError && (
+                <div className="config-error bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                  <div className="flex items-center gap-2 text-red-600 mb-2">
+                    <AlertTriangle className="w-5 h-5" />
+                    <span className="font-medium">Configuration Error</span>
+                  </div>
+                  <p className="text-red-600 text-sm">{configError}</p>
+                </div>
+              )}
 
-               {/* Success Message when Redirecting */}
-               {isRedirecting && (
-                 <div className="success-message bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
-                   <div className="flex items-center gap-2 text-green-600 mb-2">
-                     <Check className="w-5 h-5" />
-                     <span className="font-medium">Payment Order Created Successfully!</span>
-                   </div>
-                   <p className="text-green-600 text-sm">Redirecting you to the secure payment gateway...</p>
-                 </div>
-               )}
+              {/* Success Message when Redirecting */}
+              {isRedirecting && (
+                <div className="success-message bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                  <div className="flex items-center gap-2 text-green-600 mb-2">
+                    <Check className="w-5 h-5" />
+                    <span className="font-medium">Payment Order Created Successfully!</span>
+                  </div>
+                  <p className="text-green-600 text-sm">Redirecting you to the secure payment gateway...</p>
+                </div>
+              )}
 
-                             <form className={`payment-form ${isLoadingConfig || configError ? 'opacity-50 pointer-events-none' : ''}`} onSubmit={handleSubmit}>
-                 <div className="form-group">
-                   <label htmlFor="customerName" className={`form-label ${touched.customerName && errors.customerName ? 'error' : ''}`}>
-                     Full Name *
-                   </label>
-                   <div className="input-wrapper">
-                     <input
-                       type="text"
-                       id="customerName"
-                       name="customerName"
-                       value={formData.customerName}
-                       onChange={handleInputChange}
-                       onBlur={handleInputBlur}
-                       className={`form-input ${touched.customerName && errors.customerName ? 'error' : ''} ${touched.customerName && !errors.customerName ? 'success' : ''}`}
-                       placeholder="Enter your full name"
-                       required
-                     />
-                     {touched.customerName && !errors.customerName && (
-                       <div className="input-icon success">
-                         <Check className="icon" />
-                       </div>
-                     )}
-                   </div>
-                   <div className="message-container">
-                     {touched.customerName && errors.customerName && (
-                       <div className="error-message">
-                         <Shield className="icon" />
-                         <span>{errors.customerName}</span>
-                       </div>
-                     )}
-                   </div>
-                 </div>
+              <form className={`payment-form ${isLoadingConfig || configError ? 'opacity-50 pointer-events-none' : ''}`} onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <label htmlFor="customerName" className={`form-label ${touched.customerName && errors.customerName ? 'error' : ''}`}>
+                    Full Name *
+                  </label>
+                  <div className="input-wrapper">
+                    <input
+                      type="text"
+                      id="customerName"
+                      name="customerName"
+                      value={formData.customerName}
+                      onChange={handleInputChange}
+                      onBlur={handleInputBlur}
+                      className={`form-input ${touched.customerName && errors.customerName ? 'error' : ''} ${touched.customerName && !errors.customerName ? 'success' : ''}`}
+                      placeholder="Enter your full name"
+                      required
+                    />
+                    {touched.customerName && !errors.customerName && (
+                      <div className="input-icon success">
+                        <Check className="icon" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="message-container">
+                    {touched.customerName && errors.customerName && (
+                      <div className="error-message">
+                        <Shield className="icon" />
+                        <span>{errors.customerName}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
 
-                 <div className="form-group">
-                   <label htmlFor="email" className={`form-label ${touched.email && errors.email ? 'error' : ''}`}>
-                     Email Address *
-                   </label>
-                   <div className="input-wrapper">
-                     <input
-                       type="email"
-                       id="email"
-                       name="email"
-                       value={formData.email}
-                       onChange={handleInputChange}
-                       onBlur={handleInputBlur}
-                       className={`form-input ${touched.email && errors.email ? 'error' : ''} ${touched.email && !errors.email ? 'success' : ''}`}
-                       placeholder="Enter your email address"
-                       required
-                     />
-                     {touched.email && !errors.email && (
-                       <div className="input-icon success">
-                         <Check className="icon" />
-                       </div>
-                     )}
-                   </div>
-                   <div className="message-container">
-                     {touched.email && errors.email && (
-                       <div className="error-message">
-                         <Shield className="icon" />
-                         <span>{errors.email}</span>
-                       </div>
-                     )}
-                   </div>
-                   <small className="form-help">We'll create an account if you're new, or ask you to sign in.</small>
-                 </div>
+                <div className="form-group">
+                  <label htmlFor="email" className={`form-label ${touched.email && errors.email ? 'error' : ''}`}>
+                    Email Address *
+                  </label>
+                  <div className="input-wrapper">
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      onBlur={handleInputBlur}
+                      className={`form-input ${touched.email && errors.email ? 'error' : ''} ${touched.email && !errors.email ? 'success' : ''}`}
+                      placeholder="Enter your email address"
+                      required
+                    />
+                    {touched.email && !errors.email && (
+                      <div className="input-icon success">
+                        <Check className="icon" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="message-container">
+                    {touched.email && errors.email && (
+                      <div className="error-message">
+                        <Shield className="icon" />
+                        <span>{errors.email}</span>
+                      </div>
+                    )}
+                  </div>
+                  <small className="form-help">We'll create an account if you're new, or ask you to sign in.</small>
+                </div>
 
 
 
-                                 {/* Consent Section */}
-                 <div className="consent-section">
-                   <p className="consent-text">
-                     By clicking "Proceed to Payment", I agree that AgniVirya can keep me informed by sending personalized emails about products and services. See our <a href="#" className="privacy-link">Privacy Policy</a> for details.
-                   </p>
-                 </div>
+                {/* Consent Section */}
+                <div className="consent-section">
+                  <p className="consent-text">
+                    By clicking "Proceed to Payment", I agree that AgniVirya can keep me informed by sending personalized emails about products and services. See our <a href="#" className="privacy-link">Privacy Policy</a> for details.
+                  </p>
+                </div>
 
-                                 <button 
-                   type="submit" 
-                   className="submit-button"
-                   disabled={isProcessing || isRedirecting}
-                 >
-                   {isProcessing ? (
-                     <>
-                       <Loader2 className="icon animate-spin" />
-                       <span>Creating Order...</span>
-                     </>
-                   ) : isRedirecting ? (
-                     <>
-                       <Loader2 className="icon animate-spin" />
-                       <span>Redirecting to Payment...</span>
-                     </>
-                   ) : (
-                     <>
-                       <Lock className="icon" />
-                       <span>Proceed to Payment</span>
-                       <div className="discount-badge">95% OFF</div>
-                     </>
-                   )}
-                 </button>
+                <button
+                  type="submit"
+                  className="submit-button"
+                  disabled={isProcessing || isRedirecting}
+                >
+                  {isProcessing ? (
+                    <>
+                      <Loader2 className="icon animate-spin" />
+                      <span>Creating Order...</span>
+                    </>
+                  ) : isRedirecting ? (
+                    <>
+                      <Loader2 className="icon animate-spin" />
+                      <span>Redirecting to Payment...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Lock className="icon" />
+                      <span>Proceed to Payment</span>
+                      <div className="discount-badge">95% OFF</div>
+                    </>
+                  )}
+                </button>
               </form>
 
               {/* Security Badge */}
