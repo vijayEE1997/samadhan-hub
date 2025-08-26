@@ -21,7 +21,7 @@
     "install:all": "npm install && cd client-agnivirya && npm install && cd ../server && npm install",
     "setup": "npm run install:all && npm run build",
     "ssr:build": "npm run client:build && npm run server:start",
-    "vercel-build": "npm run client:build",
+    "vercel-build": "node vercel-build.js",
     "vercel-dev": "npm run dev",
     "mode:dev": "echo Setting mode to DEV && npm run dev",
     "mode:prod": "echo Setting mode to PROD && npm run prod",
