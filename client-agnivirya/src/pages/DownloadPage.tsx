@@ -18,6 +18,7 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState<string | null>(null);
   const [downloadCompleted, setDownloadCompleted] = useState(false);
+  const [pollingAttempts, setPollingAttempts] = useState(0);
 
   const { toast } = useToast();
   const { verifyPayment, isVerifying } = usePayment();
@@ -36,7 +37,7 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
         console.log('Using default product values');
       }
     };
-    
+
     fetchConfig();
   }, [])
 
@@ -45,6 +46,9 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
 
     const initializePage = async () => {
       try {
+        // Reset polling attempts
+        setPollingAttempts(0);
+        
         // Get URL parameters and stored order once
         const urlParams = new URLSearchParams(window.location.search);
         const paymentStatus = urlParams.get('payment_status');
@@ -84,13 +88,21 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
           try {
             const orderData = JSON.parse(storedOrder);
             const ordersToTry = [orderData.orderId, orderData.cfOrderId].filter(Boolean);
-            
+
+            console.log('🔍 Starting payment verification polling...', { ordersToTry });
+
             if (ordersToTry.length > 0) {
               pollInterval = setInterval(async () => {
+                setPollingAttempts(prev => prev + 1);
+                const currentAttempt = pollingAttempts + 1;
+                console.log(`🔄 Polling attempt ${currentAttempt} for orders:`, ordersToTry);
+
                 for (const orderId of ordersToTry) {
                   try {
+                    console.log(`🔍 Verifying order: ${orderId}`);
                     const verified = await verifyPayment(orderId);
                     if (verified) {
+                      console.log('✅ Payment verified successfully!', { orderId });
                       clearInterval(pollInterval);
                       setVerificationStatus('success');
                       localStorage.setItem('agnivirya-payment-status', 'paid');
@@ -109,21 +121,30 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
                         }
                       }
                       return;
+                    } else {
+                      console.log(`❌ Order ${orderId} not verified yet`);
                     }
                   } catch (error) {
                     console.error('Payment verification error:', error);
                   }
                 }
+
+                // Log polling status every 5 attempts
+                if (currentAttempt % 5 === 0) {
+                  console.log(`📊 Polling status: ${currentAttempt} attempts completed, still verifying...`);
+                }
               }, 3000);
 
-              // Stop polling after 5 minutes
-              setTimeout(() => {
-                if (pollInterval) {
-                  clearInterval(pollInterval);
-                  setVerificationStatus('failed');
-                }
-              }, 300000);
+                             // Stop polling after 1 minute
+               setTimeout(() => {
+                 if (pollInterval) {
+                   console.log('⏰ Polling timeout reached (1 minute), stopping verification');
+                   clearInterval(pollInterval);
+                   setVerificationStatus('failed');
+                 }
+               }, 60000);
             } else {
+              console.log('❌ No valid order IDs found for polling');
               setVerificationStatus('failed');
             }
           } catch (e) {
@@ -131,6 +152,7 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
             setVerificationStatus('failed');
           }
         } else {
+          console.log('❌ No stored order found, cannot start polling');
           setVerificationStatus('failed');
         }
 
@@ -152,10 +174,10 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
 
   const handleDownload = async () => {
     if (isDownloading) return;
-    
+
     setIsDownloading(true);
     setDownloadError(null);
-    
+
     try {
       const response = await fetch(getPdfPath(pdfFileName));
       if (response.ok) {
@@ -182,7 +204,7 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
       console.error('Download error:', error);
       const errorMessage = error instanceof Error ? error.message : 'Download failed';
       setDownloadError(errorMessage);
-      
+
       toast({
         title: "Download Error",
         description: errorMessage,
@@ -228,7 +250,7 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
           <p className="failed-description">
             We couldn't verify your payment. Please try again or contact support if the issue persists.
           </p>
-          
+
           <div className="failed-actions">
             <button
               onClick={handleBackToPayment}
@@ -271,16 +293,27 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
             <p className="verification-description">
               Please wait while we verify your payment. This usually takes a few moments.
             </p>
-            
+
             <div className="verification-progress">
               <div className="progress-dots">
                 <div className="dot active"></div>
                 <div className="dot active"></div>
                 <div className="dot"></div>
               </div>
-              <p className="verification-status-text">
-                {isVerifying ? 'Checking payment status...' : 'Waiting to verify...'}
-              </p>
+                             <p className="verification-status-text">
+                 {isVerifying ? 'Checking payment status...' : 'Waiting to verify...'}
+               </p>
+               
+               {/* Polling Status Indicator */}
+              <div className="polling-status">
+                <div className="polling-indicator">
+                  <div className="pulse-dot"></div>
+                  <span>Actively checking payment status every 3 seconds...</span>
+                </div>
+                                 <div className="polling-details">
+                   <small>Attempt {pollingAttempts} • This process will continue until payment is verified or timeout (1 minute)</small>
+                 </div>
+              </div>
             </div>
 
             {orderDetails && (

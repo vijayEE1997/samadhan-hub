@@ -22,7 +22,6 @@ import FAQSection from './components/sections/FAQSection'
 import AboutSection from './components/sections/AboutSection'
 import Footer from './components/Footer'
 import PaymentPage from './pages/PaymentPage'
-import SuccessPage from './pages/SuccessPage'
 import DownloadPage from './pages/DownloadPage'
 import MetricsBubble from './components/sections/MetricsBubble';
 
@@ -86,8 +85,6 @@ function App({ initialState }: AppProps) {
     switch (currentRoute) {
       case '/payment':
         return <PaymentPage onBackToHome={() => navigateTo('/')} />;
-      case '/success':
-        return <SuccessPage onBackToHome={() => navigateTo('/')} />;
       case '/download':
         return <DownloadPage onBackToHome={() => navigateTo('/')} onBackToPayment={() => navigateTo('/payment')} />;
       case '/':
