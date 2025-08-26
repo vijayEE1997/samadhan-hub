@@ -20,7 +20,7 @@ interface PaymentVerificationState {
 
 const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
   console.log('🔄 DownloadPage component rendering');
-  
+
   const [orderDetails, setOrderDetails] = useState<any>(null);
   const [pdfFileName, setPdfFileName] = useState('agnivirya-complete-wellness-guide-2025.pdf');
   const [productName, setProductName] = useState('AgniVirya - Complete Ancient Modern Wellness Guide');
@@ -38,7 +38,7 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
 
   const { toast } = useToast();
   const { verifyPayment, isVerifying } = usePayment();
-  
+
   // Use refs to track attempts and avoid re-render loops
   const attemptsRef = useRef(0);
   const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -84,13 +84,13 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
   // Initialize payment verification
   useEffect(() => {
     console.log('🔄 Payment verification useEffect triggered');
-    
+
     // Only run once when component mounts
     let isMounted = true;
 
     const startPaymentVerification = async () => {
       if (!isMounted) return;
-      
+
       try {
         // Get URL parameters and stored order
         const urlParams = new URLSearchParams(window.location.search);
@@ -128,11 +128,11 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
               error: null
             });
           }
-          
+
           // Update localStorage
           localStorage.setItem('agnivirya-payment-status', 'paid');
           localStorage.setItem('agnivirya-payment-verified', 'true');
-          
+
           if (storedOrder) {
             try {
               const orderData = JSON.parse(storedOrder);
@@ -178,12 +178,12 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
             // Reset attempts counter
             attemptsRef.current = 0;
 
-            // Start polling
+            // Start polling every 2 seconds
             pollIntervalRef.current = setInterval(async () => {
               if (!isMounted) return;
-              
+
               attemptsRef.current += 1;
-              
+
               if (isMounted) {
                 setVerificationState(prev => ({
                   ...prev,
@@ -201,7 +201,7 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
                   const verified = await verifyPaymentStatus(orderId);
                   if (verified && isMounted) {
                     console.log('✅ Payment verified successfully!', { orderId });
-                    
+
                     // Clear intervals and timeouts
                     if (pollIntervalRef.current) {
                       clearInterval(pollIntervalRef.current);
@@ -211,7 +211,7 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
                       clearTimeout(timeoutIdRef.current);
                       timeoutIdRef.current = null;
                     }
-                    
+
                     // Update verification state
                     setVerificationState({
                       status: 'success',
@@ -257,7 +257,7 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
               if (attemptsRef.current % 5 === 0) {
                 console.log(`📊 Polling status: ${attemptsRef.current} attempts completed, still verifying...`);
               }
-            }, 3000);
+            }, 2000); // Poll every 2 seconds
 
             // Set timeout to stop polling after 1 minute
             timeoutIdRef.current = setTimeout(() => {
@@ -265,7 +265,7 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
                 console.log('⏰ Polling timeout reached (1 minute), stopping verification');
                 clearInterval(pollIntervalRef.current);
                 pollIntervalRef.current = null;
-                
+
                 setVerificationState({
                   status: 'timeout',
                   message: 'Payment verification timed out',
@@ -335,7 +335,7 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
     if (verificationState.status === 'verifying') return;
 
     console.log('🔄 Manual retry initiated');
-    
+
     // Clear any existing intervals/timeouts
     if (pollIntervalRef.current) {
       clearInterval(pollIntervalRef.current);
@@ -363,26 +363,24 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
       try {
         const orderData = JSON.parse(storedOrder);
         const ordersToTry = [orderData.orderId, orderData.cfOrderId].filter(Boolean);
-        
+
         if (ordersToTry.length > 0) {
-          for (const orderId of ordersToTry) {
-            const verified = await verifyPaymentStatus(orderId);
-            if (verified) {
-              setVerificationState({
-                status: 'success',
-                message: 'Payment verified successfully on retry!',
-                attempts: 1,
-                lastAttempt: new Date(),
-                error: null
-              });
-              
-              localStorage.setItem('agnivirya-payment-status', 'paid');
-              localStorage.setItem('agnivirya-payment-verified', 'true');
-              return;
-            }
+          const verified = await verifyPaymentStatus(orderData.orderId);
+          if (verified) {
+            setVerificationState({
+              status: 'success',
+              message: 'Payment verified successfully on retry!',
+              attempts: 1,
+              lastAttempt: new Date(),
+              error: null
+            });
+
+            localStorage.setItem('agnivirya-payment-status', 'paid');
+            localStorage.setItem('agnivirya-payment-verified', 'true');
+            return;
           }
         }
-        
+
         // If retry failed
         setVerificationState({
           status: 'failed',

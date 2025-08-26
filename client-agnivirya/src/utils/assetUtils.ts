@@ -33,6 +33,14 @@ export const getImagePath = (imageName: string): string => {
 };
 
 /**
+ * Get the path for a favicon
+ * @returns The correct favicon path
+ */
+export const getFaviconPath = (): string => {
+  return '/favicon.ico';
+};
+
+/**
  * Get the path for a PDF asset using the download API
  * @param language - The language for the PDF ('english' or 'hindi')
  * @returns The correct PDF download API path

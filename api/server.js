@@ -237,6 +237,54 @@ app.get('/api/payments/test', (req, res) => {
   });
 });
 
+// Favicon endpoint - ensure it's always served correctly
+app.get('/favicon.ico', (req, res) => {
+  const faviconPath = path.join(__dirname, '..', 'client-agnivirya', 'public', 'favicon.ico');
+  if (fs.existsSync(faviconPath)) {
+    res.setHeader('Content-Type', 'image/x-icon');
+    res.setHeader('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
+    res.sendFile(faviconPath);
+  } else {
+    // Fallback to dist assets
+    const distFaviconPath = path.join(__dirname, '..', 'client-agnivirya', 'dist', 'favicon.ico');
+    if (fs.existsSync(distFaviconPath)) {
+      res.setHeader('Content-Type', 'image/x-icon');
+      res.setHeader('Cache-Control', 'public, max-age=31536000');
+      res.sendFile(distFaviconPath);
+    } else {
+      res.status(404).send('Favicon not found');
+    }
+  }
+});
+
+// Manifest endpoint for PWA
+app.get('/manifest.json', (req, res) => {
+  const manifestPath = path.join(__dirname, '..', 'client-agnivirya', 'public', 'manifest.json');
+  if (fs.existsSync(manifestPath)) {
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Cache-Control', 'public, max-age=31536000');
+    res.sendFile(manifestPath);
+  } else {
+    // Return a basic manifest if file doesn't exist
+    res.json({
+      name: "Agnivirya - Ancient Modern Wellness",
+      short_name: "Agnivirya",
+      description: "Transform Your Health with Ayurvedic Wisdom",
+      start_url: "/",
+      display: "standalone",
+      background_color: "#ffffff",
+      theme_color: "#8B5CF6",
+      icons: [
+        {
+          src: "/assets/agnivirya-logo.png",
+          sizes: "192x192",
+          type: "image/png"
+        }
+      ]
+    });
+  }
+});
+
 // Health endpoint
 app.get('/health', (req, res) => {
   res.json({
@@ -932,10 +980,10 @@ app.get('/api/download', (req, res) => {
     let fileName, filePath;
     if (language.toLowerCase() === 'english') {
       fileName = 'English.pdf';
-      filePath = path.join(__dirname, 'assest', 'English.pdf');
+      filePath = path.join(__dirname, 'assets', 'English.pdf');
     } else {
       fileName = 'Hindi.pdf';
-      filePath = path.join(__dirname, 'assest', 'Hindi.pdf');
+      filePath = path.join(__dirname, 'assets', 'Hindi.pdf');
     }
 
     // Check if file exists
@@ -1070,36 +1118,48 @@ if (mainDistExists && clientDistExists) {
         res.setHeader('Content-Type', 'text/css; charset=utf-8');
       } else if (ext === '.html') {
         res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      } else if (ext === '.ico') {
+        res.setHeader('Content-Type', 'image/x-icon');
+      } else if (ext === '.png' || ext === '.jpg' || ext === '.jpeg' || ext === '.gif' || ext === '.webp') {
+        res.setHeader('Content-Type', `image/${ext === '.jpg' ? 'jpeg' : ext.slice(1)}`);
       }
     }
   }));
 
-  // Serve public assets folder separately for production
-  const publicAssetsPath = path.join(__dirname, '..', 'client-agnivirya', 'public', 'assets');
-  if (fs.existsSync(publicAssetsPath)) {
-    console.log(`📁 Serving public assets from: ${publicAssetsPath}`);
-    app.use('/assets', express.static(publicAssetsPath, {
+  // Serve assets from the dist/assets folder (where Vite builds them)
+  const distAssetsPath = path.join(__dirname, '..', 'client-agnivirya', 'dist', 'assets');
+  if (fs.existsSync(distAssetsPath)) {
+    console.log(`📁 Serving dist assets from: ${distAssetsPath}`);
+    app.use('/assets', express.static(distAssetsPath, {
       maxAge: '1y',
       setHeaders: (res, filePath) => {
         const ext = path.extname(filePath).toLowerCase();
         if (ext === '.png' || ext === '.jpg' || ext === '.jpeg' || ext === '.gif' || ext === '.webp') {
           res.setHeader('Content-Type', `image/${ext === '.jpg' ? 'jpeg' : ext.slice(1)}`);
-        }
-      }
-    }));
-    
-    // Also serve assets from root path as fallback for some build configurations
-    app.use('/public/assets', express.static(publicAssetsPath, {
-      maxAge: '1y',
-      setHeaders: (res, filePath) => {
-        const ext = path.extname(filePath).toLowerCase();
-        if (ext === '.png' || ext === '.jpg' || ext === '.jpeg' || ext === '.gif' || ext === '.webp') {
-          res.setHeader('Content-Type', `image/${ext === '.jpg' ? 'jpeg' : ext.slice(1)}`);
+        } else if (ext === '.ico') {
+          res.setHeader('Content-Type', 'image/x-icon');
         }
       }
     }));
   } else {
-    console.log(`⚠️ Public assets folder not found: ${publicAssetsPath}`);
+    console.log(`⚠️ Dist assets folder not found: ${distAssetsPath}`);
+    
+    // Fallback to public assets if dist doesn't exist
+    const publicAssetsPath = path.join(__dirname, '..', 'client-agnivirya', 'public', 'assets');
+    if (fs.existsSync(publicAssetsPath)) {
+      console.log(`📁 Falling back to public assets from: ${publicAssetsPath}`);
+      app.use('/assets', express.static(publicAssetsPath, {
+        maxAge: '1y',
+        setHeaders: (res, filePath) => {
+          const ext = path.extname(filePath).toLowerCase();
+          if (ext === '.png' || ext === '.jpg' || ext === '.jpeg' || ext === '.gif' || ext === '.webp') {
+            res.setHeader('Content-Type', `image/${ext === '.jpg' ? 'jpeg' : ext.slice(1)}`);
+          } else if (ext === '.ico') {
+            res.setHeader('Content-Type', 'image/x-icon');
+          }
+        }
+      }));
+    }
   }
 
   // Catch-all route for SPA - ONLY for non-API routes
