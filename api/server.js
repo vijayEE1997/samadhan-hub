@@ -1074,6 +1074,34 @@ if (mainDistExists && clientDistExists) {
     }
   }));
 
+  // Serve public assets folder separately for production
+  const publicAssetsPath = path.join(__dirname, '..', 'client-agnivirya', 'public', 'assets');
+  if (fs.existsSync(publicAssetsPath)) {
+    console.log(`📁 Serving public assets from: ${publicAssetsPath}`);
+    app.use('/assets', express.static(publicAssetsPath, {
+      maxAge: '1y',
+      setHeaders: (res, filePath) => {
+        const ext = path.extname(filePath).toLowerCase();
+        if (ext === '.png' || ext === '.jpg' || ext === '.jpeg' || ext === '.gif' || ext === '.webp') {
+          res.setHeader('Content-Type', `image/${ext === '.jpg' ? 'jpeg' : ext.slice(1)}`);
+        }
+      }
+    }));
+    
+    // Also serve assets from root path as fallback for some build configurations
+    app.use('/public/assets', express.static(publicAssetsPath, {
+      maxAge: '1y',
+      setHeaders: (res, filePath) => {
+        const ext = path.extname(filePath).toLowerCase();
+        if (ext === '.png' || ext === '.jpg' || ext === '.jpeg' || ext === '.gif' || ext === '.webp') {
+          res.setHeader('Content-Type', `image/${ext === '.jpg' ? 'jpeg' : ext.slice(1)}`);
+        }
+      }
+    }));
+  } else {
+    console.log(`⚠️ Public assets folder not found: ${publicAssetsPath}`);
+  }
+
   // Catch-all route for SPA - ONLY for non-API routes
   app.get('*', (req, res) => {
     // CRITICAL: Double-check for API routes to prevent HTML serving

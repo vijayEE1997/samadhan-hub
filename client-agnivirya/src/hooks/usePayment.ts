@@ -6,6 +6,8 @@ export const usePayment = () => {
 
   const verifyPayment = async (orderId: string): Promise<boolean> => {
     if (isVerifying) return false;
+
+    console.log('🔍 Starting payment verification...', { orderId });
     
     setIsVerifying(true);
     try {

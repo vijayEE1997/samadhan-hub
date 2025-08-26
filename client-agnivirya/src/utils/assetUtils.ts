@@ -13,8 +13,10 @@ export const getAssetPath = (assetPath: string): string => {
   // Remove leading slash if present
   const cleanPath = assetPath.startsWith('/') ? assetPath.slice(1) : assetPath;
   
-  // Use relative path for both development and production
-  return `./${cleanPath}`;
+  // Always use absolute path - this works in both development and production
+  // In development, Vite dev server handles this
+  // In production, our Express server serves the /assets route
+  return `/${cleanPath}`;
 };
 
 /**

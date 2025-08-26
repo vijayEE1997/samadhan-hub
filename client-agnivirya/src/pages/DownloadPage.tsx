@@ -85,12 +85,10 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
         }
 
         // Start polling if we have order IDs to check
-        if (storedOrder) {
+        if (storedOrder && verificationStatus === 'pending') {
           try {
             const orderData = JSON.parse(storedOrder);
             const ordersToTry = [orderData.orderId, orderData.cfOrderId].filter(Boolean);
-
-            console.log('🔍 Starting payment verification polling...', { ordersToTry });
 
             if (ordersToTry.length > 0) {
               pollInterval = setInterval(async () => {
@@ -128,11 +126,6 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
                   } catch (error) {
                     console.error('Payment verification error:', error);
                   }
-                }
-
-                // Log polling status every 5 attempts
-                if (currentAttempt % 5 === 0) {
-                  console.log(`📊 Polling status: ${currentAttempt} attempts completed, still verifying...`);
                 }
               }, 3000);
 
