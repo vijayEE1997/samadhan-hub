@@ -83,7 +83,7 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
           try {
             const orderData = JSON.parse(storedOrder);
             const ordersToTry = [orderData.orderId, orderData.cfOrderId].filter(Boolean);
-
+            
             if (ordersToTry.length > 0) {
               pollInterval = setInterval(async () => {
                 for (const orderId of ordersToTry) {
@@ -151,10 +151,10 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
 
   const handleDownload = async () => {
     if (isDownloading) return;
-
+    
     setIsDownloading(true);
     setDownloadError(null);
-
+    
     try {
       const response = await fetch(`/agnivirya/${pdfFileName}`);
       if (response.ok) {
@@ -181,7 +181,7 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
       console.error('Download error:', error);
       const errorMessage = error instanceof Error ? error.message : 'Download failed';
       setDownloadError(errorMessage);
-
+      
       toast({
         title: "Download Error",
         description: errorMessage,
@@ -227,7 +227,7 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
           <p className="failed-description">
             We couldn't verify your payment. Please try again or contact support if the issue persists.
           </p>
-
+          
           <div className="failed-actions">
             <Button
               onClick={handleBackToPayment}
@@ -273,7 +273,7 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
             <p className="verification-description">
               Please wait while we verify your payment. This usually takes a few moments.
             </p>
-
+            
             <div className="verification-progress">
               <div className="progress-dots">
                 <div className="dot active"></div>
