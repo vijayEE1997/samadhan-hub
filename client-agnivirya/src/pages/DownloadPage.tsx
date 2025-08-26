@@ -1,18 +1,21 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Download as DownloadIcon, CheckCircle, Star, AlertCircle, Loader2, Menu, X } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 
 
-const DownloadPage = () => {
+interface DownloadPageProps {
+  onBackToHome?: () => void;
+  onBackToPayment?: () => void;
+}
+
+const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
   const [orderDetails, setOrderDetails] = useState<any>(null);
   const [pdfFileName, setPdfFileName] = useState('agnivirya-complete-wellness-guide-2025.pdf');
   const [productName, setProductName] = useState('AgniVirya - Complete Ancient Modern Wellness Guide');
   const [verificationStatus, setVerificationStatus] = useState<'pending' | 'success' | 'failed'>('pending');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -181,13 +184,23 @@ const DownloadPage = () => {
     }
   };
 
-  const handleBackToPayment = () => {
-    navigate('/payment');
-  };
+          const handleBackToPayment = () => {
+          if (onBackToPayment) {
+            onBackToPayment();
+          } else {
+            window.history.pushState({}, '', '/payment');
+            window.location.reload();
+          }
+        };
 
-  const handleBackToHome = () => {
-    navigate('/');
-  };
+        const handleBackToHome = () => {
+          if (onBackToHome) {
+            onBackToHome();
+          } else {
+            window.history.pushState({}, '', '/');
+            window.location.reload();
+          }
+        };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-900 text-white py-8 sm:py-12 lg:py-20 relative overflow-hidden">

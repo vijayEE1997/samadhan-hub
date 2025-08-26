@@ -136,7 +136,7 @@ function App({ initialState }: AppProps) {
       case '/success':
         return <SuccessPage onBackToHome={() => navigateTo('/')} />;
       case '/download':
-        return <DownloadPage />;
+        return <DownloadPage onBackToHome={() => navigateTo('/')} onBackToPayment={() => navigateTo('/payment')} />;
       case '/':
       default:
         return (

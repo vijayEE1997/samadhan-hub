@@ -223,8 +223,8 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
       }
 
       const result = await response.json();
-
-      if (result.success) {
+      
+             if (result.success) {
         // Show success message and prepare for redirect
         setErrors(prev => ({ ...prev, email: '' }));
         setIsRedirecting(true);
@@ -286,22 +286,22 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
   return (
     <div className="payment-container">
       <div className="content-wrapper">
-        {/* Page Header - Wondershare Style */}
-        <div className="page-header">
-          <div className="header-top">
-            <div className="header-left">
-              <button onClick={onBackToHome} className="back-button">
-                <ArrowLeft className="icon" />
-                <span>Back to Home</span>
-              </button>
-            </div>
-            <div className="header-right">
-              <div className="header-logo">
+                 {/* Page Header - Wondershare Style */}
+         <div className="page-header">
+           <div className="header-top">
+             <div className="header-left">
+               <button onClick={onBackToHome} className="back-button">
+                 <ArrowLeft className="icon" />
+                 <span>Back to Home</span>
+               </button>
+             </div>
+             <div className="header-right">
+               <div className="header-logo">
                 <img src="/assets/agnivirya-logo.png" alt="AgniVirya" className="logo-image" />
-              </div>
-            </div>
-          </div>
-        </div>
+               </div>
+             </div>
+           </div>
+         </div>
 
         {/* Two-Column Layout - Inspired by Wondershare */}
         <div className="payment-layout">
@@ -459,7 +459,7 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
                       </div>
                     )}
                   </div>
-                </div>
+              </div>
 
                 <div className="form-group">
                   <label htmlFor="email" className={`form-label ${touched.email && errors.email ? 'error' : ''}`}>
@@ -503,39 +503,39 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
                   </p>
                 </div>
 
-                <button
-                  type="submit"
+                <button 
+                  type="submit" 
                   className="submit-button"
                   disabled={isProcessing || isRedirecting}
                 >
-                                     {isProcessing ? (
-                     <>
-                       <Loader2 className="icon animate-spin" />
-                       <span>Creating Order...</span>
-                     </>
+                  {isProcessing ? (
+                    <>
+                      <Loader2 className="icon animate-spin" />
+                      <span>Creating Order...</span>
+                    </>
                    ) : isRedirecting ? (
                      <>
                        <Loader2 className="icon animate-spin" />
                        <span>Opening Payment Gateway...</span>
                      </>
-                   ) : (
-                     <>
+                  ) : (
+                    <>
                        <CreditCard className="icon" />
                        <span>Pay with Cashfree</span>
-                       <div className="discount-badge">95% OFF</div>
-                     </>
-                   )}
+                      <div className="discount-badge">95% OFF</div>
+                    </>
+                  )}
                 </button>
               </form>
 
-                             {/* Security Badge */}
-               <div className="security-badge">
+              {/* Security Badge */}
+              <div className="security-badge">
                  <CreditCard className="icon" />
-                 <span>Powered by Cashfree - 100% Secure & Encrypted</span>
+                <span>Powered by Cashfree - 100% Secure & Encrypted</span>
                  <div className="text-xs text-gray-500 mt-1">
                    {cashfreeSDKReady ? 'SDK Ready' : 'SDK Loading...'}
                  </div>
-               </div>
+              </div>
             </div>
           </div>
         </div>
