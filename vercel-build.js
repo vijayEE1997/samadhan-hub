@@ -11,7 +11,15 @@ try {
   process.chdir(clientDir);
   
   console.log('📦 Installing client dependencies...');
-  execSync('npm install', { stdio: 'inherit' });
+  execSync('npm ci --production=false', { stdio: 'inherit' });
+  
+  console.log('🔧 Checking TypeScript installation...');
+  try {
+    execSync('npx tsc --version', { stdio: 'inherit' });
+  } catch (tscError) {
+    console.log('📦 Installing TypeScript globally...');
+    execSync('npm install -g typescript', { stdio: 'inherit' });
+  }
   
   console.log('🏗️ Building frontend...');
   execSync('npm run build', { stdio: 'inherit' });
