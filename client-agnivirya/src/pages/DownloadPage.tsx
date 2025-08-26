@@ -19,6 +19,7 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
   const [downloadError, setDownloadError] = useState<string | null>(null);
   const [downloadCompleted, setDownloadCompleted] = useState(false);
   const [pollingAttempts, setPollingAttempts] = useState(0);
+  const [selectedLanguage, setSelectedLanguage] = useState<'english' | 'hindi'>('english');
 
   const { toast } = useToast();
   const { verifyPayment, isVerifying } = usePayment();
@@ -48,7 +49,7 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
       try {
         // Reset polling attempts
         setPollingAttempts(0);
-        
+
         // Get URL parameters and stored order once
         const urlParams = new URLSearchParams(window.location.search);
         const paymentStatus = urlParams.get('payment_status');
@@ -135,14 +136,14 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
                 }
               }, 3000);
 
-                             // Stop polling after 1 minute
-               setTimeout(() => {
-                 if (pollInterval) {
-                   console.log('⏰ Polling timeout reached (1 minute), stopping verification');
-                   clearInterval(pollInterval);
-                   setVerificationStatus('failed');
-                 }
-               }, 60000);
+              // Stop polling after 1 minute
+              setTimeout(() => {
+                if (pollInterval) {
+                  console.log('⏰ Polling timeout reached (1 minute), stopping verification');
+                  clearInterval(pollInterval);
+                  setVerificationStatus('failed');
+                }
+              }, 60000);
             } else {
               console.log('❌ No valid order IDs found for polling');
               setVerificationStatus('failed');
@@ -179,13 +180,14 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
     setDownloadError(null);
 
     try {
-      const response = await fetch(getPdfPath(pdfFileName));
+      // Use the new download API with language parameter
+      const response = await fetch(getPdfPath(selectedLanguage));
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = pdfFileName;
+        a.download = `AgniVirya-Wellness-Guide-${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)}.pdf`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
@@ -243,9 +245,7 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
     if (verificationStatus === 'failed') {
       return (
         <div className="failed-payment-container">
-          <div className="failed-icon">
-            <AlertCircle className="w-20 h-20 text-red-500" />
-          </div>
+          <AlertCircle className="w-20 h-20 text-red-500" />
           <h1 className="failed-title">Payment Verification Failed</h1>
           <p className="failed-description">
             We couldn't verify your payment. Please try again or contact support if the issue persists.
@@ -300,19 +300,19 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
                 <div className="dot active"></div>
                 <div className="dot"></div>
               </div>
-                             <p className="verification-status-text">
-                 {isVerifying ? 'Checking payment status...' : 'Waiting to verify...'}
-               </p>
-               
-               {/* Polling Status Indicator */}
+              <p className="verification-status-text">
+                {isVerifying ? 'Checking payment status...' : 'Waiting to verify...'}
+              </p>
+
+              {/* Polling Status Indicator */}
               <div className="polling-status">
                 <div className="polling-indicator">
                   <div className="pulse-dot"></div>
                   <span>Actively checking payment status every 3 seconds...</span>
                 </div>
-                                 <div className="polling-details">
-                   <small>Attempt {pollingAttempts} • This process will continue until payment is verified or timeout (1 minute)</small>
-                 </div>
+                <div className="polling-details">
+                  <small>Attempt {pollingAttempts} • This process will continue until payment is verified or timeout (1 minute)</small>
+                </div>
               </div>
             </div>
 
@@ -385,6 +385,29 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
               <div className="download-header">
                 <DownloadIcon className="w-8 h-8 text-blue-500" />
                 <h2>Download Your Guide</h2>
+              </div>
+
+              {/* Language Selection */}
+              <div className="language-selector">
+                <label className="language-label">Choose Language:</label>
+                <div className="language-options">
+                  <button
+                    type="button"
+                    className={`language-option ${selectedLanguage === 'english' ? 'active' : ''}`}
+                    onClick={() => setSelectedLanguage('english')}
+                    disabled={isDownloading}
+                  >
+                    🇺🇸 English
+                  </button>
+                  <button
+                    type="button"
+                    className={`language-option ${selectedLanguage === 'hindi' ? 'active' : ''}`}
+                    onClick={() => setSelectedLanguage('hindi')}
+                    disabled={isDownloading}
+                  >
+                    🇮🇳 Hindi
+                  </button>
+                </div>
               </div>
 
               <Button

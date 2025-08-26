@@ -35,4 +35,5 @@ export const API_ENDPOINTS = {
     VERIFY: `${SERVER_CONFIG.API_BASE_URL}/payments/verify`,
   },
   WEBHOOK: `${SERVER_CONFIG.API_BASE_URL}/webhook/cashfree`,
+  DOWNLOAD: `${SERVER_CONFIG.API_BASE_URL}/download`,
 } as const;

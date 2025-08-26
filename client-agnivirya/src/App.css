@@ -3899,6 +3899,95 @@
   }
 }
 
+/* Polling Indicator Styles */
+.polling-indicator {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background-color: #3b82f6;
+  animation: polling-pulse 1.5s infinite;
+}
+
+@keyframes polling-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Language Selector Styles */
+.language-selector {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.language-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.75rem;
+}
+
+.language-options {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.language-option {
+  padding: 0.5rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  background: white;
+  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 120px;
+}
+
+.language-option:hover:not(:disabled) {
+  border-color: #3b82f6;
+  background: #f0f9ff;
+  color: #1e40af;
+}
+
+.language-option.active {
+  border-color: #3b82f6;
+  background: #3b82f6;
+  color: white;
+}
+
+.language-option:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive design for language selector */
+@media (max-width: 640px) {
+  .language-options {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .language-option {
+    width: 100%;
+    max-width: 200px;
+  }
+}
+
 /* Mobile Responsive Design (up to 767px) */
 @media (max-width: 767px) {
   .premium-header {
@@ -5323,8 +5412,6 @@
   }
 }
 
-
-
 /* Metrics Bubble Responsive */
 @media (max-width: 1200px) {
   .metrics-bubble-container {
@@ -6688,7 +6775,7 @@
   margin-bottom: 1.5rem;
 }
 
-.payment-container .summary-card .header-icon {
+.payment-container .header-icon {
   background: linear-gradient(135deg, var(--secondary), var(--accent));
 }
 
@@ -9564,5 +9651,69 @@
 .polling-details {
   color: #6b7280;
   font-size: 0.875rem;
+}
+
+/* Language Selector Styles */
+.language-selector {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.language-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.75rem;
+}
+
+.language-options {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.language-option {
+  padding: 0.5rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  background: white;
+  color: #374151;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 120px;
+}
+
+.language-option:hover:not(:disabled) {
+  border-color: #3b82f6;
+  background: #f0f9ff;
+  color: #1e40af;
+}
+
+.language-option.active {
+  border-color: #3b82f6;
+  background: #3b82f6;
+  color: white;
+}
+
+.language-option:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive design for language selector */
+@media (max-width: 640px) {
+  .language-options {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .language-option {
+    width: 100%;
+    max-width: 200px;
+  }
 }
 

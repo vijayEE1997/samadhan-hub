@@ -2,6 +2,8 @@
  * Utility functions for handling asset paths in both development and production
  */
 
+import { API_ENDPOINTS } from "@/constants";
+
 /**
  * Get the correct path for an asset
  * @param assetPath - The asset path relative to the public/assets folder
@@ -25,10 +27,19 @@ export const getImagePath = (imageName: string): string => {
 };
 
 /**
- * Get the path for a PDF asset
- * @param pdfName - The PDF filename (e.g., 'agnivirya-complete-wellness-guide-2025.pdf')
+ * Get the path for a PDF asset using the download API
+ * @param language - The language for the PDF ('english' or 'hindi')
+ * @returns The correct PDF download API path
+ */
+export const getPdfPath = (language: 'english' | 'hindi' = 'english'): string => {
+  return `${API_ENDPOINTS.DOWNLOAD}?language=${language}`;
+};
+
+/**
+ * Get the path for a specific PDF file (legacy support)
+ * @param pdfName - The PDF filename
  * @returns The correct PDF path
  */
-export const getPdfPath = (pdfName: string): string => {
+export const getPdfFilePath = (pdfName: string): string => {
   return getAssetPath(`agnivirya/${pdfName}`);
 };
