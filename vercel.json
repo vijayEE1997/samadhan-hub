@@ -1,7 +1,9 @@
 {
   "version": 2,
   "name": "samadhanhub",
-  "alias": ["samadhanhub.com"],
+  "alias": [
+    "samadhanhub.com"
+  ],
   "builds": [
     {
       "src": "server/index.js",
