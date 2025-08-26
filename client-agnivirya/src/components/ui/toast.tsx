@@ -29,6 +29,8 @@ const Toast = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & {
     variant?: keyof typeof toastVariants
+    open?: boolean
+    onOpenChange?: (open: boolean) => void
   }
 >(({ className, variant = "default", ...props }, ref) => {
   return (

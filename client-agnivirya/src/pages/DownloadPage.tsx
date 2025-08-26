@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Download as DownloadIcon, CheckCircle, BookOpen, Star, AlertCircle, Loader2, Menu, X } from 'lucide-react';
+import { Download as DownloadIcon, CheckCircle, Star, AlertCircle, Loader2, Menu, X } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
-import agniviryaLogo from "/assets/agnivirya-logo.png";
+
 
 const DownloadPage = () => {
   const [orderDetails, setOrderDetails] = useState<any>(null);
@@ -16,7 +16,7 @@ const DownloadPage = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    let pollInterval: NodeJS.Timeout;
+    let pollInterval: ReturnType<typeof setInterval>;
 
     const checkPaymentStatus = async () => {
       try {
@@ -205,7 +205,7 @@ const DownloadPage = () => {
               <div className="flex items-center gap-3">
                 <div className="relative">
                   <img 
-                    src={agniviryaLogo} 
+                    src="/assets/agnivirya-logo.png" 
                     alt="AgniVirya Logo" 
                     className="w-8 h-8 sm:w-10 sm:h-10 object-contain relative z-10"
                   />
@@ -312,7 +312,7 @@ const DownloadPage = () => {
                 <CardTitle className="flex items-center justify-center gap-3 text-white">
                   <div className="relative">
                     <img
-                      src={agniviryaLogo}
+                      src="/assets/agnivirya-logo.png"
                       alt="AgniVirya Logo"
                       className="w-6 h-6 object-contain relative z-10"
                     />
