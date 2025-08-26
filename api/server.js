@@ -16,14 +16,106 @@ const {
   SECURITY,
   MESSAGES,
   LOGGING
-} = require('../server/constants');
+} = require('./constants');
 
+// Create local copies of constants with fallback values
+const localSecurity = {
+  ...SECURITY,
+  HELMET_CSP: SECURITY?.HELMET_CSP || false
+};
+
+const localMessages = {
+  ...MESSAGES,
+  HEALTH: {
+    STATUS: MESSAGES?.HEALTH?.STATUS || 'OK',
+    MESSAGE: MESSAGES?.HEALTH?.MESSAGE || 'Server is running!'
+  }
+};
+
+const localApi = {
+  ...API,
+  ENDPOINTS: {
+    HEALTH: API?.ENDPOINTS?.HEALTH || '/health',
+    CONFIG: API?.ENDPOINTS?.CONFIG || '/api/config'
+  }
+};
+
+const localEnv = {
+  ...ENV,
+  IS_VERCEL: ENV?.IS_VERCEL || (process.env.VERCEL === '1'),
+  IS_DEV: ENV?.IS_DEV || (process.env.NODE_ENV === 'development'),
+  IS_PROD: ENV?.IS_PROD || (process.env.NODE_ENV === 'production')
+};
+
+const localLogging = {
+  ...LOGGING,
+  FORMAT: LOGGING?.FORMAT || 'combined',
+  LEVEL: LOGGING?.LEVEL || 'info'
+};
+
+
+
+
+
+// Dynamic configuration from environment variables
+const config = {
+  port: process.env.PORT || 5000,
+  nodeEnv: process.env.NODE_ENV || 'development',
+  cashfreeMode: process.env.CASHFREE_MODE || 'production',
+  cashfreeClientId: process.env.CASHFREE_CLIENT_ID,
+  cashfreeClientSecret: process.env.CASHFREE_CLIENT_SECRET,
+  productName: process.env.PRODUCT_NAME || 'Samadhan Hub - Wellness Guide',
+  productPrice: process.env.PRODUCT_PRICE,
+  productCurrency: process.env.PRODUCT_CURRENCY || 'INR',
+  productPdfFileName: process.env.PRODUCT_PDF_FILENAME || 'samadhan-wellness-guide-2025.pdf',
+  productDescription: process.env.PRODUCT_DESCRIPTION || 'Complete wellness guide with ancient and modern wellness practices',
+  returnUrl: process.env.RETURN_URL,
+  domain: process.env.DOMAIN || 'localhost:5000',
+  protocol: process.env.PROTOCOL || 'http',
+  // Add missing properties that the code references
+  server: {
+    port: process.env.PORT || 5000,
+    host: process.env.HOST || 'localhost',
+    enableSSR: process.env.ENABLE_SSR !== 'false',
+    enableCors: process.env.ENABLE_CORS !== 'false',
+    enableHelmet: process.env.ENABLE_HELMET !== 'false',
+    enableLogging: process.env.ENABLE_LOGGING !== 'false',
+    enableRateLimiting: process.env.ENABLE_RATE_LIMITING === 'true'
+  },
+  api: {
+    version: process.env.API_VERSION || 'v1',
+    rateLimit: parseInt(process.env.API_RATE_LIMIT || '100'),
+    timeout: parseInt(process.env.API_TIMEOUT || '30000')
+  },
+  mode: process.env.APP_MODE || (process.env.NODE_ENV === 'production' ? 'prod' : 'dev'),
+  environment: process.env.NODE_ENV || 'development',
+  cors: {
+    origin: process.env.CORS_ORIGIN || (process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://samadhanhub.com'),
+    credentials: process.env.NODE_ENV === 'development',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    optionsSuccessStatus: 200
+  }
+};
+
+console.log(config);
+// Validate required configuration
+const requiredConfig = ['cashfreeClientId', 'cashfreeClientSecret'];
+const missingConfig = requiredConfig.filter(key => !config[key]);
+
+if (missingConfig.length > 0) {
+  console.error(`❌ Missing required configuration: ${missingConfig.join(', ')}`);
+  console.error('Please check your .env file');
+  process.exit(1);
+}
+
+const app = express();
 
 // API Routes
-app.get(API.ENDPOINTS.HEALTH, (req, res) => {
+app.get(localApi.ENDPOINTS.HEALTH, (req, res) => {
   res.json({
-    status: MESSAGES.HEALTH.STATUS,
-    message: MESSAGES.HEALTH.MESSAGE,
+    status: localMessages.HEALTH.STATUS,
+    message: localMessages.HEALTH.MESSAGE,
     mode: config.mode,
     environment: config.environment,
     timestamp: new Date().toISOString()
@@ -31,19 +123,19 @@ app.get(API.ENDPOINTS.HEALTH, (req, res) => {
 });
 
 // Configuration API
-app.get(API.ENDPOINTS.CONFIG, (req, res) => {
+app.get(localApi.ENDPOINTS.CONFIG, (req, res) => {
   try {
     const envVars = process.env;
     const safeConfig = {};
 
     Object.keys(envVars).forEach(key => {
       const value = envVars[key];
-      const isSensitive = SECURITY.SENSITIVE_KEYS.some(sensitive =>
+      const isSensitive = localSecurity.SENSITIVE_KEYS.some(sensitive =>
         key.toUpperCase().includes(sensitive)
       );
 
       if (isSensitive) {
-        safeConfig[key] = value ? SECURITY.MASKED_VALUE : value;
+        safeConfig[key] = value ? localSecurity.MASKED_VALUE : value;
       } else {
         safeConfig[key] = value;
       }
@@ -71,9 +163,9 @@ app.get(API.ENDPOINTS.CONFIG, (req, res) => {
         rateLimiting: config.server.enableRateLimiting,
       },
       deployment: {
-        isVercel: ENV.IS_VERCEL,
-        isDev: ENV.IS_DEV,
-        isProd: ENV.IS_PROD,
+        isVercel: localEnv.IS_VERCEL,
+        isDev: localEnv.IS_DEV,
+        isProd: localEnv.IS_PROD,
         enableCDN: process.env.ENABLE_CDN === 'true',
         enableCompression: process.env.ENABLE_COMPRESSION === 'true',
       },
@@ -84,9 +176,9 @@ app.get(API.ENDPOINTS.CONFIG, (req, res) => {
       },
       variables: safeConfig,
       computed: {
-        isProduction: ENV.IS_PROD,
-        isDevelopment: ENV.IS_DEV,
-        isVercel: ENV.IS_VERCEL,
+        isProduction: localEnv.IS_PROD,
+        isDevelopment: localEnv.IS_DEV,
+        isVercel: localEnv.IS_VERCEL,
         port: config.server.port,
         corsOrigin: config.cors.origin,
       }
@@ -102,41 +194,32 @@ app.get(API.ENDPOINTS.CONFIG, (req, res) => {
   }
 });
 
+// Test API endpoint
+app.get('/api/test', (req, res) => {
+  res.json({
+    success: true,
+    message: 'API is working!',
+    timestamp: new Date().toISOString(),
+    server: 'unified-server',
+    environment: config.nodeEnv
+  });
+});
 
-// Dynamic configuration from environment variables
-const config = {
-  port: process.env.PORT || 3001,
-  nodeEnv: process.env.NODE_ENV || 'development',
-  cashfreeMode: process.env.CASHFREE_MODE || 'production',
-  cashfreeClientId: process.env.CASHFREE_CLIENT_ID,
-  cashfreeClientSecret: process.env.CASHFREE_CLIENT_SECRET,
-  productName: process.env.PRODUCT_NAME || 'AI Seekho - AI Tools Guide',
-  productPrice: process.env.PRODUCT_PRICE,
-  productCurrency: process.env.PRODUCT_CURRENCY || 'INR',
-  productPdfFileName: process.env.PRODUCT_PDF_FILENAME || 'ai-seekho-complete-guide-2025.pdf',
-  productDescription: process.env.PRODUCT_DESCRIPTION || 'Complete 100+ page PDF guide with 25 AI tools tutorials',
-  returnUrl: process.env.RETURN_URL,
-  domain: process.env.DOMAIN || 'localhost:3001',
-  protocol: process.env.PROTOCOL || 'http'
-};
-
-// Validate required configuration
-const requiredConfig = ['cashfreeClientId', 'cashfreeClientSecret'];
-const missingConfig = requiredConfig.filter(key => !config[key]);
-
-if (missingConfig.length > 0) {
-  console.error(`❌ Missing required configuration: ${missingConfig.join(', ')}`);
-  console.error('Please check your .env file');
-  process.exit(1);
-}
-
-const app = express();
-
+// Health endpoint
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'OK',
+    message: 'Server is running!',
+    timestamp: new Date().toISOString(),
+    server: 'unified-server',
+    environment: config.nodeEnv
+  });
+});
 
 // Middleware configuration
 if (config.server.enableHelmet) {
   app.use(helmet({
-    contentSecurityPolicy: SECURITY.HELMET_CSP,
+    contentSecurityPolicy: localSecurity.HELMET_CSP,
   }));
 }
 
@@ -149,7 +232,7 @@ app.use(cors({
 }));
 
 if (config.server.enableLogging) {
-  app.use(morgan(LOGGING.FORMAT));
+  app.use(morgan(localLogging.FORMAT));
 }
 
 app.use(express.json());
@@ -159,8 +242,8 @@ app.use(express.urlencoded({ extended: true }));
 app.options('*', cors());
 
 // Build paths
-const mainDistPath = path.join(__dirname, 'dist');
-const aiSeekhoDistPath = path.join(__dirname, 'ai-seekho', 'dist');
+const mainDistPath = path.join(__dirname, '..', 'client-agnivirya', 'dist');
+const clientDistPath = path.join(__dirname, '..', 'client-agnivirya', 'dist');
 
 // Security middleware (only in production)
 if (config.nodeEnv === 'production') {
@@ -204,169 +287,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// ============================================================================
-// API ROUTES - Must come BEFORE any other routes
-// ============================================================================
-
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.status(200).json({
-    status: 'OK',
-    timestamp: new Date().toISOString(),
-    message: 'Unified server is running',
-    environment: config.nodeEnv,
-    cashfreeMode: config.cashfreeMode,
-    domain: config.domain,
-    port: config.port,
-    services: ['payment-apis', 'main-app', 'ai-seekho-app']
-  });
-});
-
-// Configuration endpoint
-app.get('/api/config', (req, res) => {
-  try {
-    // Set CORS headers
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.setHeader('Content-Type', 'application/json');
-
-    if (req.method === 'OPTIONS') {
-      res.status(200).end();
-      return;
-    }
-
-    // Dynamic configuration based on environment
-    const isVercel = process.env.VERCEL === '1';
-    const isLocal = config.nodeEnv === 'development';
-
-    // Domain priority logic - explicit DOMAIN takes absolute priority
-    let domain;
-    if (config.domain) {
-      // Use explicitly set DOMAIN from environment (highest priority)
-      domain = config.domain;
-      console.log(`🔒 Using explicit DOMAIN: ${domain}`);
-    } else if (isVercel && process.env.VERCEL_URL) {
-      // Fallback to VERCEL_URL only if DOMAIN is not set
-      domain = process.env.VERCEL_URL;
-      console.log(`🔄 Using VERCEL_URL: ${domain}`);
-    } else if (isLocal) {
-      // Local development
-      domain = 'localhost:3001';
-      console.log(`🏠 Using localhost: ${domain}`);
-    } else {
-      // Production fallback
-      domain = 'thethinkverse.ai';
-      console.log(`🌍 Using production fallback: ${domain}`);
-    }
-
-    const protocol = isVercel ? 'https' : (isLocal ? 'http' : 'https');
-    const returnUrl = `${protocol}://${domain}/ai-seekho/download`;
-
-    const configResponse = {
-      // Environment detection
-      environment: isVercel ? 'vercel' : (isLocal ? 'local' : 'production'),
-      isVercel,
-      isProduction: config.nodeEnv === 'production',
-      isLocal,
-
-      // Domain configuration
-      domain,
-      protocol,
-
-      // Cashfree configuration
-      cashfreeMode: config.cashfreeMode,
-      cashfreeClientId: config.cashfreeClientId || 'CONFIGURED',
-
-      // Product configuration
-      product: {
-        name: config.productName,
-        price: config.productPrice,
-        currency: config.productCurrency,
-        description: config.productDescription,
-        pdfFileName: config.productPdfFileName,
-      },
-
-      // API configuration
-      apiBase: `${protocol}://${domain}/api`,
-
-      // Return URL configuration
-      returnUrl,
-
-      // Build information
-      buildTime: new Date().toISOString(),
-      version: process.env.VERCEL_GIT_COMMIT_SHA || 'local',
-      branch: process.env.VERCEL_GIT_COMMIT_REF || 'local'
-    };
-
-    res.status(200).json(configResponse);
-  } catch (error) {
-    console.error('Config error:', error);
-    res.status(500).json({ error: 'Failed to get configuration' });
-  }
-});
-
-// Debug endpoint for payment verification
-app.get('/api/debug/payment/:orderId', async (req, res) => {
-  try {
-    const { orderId } = req.params;
-
-    console.log(`🔍 Debug: Checking payment status for order: ${orderId}`);
-
-    // Get Cashfree credentials from configuration
-    const clientSecret = config.cashfreeClientSecret;
-    const clientId = config.cashfreeClientId;
-    const cashfreeMode = config.cashfreeMode;
-
-    if (!clientSecret || !clientId) {
-      return res.status(500).json({ error: 'Payment system not configured' });
-    }
-
-    // Determine the correct Cashfree API URL based on mode
-    const cashfreeBaseUrl = cashfreeMode === 'production'
-      ? 'https://api.cashfree.com'
-      : 'https://sandbox.cashfree.com';
-
-    console.log(`🔍 Debug: Using ${cashfreeMode} mode: ${cashfreeBaseUrl}`);
-
-    // Check order status with Cashfree
-    const response = await fetch(`${cashfreeBaseUrl}/pg/orders/${orderId}`, {
-      method: 'GET',
-      headers: {
-        'x-client-id': clientId,
-        'x-client-secret': clientSecret,
-        'x-api-version': '2023-08-01'
-      }
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      return res.status(response.status).json({
-        error: 'Cashfree API error',
-        status: response.status,
-        details: errorData
-      });
-    }
-
-    const result = await response.json();
-
-    res.status(200).json({
-      success: true,
-      orderId,
-      cashfreeMode,
-      apiUrl: `${cashfreeBaseUrl}/pg/orders/${orderId}`,
-      response: result
-    });
-
-  } catch (error) {
-    console.error('Debug endpoint error:', error);
-    res.status(500).json({
-      error: 'Debug failed',
-      details: error.message
-    });
-  }
-});
-
 // Payment API Routes
 app.get('/api/payments/config', async (req, res) => {
   try {
@@ -401,16 +321,16 @@ app.get('/api/payments/config', async (req, res) => {
         console.log(`🔄 Using VERCEL_URL: ${domain}`);
       } else if (isLocal) {
         // Local development
-        domain = 'localhost:3001';
+        domain = 'localhost:5000';
         console.log(`🏠 Using localhost: ${domain}`);
       } else {
         // Production fallback
-        domain = 'thethinkverse.ai';
+        domain = 'samadhanhub.com';
         console.log(`🌍 Using production fallback: ${domain}`);
       }
 
       const protocol = isVercel ? 'https' : (isLocal ? 'http' : 'https');
-      dynamicReturnUrl = `${protocol}://${domain}/ai-seekho/download`;
+      dynamicReturnUrl = `${protocol}://${domain}/download`;
     }
 
     res.status(200).json({
@@ -496,16 +416,16 @@ app.post('/api/payments/initiate', async (req, res) => {
         console.log(`🔄 Using VERCEL_URL: ${domain}`);
       } else if (isLocal) {
         // Local development
-        domain = 'localhost:3001';
+        domain = 'localhost:5000';
         console.log(`🏠 Using localhost: ${domain}`);
       } else {
         // Production fallback
-        domain = 'thethinkverse.ai';
+        domain = 'samadhanhub.com';
         console.log(`🌍 Using production fallback: ${domain}`);
       }
 
       const protocol = isVercel ? 'https' : (isLocal ? 'http' : 'https');
-      dynamicReturnUrl = `${protocol}://${domain}/ai-seekho/download`;
+      dynamicReturnUrl = `${protocol}://${domain}/download`;
     }
 
     // Build notify URL using the same domain logic
@@ -523,13 +443,13 @@ app.post('/api/payments/initiate', async (req, res) => {
       console.log(`🔄 Using VERCEL_URL for notify: ${notifyDomain}`);
     } else if (isLocal) {
       // Local development
-      notifyDomain = 'localhost:3001';
+      notifyDomain = 'localhost:5000';
       console.log(`🏠 Using localhost for notify: ${notifyDomain}`);
-    } else {
-      // Production fallback
-      notifyDomain = 'thethinkverse.ai';
-      console.log(`🌍 Using production fallback for notify: ${notifyDomain}`);
-    }
+          } else {
+        // Production fallback
+        notifyDomain = 'samadhanhub.com';
+        console.log(`🌍 Using production fallback for notify: ${notifyDomain}`);
+      }
 
     const notifyProtocol = isVercel ? 'https' : (isLocal ? 'http' : 'https');
     const dynamicNotifyUrl = `${notifyProtocol}://${notifyDomain}/api/payments/webhook`;
@@ -882,6 +802,27 @@ app.post('/api/payments/webhook', async (req, res) => {
   }
 });
 
+// Download endpoint for successful payments
+app.get('/download', (req, res) => {
+  try {
+    // This endpoint should handle successful payment downloads
+    // For now, we'll return a success message
+    res.json({
+      success: true,
+      message: 'Download endpoint reached. Payment verification required.',
+      timestamp: new Date().toISOString(),
+      server: 'unified-server'
+    });
+  } catch (error) {
+    console.error('Download endpoint error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Download failed',
+      details: error.message
+    });
+  }
+});
+
 // ============================================================================
 // STATIC FILE SERVING
 // ============================================================================
@@ -889,13 +830,12 @@ app.post('/api/payments/webhook', async (req, res) => {
 // Check environment and build status
 const isDevelopment = config.nodeEnv === 'development';
 const mainDistExists = fs.existsSync(mainDistPath);
-const aiSeekhoDistExists = fs.existsSync(aiSeekhoDistPath);
+const clientDistExists = fs.existsSync(clientDistPath);
 
 // If we have built files, serve them regardless of environment
-if (mainDistExists && aiSeekhoDistExists) {
-  console.log('🏭 Built files detected - serving React apps from unified server');
-  console.log('📱 Main app will be served from /');
-  console.log('🤖 AI Seekho app will be served from /ai-seekho');
+if (mainDistExists && clientDistExists) {
+  console.log('🏭 Built files detected - serving React app from unified server');
+  console.log('📱 Samadhan Hub app will be served from /');
 
   // Serve built React apps from unified server
   // Static file serving for main app
@@ -913,25 +853,7 @@ if (mainDistExists && aiSeekhoDistExists) {
     }
   }));
 
-  // Static file serving for AI Seekho app
-  app.use('/ai-seekho', express.static(aiSeekhoDistPath, {
-    maxAge: '1y',
-    setHeaders: (res, filePath) => {
-      const ext = path.extname(filePath).toLowerCase();
-      if (ext === '.js') {
-        res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-      } else if (ext === '.css') {
-        res.setHeader('Content-Type', 'text/css; charset=utf-8');
-      } else if (ext === '.html') {
-        res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      }
-    }
-  }));
 
-  // Handle client-side routing for both apps
-  app.get('/ai-seekho/*', (req, res) => {
-    res.sendFile(path.join(aiSeekhoDistPath, 'index.html'));
-  });
 
   app.get('*', (req, res) => {
     // Only serve index.html for routes that don't have file extensions
@@ -942,32 +864,24 @@ if (mainDistExists && aiSeekhoDistExists) {
 } else if (isDevelopment) {
   // Development mode - redirect to Vite dev servers
   console.log('🔄 Development mode - no built files found');
-  console.log('🔄 Redirecting to Vite dev servers for frontend apps');
-  console.log('🔄 Backend APIs will work on this server (port 3001)');
+  console.log('🔄 Redirecting to Vite dev server for frontend app');
+  console.log('🔄 Backend APIs will work on this server (port 5000)');
 
-  // In development, redirect frontend requests to Vite dev servers
+  // In development, redirect frontend requests to Vite dev server
   app.get('/', (req, res) => {
-    res.redirect('http://localhost:5173');
-  });
-
-  app.get('/ai-seekho', (req, res) => {
-    res.redirect('http://localhost:8081/ai-seekho');
-  });
-
-  app.get('/ai-seekho/*', (req, res) => {
-    res.redirect(`http://localhost:8081${req.path}`);
+    res.redirect('http://localhost:3000');
   });
 
   app.get('*', (req, res) => {
     // Only redirect if it's not an API call
     if (!req.path.startsWith('/api/') && !req.path.startsWith('/health')) {
-      res.redirect('http://localhost:5173');
+      res.redirect('http://localhost:3000');
     }
   });
 } else {
   // Production mode but no built files - error
   console.log('❌ Production mode but no built files found');
-  console.log('❌ Please run: npm run build && npm run build:ai-seekho');
+  console.log('❌ Please run: npm run build');
   process.exit(1);
 }
 
@@ -976,7 +890,7 @@ if (mainDistExists && aiSeekhoDistExists) {
 // ============================================================================
 
 // Note: App routes are now handled in the development mode check above
-// In development: redirects to Vite dev servers
+// In development: redirects to Vite dev server
 // In production: served by static file middleware
 
 // ============================================================================
@@ -1024,8 +938,7 @@ app.listen(config.port, () => {
   console.log('🚀 ==========================================');
   console.log('🚀 Unified Server Started');
   console.log('🚀 ==========================================');
-  console.log(`📱 Main app: ${config.protocol}://${config.domain}`);
-  console.log(`🤖 AI Seekho: ${config.protocol}://${config.domain}/ai-seekho`);
+  console.log(`📱 Samadhan Hub APIs: ${config.protocol}://${config.domain}`);
   console.log(`🏥 Health check: ${config.protocol}://${config.domain}/health`);
   console.log(`🧪 API test: ${config.protocol}://${config.domain}/api/test`);
   console.log(`💳 Payment API: ${config.protocol}://${config.domain}/api/payments/*`);
@@ -1034,7 +947,7 @@ app.listen(config.port, () => {
   console.log(`🌍 Port: ${config.port}`);
   console.log(`🌍 Domain: ${config.domain}`);
   console.log(`🌍 Protocol: ${config.protocol}`);
-  console.log(`🔧 Services: Payment APIs + Main App + AI Seekho App`);
+  console.log(`🔧 Services: Payment APIs + Samadhan Hub App`);
   if (config.nodeEnv === 'production') {
     console.log(`🔒 Security: Helmet, Rate Limiting, CORS enabled`);
   }

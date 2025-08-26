@@ -49,7 +49,7 @@ const DEPLOYMENT = {
 };
 
 // Security Constants
-const SECURITY = {
+const  SECURITY = {
   SENSITIVE_KEYS: ['PASSWORD', 'SECRET', 'KEY', 'TOKEN', 'AUTH', 'PRIVATE'],
   MASKED_VALUE: '***MASKED***',
   HELMET_CSP: ENV.IS_DEV ? false : undefined

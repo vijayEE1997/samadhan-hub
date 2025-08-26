@@ -29,7 +29,7 @@ export const ENV = {
 
 // API endpoints with full URLs
 export const API_ENDPOINTS = {
-  CONFIG: `${SERVER_CONFIG.API_BASE_URL}/config`,
+  CONFIG: `${SERVER_CONFIG.API_BASE_URL}/payments/config`,
   PAYMENT: {
     CREATE_ORDER: `${SERVER_CONFIG.API_BASE_URL}/payments/create-order`,
     VERIFY: `${SERVER_CONFIG.API_BASE_URL}/payments/verify`,
