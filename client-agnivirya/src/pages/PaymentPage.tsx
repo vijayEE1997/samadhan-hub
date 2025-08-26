@@ -1,19 +1,8 @@
 import { useState } from 'react';
 import {
   ArrowLeft,
-  CreditCard,
-  Package,
-  BookOpen,
   Check,
   Shield,
-  Users,
-  Star,
-  Award,
-  Clock,
-  CheckCircle,
-  FileText,
-  Zap,
-  Infinity,
   Lock,
   Loader2
 } from 'lucide-react';

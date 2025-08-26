@@ -23,14 +23,14 @@ const Index = () => {
       <ModeToggle />
       <ConfigBadge />
       <HeroSection onPaymentClick={handlePaymentClick} />
-      <FeaturesSection onPaymentClick={handlePaymentClick} />
+      <FeaturesSection />
       <TechnologySection onPaymentClick={handlePaymentClick} />
       <DemoSection onPaymentClick={handlePaymentClick} />
       <BenefitsSection onPaymentClick={handlePaymentClick} />
-      <TestimonialsSection onPaymentClick={handlePaymentClick} />
+      <TestimonialsSection />
       <SecuritySection onPaymentClick={handlePaymentClick} />
       <CTASection onPaymentClick={handlePaymentClick} />
-      <Footer onPaymentClick={handlePaymentClick} />
+      <Footer />
     </div>
   );
 };

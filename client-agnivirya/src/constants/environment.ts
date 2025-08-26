@@ -1,11 +1,11 @@
 // Environment-specific configuration for the client application
 
 // Type definitions for Vite environment variables
-interface ImportMetaEnv {
-  DEV: boolean;
-  PROD: boolean;
-  MODE: string;
-}
+// interface ImportMetaEnv {
+//   DEV: boolean;
+//   PROD: boolean;
+//   MODE: string;
+// }
 
 // Determine the current environment
 const isDevelopment = (import.meta as any).env?.DEV || false;

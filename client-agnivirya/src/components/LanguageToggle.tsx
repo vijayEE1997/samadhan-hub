@@ -11,12 +11,11 @@ import { LANGUAGES } from '@/constants'
 import { Globe } from 'lucide-react'
 
 export default function LanguageToggle() {
-  const { currentLanguage, toggleLanguage } = useLanguage()
+  const { language, setLanguage } = useLanguage()
   const [isOpen, setIsOpen] = useState(false)
 
-  const handleLanguageChange = (language: { code: string; name: string; flag: string }) => {
-    // This would trigger language change logic
-    console.log('Language changed to:', language.name)
+  const handleLanguageChange = (languageCode: string) => {
+    setLanguage(languageCode)
     setIsOpen(false)
   }
 
@@ -29,7 +28,7 @@ export default function LanguageToggle() {
       >
         <Globe className="w-4 h-4" />
         <span className="text-sm font-medium">
-          {currentLanguage === 'English' ? 'EN' : 'HI'}
+          {language === 'en' ? 'EN' : 'HI'}
         </span>
       </button>
 
@@ -39,7 +38,7 @@ export default function LanguageToggle() {
             {LANGUAGES.SUPPORTED.map((language) => (
               <button
                 key={language.code}
-                onClick={() => handleLanguageChange(language)}
+                onClick={() => handleLanguageChange(language.code)}
                 className="w-full flex items-center space-x-3 px-4 py-2 text-left hover:bg-muted/50 transition-colors"
               >
                 <span className="text-lg">{language.flag}</span>

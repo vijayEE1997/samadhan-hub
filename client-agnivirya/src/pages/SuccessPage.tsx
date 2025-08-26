@@ -5,8 +5,7 @@ import { useState, useEffect } from 'react'
 import { 
   SUCCESS_PAGE, 
   DOWNLOAD_ITEMS, 
-  NEXT_STEPS,
-  UI 
+  NEXT_STEPS
 } from '@/constants'
 
 // @// Icons
@@ -14,8 +13,6 @@ import {
   CheckCircle, 
   Download, 
   BookOpen, 
-  Heart, 
-  Gift,
   ArrowLeft 
 } from 'lucide-react'
 
