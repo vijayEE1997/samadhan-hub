@@ -178,6 +178,7 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
       }
 
       const orderData = await orderResponse.json();
+      console.log('📋 Order data received:', orderData);
 
       // Initialize Cashfree payment
       if (cashfreeSDK && !isSDKLoading) {
@@ -185,9 +186,12 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
         
         try {
           console.log('🔄 Opening Cashfree checkout...');
+          console.log('🔍 Session ID:', orderData.sessionId);
+          console.log('🔍 Order ID:', orderData.orderId);
           
           const checkoutOptions = {
-            paymentSessionId: orderData.paymentSessionId,
+            paymentSessionId: orderData.sessionId, // Use sessionId from backend response
+            sessionId: orderData.sessionId, // Alternative parameter name
             returnUrl: `${window.location.origin}/download?payment_status=SUCCESS`,
             onSuccess: (data: any) => {
               console.log('Payment successful:', data);
@@ -215,8 +219,8 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
           
           // Fallback: redirect to Cashfree hosted checkout
           const checkoutUrl = paymentConfig?.mode === 'production'
-            ? `https://checkout.cashfree.com/pg/view/sessions/${orderData.paymentSessionId}`
-            : `https://sandbox.cashfree.com/pg/view/sessions/${orderData.paymentSessionId}`;
+            ? `https://checkout.cashfree.com/pg/view/sessions/${orderData.sessionId}`
+            : `https://sandbox.cashfree.com/pg/view/sessions/${orderData.sessionId}`;
           
           console.log('🔄 Redirecting to hosted checkout:', checkoutUrl);
           window.location.href = checkoutUrl;
