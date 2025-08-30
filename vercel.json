@@ -22,6 +22,14 @@
       "destination": "/api/server.js"
     },
     {
+      "source": "/visitor-demo",
+      "destination": "/api/server.js"
+    },
+    {
+      "source": "/visitor-demo-prod",
+      "destination": "/api/server.js"
+    },
+    {
       "source": "/agnivirya/(.*)",
       "destination": "/$1"
     },

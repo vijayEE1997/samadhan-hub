@@ -1337,6 +1337,41 @@ app.get('/visitor-demo-prod', (req, res) => {
   }
 });
 
+// Alternative demo page route using query parameter
+app.get('/demo', (req, res) => {
+  try {
+    const type = req.query.type || 'visitor';
+    let demoPath;
+    
+    if (type === 'visitor-prod' || process.env.VERCEL === '1' || process.env.NODE_ENV === 'production') {
+      demoPath = path.join(__dirname, 'visitor-demo-prod.html');
+    } else {
+      demoPath = path.join(__dirname, 'visitor-demo.html');
+    }
+    
+    if (fs.existsSync(demoPath)) {
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.sendFile(demoPath);
+      console.log(`✅ Demo page served via /demo route: ${demoPath}`);
+    } else {
+      res.status(404).json({
+        success: false,
+        error: 'Demo page not found',
+        message: 'Please check if demo HTML files exist',
+        requestedPath: demoPath,
+        type: type
+      });
+    }
+  } catch (error) {
+    console.error('Demo page error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to serve demo page',
+      details: error.message
+    });
+  }
+});
+
 // ============================================================================
 // IMAGE SERVING API - Serve images from server-side directory
 // ============================================================================
