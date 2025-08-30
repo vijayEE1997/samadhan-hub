@@ -554,7 +554,7 @@ app.get('/api/payments/initiate', async (req, res) => {
     // Use default values for all customer information
     const finalCustomerEmail = 'abc@gmail.com';
     const finalCustomerName = 'Customer';
-    const finalCustomerPhone = '8305940684';
+    const finalCustomerPhone = '0000000000';
     const amount = config.productPrice;
     const currency = config.productCurrency;
 
