@@ -10,6 +10,7 @@ import {
   Clock
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { getImagePath } from '@/utils/assetUtils';
 import './SolutionOverviewSection.css';
 
 const SolutionOverviewSection: React.FC = () => {
@@ -125,7 +126,7 @@ const SolutionOverviewSection: React.FC = () => {
             <div className="mockup-container premium">
               <div className="mockup-cover">
                 <img 
-                  src="/assets/ebook-cover.png" 
+                  src={getImagePath('ebook-cover.png')} 
                   alt="AgniVirya Ebook Cover"
                   className="mockup-image"
                 />

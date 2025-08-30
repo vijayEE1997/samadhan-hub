@@ -6,7 +6,6 @@ export const APP_CONFIG = {
   SUBTITLE: 'प्राचीन ज्ञान, आधुनिक बल',
   DESCRIPTION: 'Ancient Ayurvedic Wisdom for Modern Men',
   VERSION: '1.0.0',
-  LOGO_PATH: '/assets/agnivirya-logo.png',
 } as const;
 
 // Navigation Constants

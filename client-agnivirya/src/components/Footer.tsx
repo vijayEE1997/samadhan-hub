@@ -9,6 +9,7 @@ import {
   Users
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { getImagePath } from '@/utils/assetUtils';
 import './Footer.css';
 
 const Footer: React.FC = () => {
@@ -26,7 +27,7 @@ const Footer: React.FC = () => {
           <div className="footer-brand">
             <div className="footer-logo">
               <img 
-                src="/assets/agnivirya-logo.png"
+                src={getImagePath('agnivirya-logo.png')}
                 alt="AgniVirya Logo"
                 className="footer-logo-img"
               />

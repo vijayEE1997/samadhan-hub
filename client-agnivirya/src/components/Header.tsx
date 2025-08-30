@@ -10,6 +10,7 @@ import { NAVIGATION, APP_CONFIG } from '@/constants'
 // @// Icons
 import { Book } from 'lucide-react'
 import './Header.css';
+import { getImagePath } from '@/utils/assetUtils';
 
 // @// Types
 interface HeaderProps {
@@ -140,7 +141,7 @@ export default function Header({ }: HeaderProps) {
         {/* Logo Section */}
         <a href="#" className="header-logo">
           <img 
-            src={APP_CONFIG.LOGO_PATH}
+            src={getImagePath('agnivirya-logo.png')}
             alt={`${APP_CONFIG.NAME} Logo`}
           />
           <div className="header-brand">
