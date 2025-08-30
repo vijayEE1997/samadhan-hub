@@ -40,6 +40,9 @@ const {
   LOGGING
 } = require('./constants');
 
+// Import visitor tracker
+const VisitorTracker = require('./visitor-tracker');
+
 // Create local copies of constants with fallback values
 const localSecurity = {
   ...SECURITY,
@@ -130,6 +133,10 @@ if (missingConfig.length > 0) {
   console.error('Please check your .env file');
   process.exit(1);
 }
+
+// Initialize visitor tracker
+const visitorTracker = new VisitorTracker();
+console.log('📊 Visitor tracking system initialized');
 
 const app = express();
 
@@ -426,6 +433,39 @@ app.use((req, res, next) => {
     console.log(`🔍 Request ID: ${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
   }
 
+  next();
+});
+
+// Visitor tracking middleware - track all requests automatically
+app.use((req, res, next) => {
+  // Skip tracking for certain paths to avoid noise
+  const skipPaths = [
+    '/api/visitors/track', // Avoid double tracking
+    '/api/visitors/stats',
+    '/api/visitors/count',
+    '/api/visitors/list',
+    '/api/visitors/reset',
+    '/api/visitors/data-file',
+    '/health',
+    '/favicon.ico',
+    '/assets/',
+    '/public/'
+  ];
+  
+  const shouldSkip = skipPaths.some(path => req.path.startsWith(path));
+  
+  if (!shouldSkip) {
+    try {
+      // Track the visit asynchronously to not block the request
+      setImmediate(() => {
+        visitorTracker.trackVisit(req);
+      });
+    } catch (error) {
+      console.error('❌ Visitor tracking middleware error:', error);
+      // Don't block the request if tracking fails
+    }
+  }
+  
   next();
 });
 
@@ -981,6 +1021,186 @@ app.get('/download', (req, res) => {
 });
 
 // ============================================================================
+// VISITOR TRACKING API ENDPOINTS
+// ============================================================================
+
+// Track visitor visit (this will be called automatically for all requests)
+app.get('/api/visitors/track', (req, res) => {
+  try {
+    const trackingResult = visitorTracker.trackVisit(req);
+    
+    res.json({
+      success: true,
+      message: 'Visit tracked successfully',
+      data: trackingResult,
+      timestamp: new Date().toISOString(),
+      server: 'unified-server'
+    });
+  } catch (error) {
+    console.error('Visitor tracking error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to track visit',
+      details: error.message
+    });
+  }
+});
+
+// Get visitor statistics
+app.get('/api/visitors/stats', (req, res) => {
+  try {
+    const stats = visitorTracker.getStats();
+    
+    res.json({
+      success: true,
+      message: 'Visitor statistics retrieved successfully',
+      data: stats,
+      timestamp: new Date().toISOString(),
+      server: 'unified-server'
+    });
+  } catch (error) {
+    console.error('Stats retrieval error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to retrieve statistics',
+      details: error.message
+    });
+  }
+});
+
+// Get unique visitor count
+app.get('/api/visitors/count', (req, res) => {
+  try {
+    const stats = visitorTracker.getStats();
+    
+    res.json({
+      success: true,
+      message: 'Unique visitor count retrieved successfully',
+      data: {
+        uniqueVisitors: stats.overall.uniqueVisitors,
+        totalVisits: stats.overall.totalVisits,
+        todayUniqueVisitors: stats.today.uniqueVisitors,
+        last24HoursUniqueVisitors: stats.last24Hours.uniqueVisitors
+      },
+      timestamp: new Date().toISOString(),
+      server: 'unified-server'
+    });
+  } catch (error) {
+    console.error('Count retrieval error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to retrieve visitor count',
+      details: error.message
+    });
+  }
+});
+
+// Get detailed visitor information (with pagination)
+app.get('/api/visitors/list', (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 50;
+    const offset = parseInt(req.query.offset) || 0;
+    
+    // Validate parameters
+    if (limit > 100) {
+      return res.status(400).json({
+        success: false,
+        error: 'Limit cannot exceed 100',
+        message: 'Please use a limit of 100 or less'
+      });
+    }
+    
+    const visitors = visitorTracker.getVisitors(limit, offset);
+    
+    res.json({
+      success: true,
+      message: 'Visitor list retrieved successfully',
+      data: visitors,
+      timestamp: new Date().toISOString(),
+      server: 'unified-server'
+    });
+  } catch (error) {
+    console.error('Visitor list error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to retrieve visitor list',
+      details: error.message
+    });
+  }
+});
+
+// Reset visitor data (useful for testing)
+app.post('/api/visitors/reset', (req, res) => {
+  try {
+    visitorTracker.resetData();
+    
+    res.json({
+      success: true,
+      message: 'Visitor tracking data reset successfully',
+      timestamp: new Date().toISOString(),
+      server: 'unified-server'
+    });
+  } catch (error) {
+    console.error('Reset error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to reset visitor data',
+      details: error.message
+    });
+  }
+});
+
+// Get raw visitor data file path (for admin purposes)
+app.get('/api/visitors/data-file', (req, res) => {
+  try {
+    const dataFilePath = visitorTracker.getDataFilePath();
+    
+    res.json({
+      success: true,
+      message: 'Data file path retrieved successfully',
+      data: {
+        dataFilePath,
+        exists: require('fs').existsSync(dataFilePath),
+        size: require('fs').existsSync(dataFilePath) ? require('fs').statSync(dataFilePath).size : 0
+      },
+      timestamp: new Date().toISOString(),
+      server: 'unified-server'
+    });
+  } catch (error) {
+    console.error('Data file path error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to retrieve data file path',
+      details: error.message
+    });
+  }
+});
+
+// Serve visitor tracking demo page
+app.get('/visitor-demo', (req, res) => {
+  try {
+    const demoPath = path.join(__dirname, 'visitor-demo.html');
+    if (fs.existsSync(demoPath)) {
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.sendFile(demoPath);
+    } else {
+      res.status(404).json({
+        success: false,
+        error: 'Demo page not found',
+        message: 'Visitor demo page is not available'
+      });
+    }
+  } catch (error) {
+    console.error('Demo page error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to serve demo page',
+      details: error.message
+    });
+  }
+});
+
+// ============================================================================
 // IMAGE SERVING API - Serve images from server-side directory
 // ============================================================================
 
@@ -1366,13 +1586,14 @@ app.listen(config.port, () => {
   console.log(`🏥 Health check: ${config.protocol}://${config.domain}/health`);
   console.log(`🧪 API test: ${config.protocol}://${config.domain}/api/test`);
   console.log(`💳 Payment API: ${config.protocol}://${config.domain}/api/payments/*`);
+  console.log(`📊 Visitor Tracking: ${config.protocol}://${config.domain}/api/visitors/*`);
   console.log(`🖼️ Asset Serving: Images, favicon, and static files`);
   console.log(`🌍 Environment: ${config.nodeEnv}`);
   console.log(`🌍 Cashfree Mode: ${config.cashfreeMode}`);
   console.log(`🌍 Port: ${config.port}`);
   console.log(`🌍 Domain: ${config.domain}`);
   console.log(`🌍 Protocol: ${config.protocol}`);
-  console.log(`🔧 Services: Payment APIs + Samadhan Hub App + Asset Serving`);
+  console.log(`🔧 Services: Payment APIs + Samadhan Hub App + Asset Serving + Visitor Tracking`);
   if (config.nodeEnv === 'production') {
     console.log(`🔒 Security: Helmet, Rate Limiting, CORS enabled`);
   }

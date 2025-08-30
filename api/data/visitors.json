@@ -1,0 +1,238 @@
+{
+  "visitors": [
+    [
+      "::1",
+      {
+        "ip": "::1",
+        "firstVisit": "2025-08-30T20:05:05.202Z",
+        "lastVisit": "2025-08-30T20:06:12.098Z",
+        "visits": [
+          {
+            "ip": "::1",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+            "referer": "direct",
+            "timestamp": "2025-08-30T20:05:05.202Z",
+            "path": "/",
+            "method": "GET",
+            "headers": {
+              "accept-language": "en-US,en;q=0.9,en-IN;q=0.8",
+              "accept-encoding": "gzip, deflate, br, zstd"
+            }
+          },
+          {
+            "ip": "::1",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+            "referer": "direct",
+            "timestamp": "2025-08-30T20:05:05.805Z",
+            "path": "/api/images/agnivirya-logo.png",
+            "method": "GET",
+            "headers": {
+              "accept-language": "en-US,en;q=0.9,en-IN;q=0.8",
+              "accept-encoding": "gzip, deflate, br, zstd"
+            }
+          },
+          {
+            "ip": "::1",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+            "referer": "direct",
+            "timestamp": "2025-08-30T20:05:05.809Z",
+            "path": "/agnivirya/manifest.json",
+            "method": "GET",
+            "headers": {
+              "accept-language": "en-US,en;q=0.9,en-IN;q=0.8",
+              "accept-encoding": "gzip, deflate, br, zstd"
+            }
+          },
+          {
+            "ip": "::1",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+            "referer": "direct",
+            "timestamp": "2025-08-30T20:05:06.955Z",
+            "path": "/agnivirya/favicon.ico",
+            "method": "GET",
+            "headers": {
+              "accept-language": "en-US,en;q=0.9,en-IN;q=0.8",
+              "accept-encoding": "gzip, deflate, br, zstd"
+            }
+          },
+          {
+            "ip": "::1",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+            "referer": "direct",
+            "timestamp": "2025-08-30T20:05:16.535Z",
+            "path": "/",
+            "method": "GET",
+            "headers": {
+              "accept-language": "en-US,en;q=0.9,en-IN;q=0.8",
+              "accept-encoding": "gzip, deflate, br, zstd",
+              "cache-control": "max-age=0"
+            }
+          },
+          {
+            "ip": "::1",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+            "referer": "direct",
+            "timestamp": "2025-08-30T20:05:16.657Z",
+            "path": "/agnivirya/manifest.json",
+            "method": "GET",
+            "headers": {
+              "accept-language": "en-US,en;q=0.9,en-IN;q=0.8",
+              "accept-encoding": "gzip, deflate, br, zstd"
+            }
+          },
+          {
+            "ip": "::1",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+            "referer": "direct",
+            "timestamp": "2025-08-30T20:05:16.664Z",
+            "path": "/api/images/agnivirya-logo.png",
+            "method": "GET",
+            "headers": {
+              "accept-language": "en-US,en;q=0.9,en-IN;q=0.8",
+              "accept-encoding": "gzip, deflate, br, zstd"
+            }
+          },
+          {
+            "ip": "::1",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+            "referer": "direct",
+            "timestamp": "2025-08-30T20:05:16.681Z",
+            "path": "/api/images/agnivirya-logo.png",
+            "method": "GET",
+            "headers": {
+              "accept-language": "en-US,en;q=0.9,en-IN;q=0.8",
+              "accept-encoding": "gzip, deflate, br, zstd"
+            }
+          },
+          {
+            "ip": "::1",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+            "referer": "direct",
+            "timestamp": "2025-08-30T20:05:16.709Z",
+            "path": "/agnivirya/favicon.ico",
+            "method": "GET",
+            "headers": {
+              "accept-language": "en-US,en;q=0.9,en-IN;q=0.8",
+              "accept-encoding": "gzip, deflate, br, zstd"
+            }
+          },
+          {
+            "ip": "::1",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+            "referer": "direct",
+            "timestamp": "2025-08-30T20:05:20.070Z",
+            "path": "/agnivirya/manifest.json",
+            "method": "GET",
+            "headers": {
+              "accept-language": "en-US,en;q=0.9,en-IN;q=0.8",
+              "accept-encoding": "gzip, deflate, br, zstd"
+            }
+          },
+          {
+            "ip": "::1",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+            "referer": "direct",
+            "timestamp": "2025-08-30T20:05:20.078Z",
+            "path": "/.well-known/appspecific/com.chrome.devtools.json",
+            "method": "GET",
+            "headers": {
+              "accept-language": "en-US,en;q=0.9,en-IN;q=0.8",
+              "accept-encoding": "gzip, deflate, br, zstd"
+            }
+          },
+          {
+            "ip": "::1",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+            "referer": "http://localhost:3000/agnivirya/",
+            "timestamp": "2025-08-30T20:05:45.981Z",
+            "path": "/api/images/agnivirya-logo.png",
+            "method": "GET",
+            "headers": {
+              "accept-language": "en-US,en;q=0.9,en-IN;q=0.8",
+              "accept-encoding": "gzip, deflate, br, zstd"
+            }
+          },
+          {
+            "ip": "::1",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+            "referer": "http://localhost:3000/agnivirya/",
+            "timestamp": "2025-08-30T20:05:46.004Z",
+            "path": "/api/images/ebook-cover.png",
+            "method": "GET",
+            "headers": {
+              "accept-language": "en-US,en;q=0.9,en-IN;q=0.8",
+              "accept-encoding": "gzip, deflate, br, zstd"
+            }
+          },
+          {
+            "ip": "::1",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+            "referer": "http://localhost:3000/",
+            "timestamp": "2025-08-30T20:05:52.844Z",
+            "path": "/api/payments/config",
+            "method": "GET",
+            "headers": {
+              "accept-language": "en-US,en;q=0.9,en-IN;q=0.8",
+              "accept-encoding": "gzip, deflate, br, zstd"
+            }
+          },
+          {
+            "ip": "::1",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+            "referer": "http://localhost:3000/",
+            "timestamp": "2025-08-30T20:05:52.851Z",
+            "path": "/api/payments/config",
+            "method": "GET",
+            "headers": {
+              "accept-language": "en-US,en;q=0.9,en-IN;q=0.8",
+              "accept-encoding": "gzip, deflate, br, zstd"
+            }
+          },
+          {
+            "ip": "::1",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+            "referer": "http://localhost:3000/",
+            "timestamp": "2025-08-30T20:05:56.899Z",
+            "path": "/api/payments/initiate",
+            "method": "GET",
+            "headers": {
+              "accept-language": "en-US,en;q=0.9,en-IN;q=0.8",
+              "accept-encoding": "gzip, deflate, br, zstd"
+            }
+          },
+          {
+            "ip": "::1",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+            "referer": "direct",
+            "timestamp": "2025-08-30T20:06:11.920Z",
+            "path": "/visitor-demo",
+            "method": "GET",
+            "headers": {
+              "accept-language": "en-US,en;q=0.9,en-IN;q=0.8",
+              "accept-encoding": "gzip, deflate, br, zstd"
+            }
+          },
+          {
+            "ip": "::1",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0",
+            "referer": "direct",
+            "timestamp": "2025-08-30T20:06:12.098Z",
+            "path": "/api/visitors/track",
+            "method": "GET",
+            "headers": {
+              "accept-language": "en-US,en;q=0.9,en-IN;q=0.8",
+              "accept-encoding": "gzip, deflate, br, zstd"
+            }
+          }
+        ],
+        "totalVisits": 18
+      }
+    ]
+  ],
+  "stats": {
+    "totalVisits": 18,
+    "uniqueVisitors": 1,
+    "lastReset": "2025-08-30T20:04:34.286Z"
+  },
+  "lastUpdated": "2025-08-30T20:06:12.098Z"
+}
