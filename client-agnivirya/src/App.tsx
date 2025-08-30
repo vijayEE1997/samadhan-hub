@@ -26,9 +26,6 @@ import SolutionOverviewSection from './components/sections/SolutionOverviewSecti
 import RecipePreviewSection from './components/sections/RecipePreviewSection'
 import ScientificValidationSection from './components/sections/ScientificValidationSection'
 import TrustIndicatorsSection from './components/sections/TrustIndicatorsSection'
-import MobileHomepage from './components/MobileHomepage'
-import { useMobileDetect } from './hooks/useMobileDetect'
-
 interface AppProps {
   initialState?: {
     currentUrl?: string
@@ -42,7 +39,6 @@ interface AppProps {
 function App({ initialState }: AppProps) {
   const { t } = useLanguage()
   const [currentRoute, setCurrentRoute] = useState(initialState?.currentUrl || '/')
-  const { isMobile } = useMobileDetect();
 
 
   useEffect(() => {
@@ -170,11 +166,7 @@ function App({ initialState }: AppProps) {
   return (
     <div className="app">
       <main className="app-main">
-        {isMobile ? (
-          <MobileHomepage onPaymentClick={handlePaymentClick} />
-        ) : (
-          renderRouteContent()
-        )}
+        renderRouteContent()
       </main>
     </div>
   );
