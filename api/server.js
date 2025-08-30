@@ -1229,28 +1229,74 @@ app.get('/api/visitors/status', (req, res) => {
   }
 });
 
+// Debug endpoint to check environment variables
+app.get('/api/debug/env', (req, res) => {
+  try {
+    const envInfo = {
+      NODE_ENV: process.env.NODE_ENV,
+      VERCEL: process.env.VERCEL,
+      VERCEL_ENV: process.env.VERCEL_ENV,
+      VERCEL_URL: process.env.VERCEL_URL,
+      VERCEL_REGION: process.env.VERCEL_REGION,
+      PORT: process.env.PORT,
+      PWD: process.cwd(),
+      __dirname: __dirname,
+      timestamp: new Date().toISOString()
+    };
+    
+    res.json({
+      success: true,
+      message: 'Environment debug info retrieved',
+      data: envInfo,
+      server: 'unified-server'
+    });
+  } catch (error) {
+    console.error('Environment debug error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to retrieve environment info',
+      details: error.message
+    });
+  }
+});
+
 // Serve visitor tracking demo page
 app.get('/visitor-demo', (req, res) => {
   try {
     // Choose demo page based on environment
     let demoPath;
-    if (process.env.VERCEL === '1' || process.env.NODE_ENV === 'production') {
+    let environment = 'unknown';
+    
+    if (process.env.VERCEL === '1') {
       demoPath = path.join(__dirname, 'visitor-demo-prod.html');
+      environment = 'vercel';
+    } else if (process.env.NODE_ENV === 'production') {
+      demoPath = path.join(__dirname, 'visitor-demo-prod.html');
+      environment = 'production';
     } else {
       demoPath = path.join(__dirname, 'visitor-demo.html');
+      environment = 'development';
     }
+    
+    console.log(`🌐 Serving demo page: ${demoPath} (Environment: ${environment})`);
+    console.log(`📁 File exists: ${fs.existsSync(demoPath)}`);
+    console.log(`🔧 VERCEL: ${process.env.VERCEL}, NODE_ENV: ${process.env.NODE_ENV}`);
     
     if (fs.existsSync(demoPath)) {
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.sendFile(demoPath);
+      console.log(`✅ Demo page served successfully: ${demoPath}`);
     } else {
+      console.log(`❌ Demo page not found: ${demoPath}`);
       res.status(404).json({
         success: false,
         error: 'Demo page not found',
         message: 'Visitor demo page is not available',
         requestedPath: demoPath,
-        environment: process.env.NODE_ENV,
-        isVercel: process.env.VERCEL === '1'
+        environment: environment,
+        isVercel: process.env.VERCEL === '1',
+        nodeEnv: process.env.NODE_ENV,
+        availableFiles: fs.readdirSync(__dirname).filter(f => f.includes('visitor-demo'))
       });
     }
   } catch (error) {
@@ -1258,6 +1304,34 @@ app.get('/visitor-demo', (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Failed to serve demo page',
+      details: error.message,
+      stack: error.stack
+    });
+  }
+});
+
+// Fallback demo page route (always serves production version)
+app.get('/visitor-demo-prod', (req, res) => {
+  try {
+    const demoPath = path.join(__dirname, 'visitor-demo-prod.html');
+    
+    if (fs.existsSync(demoPath)) {
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.sendFile(demoPath);
+      console.log(`✅ Fallback demo page served: ${demoPath}`);
+    } else {
+      res.status(404).json({
+        success: false,
+        error: 'Production demo page not found',
+        message: 'Please check if visitor-demo-prod.html exists',
+        requestedPath: demoPath
+      });
+    }
+  } catch (error) {
+    console.error('Fallback demo page error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to serve fallback demo page',
       details: error.message
     });
   }
