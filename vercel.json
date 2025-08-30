@@ -6,6 +6,7 @@
   ],
   "buildCommand": "npm run vercel-build",
   "installCommand": "npm run install:all",
+  "outputDirectory": "client-agnivirya/dist",
   "functions": {
     "api/server.js": {
       "maxDuration": 30
