@@ -65,7 +65,9 @@ export default function Header({ }: HeaderProps) {
 
   // Toggle mobile menu
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen)
+    const newState = !isMenuOpen
+    setIsMenuOpen(newState)
+    console.log('Mobile menu toggled:', newState)
   }
 
   // Close mobile menu

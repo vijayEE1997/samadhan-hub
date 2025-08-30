@@ -184,38 +184,67 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
       if (window.Cashfree && cashfreeSDKReady) {
         setIsRedirecting(true);
         
-        const cashfree = new window.Cashfree({
-          mode: paymentConfig.mode || 'sandbox'
-        });
+        try {
+          // Use the correct Cashfree SDK v3 API
+          const cashfree = new window.Cashfree({
+            mode: paymentConfig.mode || 'sandbox'
+          });
 
-        const paymentOptions = {
-          sessionId: orderData.paymentSessionId,
-          returnUrl: `${window.location.origin}/payment-success`,
-          onSuccess: (data: any) => {
-            console.log('Payment successful:', data);
-            // Handle success - redirect to success page
-            window.location.href = '/payment-success';
-          },
-          onFailure: (data: any) => {
-            console.log('Payment failed:', data);
-            setIsRedirecting(false);
-            // Handle failure - show error message
-            alert('Payment failed. Please try again.');
-          },
-          onClose: () => {
-            console.log('Payment window closed');
-            setIsRedirecting(false);
+          const paymentOptions = {
+            sessionId: orderData.paymentSessionId,
+            returnUrl: `${window.location.origin}/payment-success`,
+            onSuccess: (data: any) => {
+              console.log('Payment successful:', data);
+              // Handle success - redirect to success page
+              window.location.href = '/payment-success';
+            },
+            onFailure: (data: any) => {
+              console.log('Payment failed:', data);
+              setIsRedirecting(false);
+              // Handle failure - show error message
+              alert('Payment failed. Please try again.');
+            },
+            onClose: () => {
+              console.log('Payment window closed');
+              setIsRedirecting(false);
+            }
+          };
+
+          // Use the correct method for Cashfree SDK v3
+          if (typeof cashfree.initiatePayment === 'function') {
+            cashfree.initiatePayment(paymentOptions);
+          } else if (typeof cashfree.init === 'function') {
+            cashfree.init(paymentOptions);
+          } else if (typeof cashfree.render === 'function') {
+            cashfree.render(paymentOptions);
+          } else {
+            console.error('Cashfree SDK methods not found:', Object.getOwnPropertyNames(cashfree));
+            throw new Error('Cashfree SDK methods not available');
           }
-        };
-
-        cashfree.init(paymentOptions);
+        } catch (sdkError: any) {
+          console.error('Cashfree SDK initialization error:', sdkError);
+          throw new Error(`Cashfree SDK error: ${sdkError.message || 'Unknown error'}`);
+        }
       } else {
+        console.error('Cashfree SDK not ready. Status:', {
+          windowCashfree: !!window.Cashfree,
+          cashfreeSDKReady,
+          sdkScript: !!document.getElementById('cashfree-sdk')
+        });
         throw new Error('Cashfree SDK not ready');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Payment error:', error);
       setIsProcessing(false);
-      alert('Payment initialization failed. Please try again.');
+      
+      // More specific error messages
+      if (error.message?.includes('Cashfree SDK')) {
+        alert('Payment system error. Please refresh the page and try again.');
+      } else if (error.message?.includes('Failed to create order')) {
+        alert('Order creation failed. Please check your internet connection and try again.');
+      } else {
+        alert('Payment initialization failed. Please try again.');
+      }
     }
   };
 
