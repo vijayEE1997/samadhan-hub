@@ -20,13 +20,6 @@ import { getImagePath } from '@/utils/assetUtils';
 // Import PaymentPage styles
 import './PaymentPage.css';
 
-// Declare Cashfree global type
-declare global {
-  interface Window {
-    Cashfree: any;
-  }
-}
-
 interface PaymentPageProps {
   onBackToHome: () => void;
 }
@@ -49,7 +42,8 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
   const [paymentConfig, setPaymentConfig] = useState<any>(null);
   const [isLoadingConfig, setIsLoadingConfig] = useState(true);
   const [configError, setConfigError] = useState<string>('');
-  const [cashfreeSDKReady, setCashfreeSDKReady] = useState(false);
+  const [cashfreeSDK, setCashfreeSDK] = useState<any>(null);
+  const [isSDKLoading, setIsSDKLoading] = useState(true);
   const emailInputRef = useRef<HTMLInputElement>(null);
 
   // Manage body class for padding override and auto-focus email field
@@ -66,46 +60,8 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
     };
   }, []);
 
-  // Load Cashfree SDK and payment configuration on component mount
+  // Load payment configuration on component mount
   useEffect(() => {
-    const loadCashfreeSDK = () => {
-      if (!document.getElementById('cashfree-sdk')) {
-        const script = document.createElement('script');
-        script.id = 'cashfree-sdk';
-        // Try the UI SDK first as it might have better method exposure
-        script.src = 'https://sdk.cashfree.com/js/ui/2.0.0/cashfree.prod.js';
-        script.async = true;
-        script.onload = () => {
-          console.log('✅ Cashfree SDK loaded successfully');
-          console.log('Cashfree global object:', window.Cashfree);
-          console.log('Available methods:', Object.getOwnPropertyNames(window.Cashfree || {}));
-          setCashfreeSDKReady(true);
-        };
-        script.onerror = () => {
-          console.error('❌ Failed to load Cashfree UI SDK, trying v3...');
-          // Fallback to v3
-          const scriptV3 = document.createElement('script');
-          scriptV3.id = 'cashfree-sdk-v3';
-          scriptV3.src = 'https://sdk.cashfree.com/js/v3/cashfree.js';
-          scriptV3.async = true;
-          scriptV3.onload = () => {
-            console.log('✅ Cashfree SDK v3 loaded successfully');
-            console.log('Cashfree global object:', window.Cashfree);
-            console.log('Available methods:', Object.getOwnPropertyNames(window.Cashfree || {}));
-            setCashfreeSDKReady(true);
-          };
-          scriptV3.onerror = () => {
-            console.error('❌ Failed to load Cashfree SDK v3 as well');
-            setCashfreeSDKReady(false);
-          };
-          document.head.appendChild(scriptV3);
-        };
-        document.head.appendChild(script);
-      } else {
-        setCashfreeSDKReady(true);
-      }
-    };
-
     const loadPaymentConfig = async () => {
       try {
         setIsLoadingConfig(true);
@@ -125,9 +81,34 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
       }
     };
 
-    loadCashfreeSDK();
     loadPaymentConfig();
   }, []);
+
+  // Load Cashfree SDK when payment config is available
+  useEffect(() => {
+    if (paymentConfig && !cashfreeSDK) {
+      const loadCashfreeSDK = async () => {
+        try {
+          setIsSDKLoading(true);
+          // Dynamic import to avoid build issues
+          const { load } = await import('@cashfreepayments/cashfree-js');
+          
+          const sdk = await load({
+            mode: paymentConfig.mode || 'sandbox'
+          });
+          
+          setCashfreeSDK(sdk);
+          console.log('✅ Cashfree SDK loaded successfully');
+        } catch (error) {
+          console.error('❌ Failed to load Cashfree SDK:', error);
+        } finally {
+          setIsSDKLoading(false);
+        }
+      };
+
+      loadCashfreeSDK();
+    }
+  }, [paymentConfig, cashfreeSDK]);
 
   // Handle form input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -199,44 +180,14 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
       const orderData = await orderResponse.json();
 
       // Initialize Cashfree payment
-      if (window.Cashfree && cashfreeSDKReady) {
+      if (cashfreeSDK && !isSDKLoading) {
         setIsRedirecting(true);
         
         try {
-          // Wait a bit for the SDK to fully initialize
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          console.log('🔄 Opening Cashfree checkout...');
           
-          // Check what methods are available on the Cashfree global object
-          console.log('Available Cashfree methods:', Object.getOwnPropertyNames(window.Cashfree));
-          console.log('Cashfree prototype methods:', Object.getOwnPropertyNames(Object.getPrototypeOf(window.Cashfree)));
-          
-          // Try to access the SDK in different ways
-          let cashfree = window.Cashfree;
-          
-          // If Cashfree is a function, try to call it or access its properties
-          if (typeof cashfree === 'function') {
-            console.log('Cashfree is a function, trying to access its properties...');
-            
-            // Try to access the SDK object that might be attached to the function
-            if (cashfree.SDK || cashfree.default) {
-              cashfree = cashfree.SDK || cashfree.default;
-              console.log('Found SDK object:', cashfree);
-            }
-            
-            // Try to create an instance
-            try {
-              const instance = new cashfree({
-                mode: paymentConfig.mode || 'sandbox'
-              });
-              console.log('Created Cashfree instance:', instance);
-              cashfree = instance;
-            } catch (e) {
-              console.log('Could not create instance, using function directly');
-            }
-          }
-          
-          const paymentOptions = {
-            sessionId: orderData.paymentSessionId,
+          const checkoutOptions = {
+            paymentSessionId: orderData.paymentSessionId,
             returnUrl: `${window.location.origin}/download?payment_status=SUCCESS`,
             onSuccess: (data: any) => {
               console.log('Payment successful:', data);
@@ -255,54 +206,26 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
             }
           };
 
-          // For v2.0.0, we might need to create a payment instance
-          let paymentInstance;
-          if (typeof cashfree.create === 'function') {
-            console.log('Using create method to create payment instance');
-            paymentInstance = cashfree.create({
-              mode: paymentConfig.mode || 'sandbox'
-            });
-          }
-
-          // Try different methods based on what's available
-          if (paymentInstance && typeof paymentInstance.initiatePayment === 'function') {
-            console.log('Using paymentInstance.initiatePayment method');
-            paymentInstance.initiatePayment(paymentOptions);
-          } else if (paymentInstance && typeof paymentInstance.init === 'function') {
-            console.log('Using paymentInstance.init method');
-            paymentInstance.init(paymentOptions);
-          } else if (typeof cashfree.initiatePayment === 'function') {
-            console.log('Using initiatePayment method directly');
-            cashfree.initiatePayment(paymentOptions);
-          } else if (typeof cashfree.init === 'function') {
-            console.log('Using init method directly');
-            cashfree.init(paymentOptions);
-          } else if (typeof cashfree.render === 'function') {
-            console.log('Using render method');
-            cashfree.render(paymentOptions);
-          } else if (typeof cashfree.checkout === 'function') {
-            console.log('Using checkout method');
-            cashfree.checkout(paymentOptions);
-          } else if (typeof cashfree.pay === 'function') {
-            console.log('Using pay method');
-            cashfree.pay(paymentOptions);
-          } else {
-            // Log all available methods for debugging
-            console.error('Available methods on Cashfree:', Object.getOwnPropertyNames(cashfree));
-            if (paymentInstance) {
-              console.error('Available methods on paymentInstance:', Object.getOwnPropertyNames(paymentInstance));
-            }
-            throw new Error('No suitable Cashfree payment method found');
-          }
+          // Use the Cashfree SDK checkout method
+          const result = await cashfreeSDK.checkout(checkoutOptions);
+          console.log('✅ Cashfree checkout opened successfully:', result);
+          
         } catch (sdkError: any) {
-          console.error('Cashfree SDK initialization error:', sdkError);
-          throw new Error(`Cashfree SDK error: ${sdkError.message || 'Unknown error'}`);
+          console.error('Cashfree SDK checkout error:', sdkError);
+          
+          // Fallback: redirect to Cashfree hosted checkout
+          const checkoutUrl = paymentConfig?.mode === 'production'
+            ? `https://checkout.cashfree.com/pg/view/sessions/${orderData.paymentSessionId}`
+            : `https://sandbox.cashfree.com/pg/view/sessions/${orderData.paymentSessionId}`;
+          
+          console.log('🔄 Redirecting to hosted checkout:', checkoutUrl);
+          window.location.href = checkoutUrl;
         }
       } else {
         console.error('Cashfree SDK not ready. Status:', {
-          windowCashfree: !!window.Cashfree,
-          cashfreeSDKReady,
-          sdkScript: !!document.getElementById('cashfree-sdk')
+          cashfreeSDK: !!cashfreeSDK,
+          isSDKLoading,
+          paymentConfig: !!paymentConfig
         });
         throw new Error('Cashfree SDK not ready');
       }
