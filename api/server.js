@@ -569,12 +569,35 @@ app.post('/api/payments/initiate', async (req, res) => {
       return;
     }
 
-    const { customerName, customerEmail, customerPhone, amount, currency, productName, returnUrl } = req.body;
+    const { amount, currency, email } = req.body;
 
-    // Validate input
-    if (!customerName || !customerEmail || !customerPhone) {
-      return res.status(400).json({ error: 'Missing required customer information' });
+    // Support both customerEmail and email fields
+    const finalCustomerEmail = customerEmail || email;
+
+    // Auto-populate missing customer information
+    let finalCustomerName = customerName;
+    let finalCustomerPhone = customerPhone;
+    
+    // Extract name from email if customerName is missing
+    if (!finalCustomerName && finalCustomerEmail) {
+      const emailName = finalCustomerEmail.split('@')[0];
+      finalCustomerName = emailName.charAt(0).toUpperCase() + emailName.slice(1);
+      console.log(`🔍 Auto-populated customer name from email: ${finalCustomerName}`);
     }
+    
+    // Use default phone number if customerPhone is missing
+    if (!finalCustomerPhone) {
+      finalCustomerPhone = '8305940684';
+      console.log(`🔍 Using default phone number: ${finalCustomerPhone}`);
+    }
+
+    // Validate input - only email is truly required now
+    if (!finalCustomerEmail) {
+      return res.status(400).json({ error: 'Missing required customer email' });
+    }
+
+    // Log the final customer information
+    console.log(`👤 Customer Info - Name: ${finalCustomerName}, Email: ${finalCustomerEmail}, Phone: ${finalCustomerPhone}`);
 
     // Get Cashfree credentials from configuration
     const clientSecret = config.cashfreeClientSecret;
@@ -663,9 +686,9 @@ app.post('/api/payments/initiate', async (req, res) => {
       order_currency: currency || config.productCurrency,
       customer_details: {
         customer_id: `customer_${Date.now()}`,
-        customer_name: customerName,
-        customer_email: customerEmail,
-        customer_phone: customerPhone
+        customer_name: finalCustomerName,
+        customer_email: finalCustomerEmail,
+        customer_phone: finalCustomerPhone
       },
       order_meta: {
         return_url: dynamicReturnUrl,
@@ -765,9 +788,9 @@ app.post('/api/payments/initiate', async (req, res) => {
         order_currency: currency || config.productCurrency,
         customer_details: {
           customer_id: `customer_${Date.now()}`,
-          customer_name: customerName,
-          customer_email: customerEmail,
-          customer_phone: customerPhone
+          customer_name: finalCustomerName,
+          customer_email: finalCustomerEmail,
+          customer_phone: finalCustomerPhone
         },
         order_meta: {
           return_url: dynamicReturnUrl,
