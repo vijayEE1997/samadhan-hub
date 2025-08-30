@@ -6,7 +6,6 @@
   ],
   "buildCommand": "npm run vercel-build",
   "installCommand": "npm run install:all",
-  "outputDirectory": "client-agnivirya/dist",
   "functions": {
     "api/server.js": {
       "maxDuration": 30
@@ -22,12 +21,24 @@
       "destination": "/api/server.js"
     },
     {
+      "source": "/agnivirya/assets/(.*)",
+      "destination": "/client-agnivirya/dist/assets/$1"
+    },
+    {
+      "source": "/agnivirya/favicon.ico",
+      "destination": "/client-agnivirya/dist/favicon.ico"
+    },
+    {
+      "source": "/agnivirya/manifest.json",
+      "destination": "/client-agnivirya/dist/manifest.json"
+    },
+    {
       "source": "/agnivirya/(.*)",
-      "destination": "/$1"
+      "destination": "/client-agnivirya/dist/index.html"
     },
     {
       "source": "/(.*)",
-      "destination": "/index.html"
+      "destination": "/client-agnivirya/dist/index.html"
     }
   ],
   "env": {
