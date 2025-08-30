@@ -569,7 +569,7 @@ app.post('/api/payments/initiate', async (req, res) => {
       return;
     }
 
-    const { amount, currency, email } = req.body;
+    const { amount, currency, email, customerName, customerPhone, customerEmail, productName, returnUrl } = req.body;
 
     // Support both customerEmail and email fields
     const finalCustomerEmail = customerEmail || email;
@@ -1326,6 +1326,52 @@ if (mainDistExists && clientDistExists) {
 // In production: served by static file middleware
 
 // ============================================================================
+// IMAGE SERVING API - Serve images from server-side directory
+// ============================================================================
+
+// Serve images from server-side images directory
+app.get('/api/images/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const imagePath = path.join(__dirname, 'images', filename);
+  
+  if (fs.existsSync(imagePath)) {
+    // Set appropriate MIME type based on file extension
+    const ext = path.extname(filename).toLowerCase();
+    let contentType = 'image/png'; // Default
+    
+    if (ext === '.png') contentType = 'image/png';
+    else if (ext === '.jpg' || ext === '.jpeg') contentType = 'image/jpeg';
+    else if (ext === '.gif') contentType = 'image/gif';
+    else if (ext === '.webp') contentType = 'image/webp';
+    else if (ext === '.svg') contentType = 'image/svg+xml';
+    else if (ext === '.ico') contentType = 'image/x-icon';
+    
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
+    res.sendFile(imagePath);
+  } else {
+    console.log(`❌ Image not found: ${imagePath}`);
+    res.status(404).json({ error: 'Image not found', filename });
+  }
+});
+
+// Serve favicon from server-side images directory
+app.get('/favicon.ico', (req, res) => {
+  const faviconPath = path.join(__dirname, 'images', 'favicon.ico');
+  if (fs.existsSync(faviconPath)) {
+    res.setHeader('Content-Type', 'image/x-icon');
+    res.setHeader('Cache-Control', 'public, max-age=31536000');
+    res.sendFile(faviconPath);
+  } else {
+    res.status(404).json({ error: 'Favicon not found' });
+  }
+});
+
+// ============================================================================
+// ASSET SERVING ROUTES - Serve images, favicon, and other assets
+// ============================================================================
+
+// ============================================================================
 // ERROR HANDLING
 // ============================================================================
 
@@ -1374,12 +1420,13 @@ app.listen(config.port, () => {
   console.log(`🏥 Health check: ${config.protocol}://${config.domain}/health`);
   console.log(`🧪 API test: ${config.protocol}://${config.domain}/api/test`);
   console.log(`💳 Payment API: ${config.protocol}://${config.domain}/api/payments/*`);
+  console.log(`🖼️ Asset Serving: Images, favicon, and static files`);
   console.log(`🌍 Environment: ${config.nodeEnv}`);
   console.log(`🌍 Cashfree Mode: ${config.cashfreeMode}`);
   console.log(`🌍 Port: ${config.port}`);
   console.log(`🌍 Domain: ${config.domain}`);
   console.log(`🌍 Protocol: ${config.protocol}`);
-  console.log(`🔧 Services: Payment APIs + Samadhan Hub App`);
+  console.log(`🔧 Services: Payment APIs + Samadhan Hub App + Asset Serving`);
   if (config.nodeEnv === 'production') {
     console.log(`🔒 Security: Helmet, Rate Limiting, CORS enabled`);
   }

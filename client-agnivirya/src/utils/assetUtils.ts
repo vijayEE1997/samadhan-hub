@@ -5,9 +5,21 @@
 import { API_ENDPOINTS } from "@/constants";
 
 /**
- * Get the correct path for an asset
+ * Get the correct path for an image asset from the server
+ * @param imageName - The image filename (e.g., 'agnivirya-logo.png')
+ * @returns The server-side image API path
+ */
+export const getImagePath = (imageName: string): string => {
+  // Always fetch from server-side API for consistent MIME types and caching
+  const serverImagePath = `/api/images/${imageName}`;
+  console.log(`🖼️ Image path generated: ${imageName} -> ${serverImagePath}`);
+  return serverImagePath;
+};
+
+/**
+ * Get the correct path for an asset (legacy support)
  * @param assetPath - The asset path relative to the public/assets folder
- * @returns The correct asset path for the current environment
+ * @returns The server-side asset path
  */
 export const getAssetPath = (assetPath: string): string => {
   // Remove leading slash if present
@@ -22,36 +34,19 @@ export const getAssetPath = (assetPath: string): string => {
     console.log(`🔍 Asset path generated (DEV): ${assetPath} -> ${finalPath}`);
     return finalPath;
   } else {
-    // In production, try multiple fallback paths for SSR compatibility
-    // First try the standard path
-    const standardPath = `/${cleanPath}`;
-    console.log(`🔍 Asset path generated (PROD): ${assetPath} -> ${standardPath}`);
-    
-    // Also try public folder path as fallback
-    const publicPath = `/public/${cleanPath}`;
-    console.log(`🔍 Asset fallback path (PROD): ${assetPath} -> ${publicPath}`);
-    
-    return standardPath;
+    // In production, serve from server-side API
+    const serverPath = `/api/images/${cleanPath}`;
+    console.log(`🔍 Asset path generated (PROD): ${assetPath} -> ${serverPath}`);
+    return serverPath;
   }
 };
 
 /**
- * Get the path for an image asset
- * @param imageName - The image filename (e.g., 'agnivirya-logo.png')
- * @returns The correct image path
- */
-export const getImagePath = (imageName: string): string => {
-  const imagePath = getAssetPath(`assets/${imageName}`);
-  console.log(`🖼️ Image path generated: ${imageName} -> ${imagePath}`);
-  return imagePath;
-};
-
-/**
  * Get the path for a favicon
- * @returns The correct favicon path
+ * @returns The server-side favicon path
  */
 export const getFaviconPath = (): string => {
-  return '/favicon.ico';
+  return '/favicon.ico'; // This will be served by the server-side favicon route
 };
 
 /**
