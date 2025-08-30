@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 
 // @// Contexts & Providers
-import { LanguageProvider } from '@/contexts/LanguageContext'
+import { LanguageProvider, useLanguage } from '@/contexts/LanguageContext'
 
 // @// UI Components
 import { Toaster } from '@/components/ui/toaster'
@@ -16,14 +16,18 @@ import './App.css'
 // Import all Agnivirya components
 import Header from './components/Header'
 import HeroSection from './components/sections/HeroSection'
-import FeaturesSection from './components/sections/FeaturesSection'
 import TestimonialsSection from './components/sections/TestimonialsSection'
 import FAQSection from './components/sections/FAQSection'
-import AboutSection from './components/sections/AboutSection'
 import Footer from './components/Footer'
 import PaymentPage from './pages/PaymentPage'
 import DownloadPage from './pages/DownloadPage'
-import MetricsBubble from './components/sections/MetricsBubble';
+import ProblemStatementSection from './components/sections/ProblemStatementSection'
+import SolutionOverviewSection from './components/sections/SolutionOverviewSection'
+import RecipePreviewSection from './components/sections/RecipePreviewSection'
+import ScientificValidationSection from './components/sections/ScientificValidationSection'
+import TrustIndicatorsSection from './components/sections/TrustIndicatorsSection'
+import MobileHomepage from './components/MobileHomepage'
+import { useMobileDetect } from './hooks/useMobileDetect'
 
 interface AppProps {
   initialState?: {
@@ -36,7 +40,9 @@ interface AppProps {
 }
 
 function App({ initialState }: AppProps) {
+  const { t } = useLanguage()
   const [currentRoute, setCurrentRoute] = useState(initialState?.currentUrl || '/')
+  const { isMobile } = useMobileDetect();
 
 
   useEffect(() => {
@@ -58,6 +64,11 @@ function App({ initialState }: AppProps) {
 
     return () => {
       window.removeEventListener('popstate', handleRouteChange);
+      // Cleanup body classes on unmount
+      document.body.classList.remove('payment-page-active', 'download-page-active');
+      document.body.style.overflow = '';
+      document.body.style.height = '';
+      document.body.style.maxHeight = '';
     };
   }, [initialState?.currentUrl]);
 
@@ -66,6 +77,18 @@ function App({ initialState }: AppProps) {
     const currentPath = window.location.pathname;
     if (currentPath !== currentRoute) {
       setCurrentRoute(currentPath);
+    }
+  }, [currentRoute]);
+
+  // Cleanup body classes when route changes
+  useEffect(() => {
+    // Remove any payment/download page body classes when not on those routes
+    if (currentRoute !== '/payment' && currentRoute !== '/download') {
+      document.body.classList.remove('payment-page-active', 'download-page-active');
+      // Reset body styles to normal
+      document.body.style.overflow = '';
+      document.body.style.height = '';
+      document.body.style.maxHeight = '';
     }
   }, [currentRoute]);
 
@@ -102,11 +125,15 @@ function App({ initialState }: AppProps) {
             {/* Main Content */}
             <div className="content-wrapper">
               <Header />
-              <main className="main-content">
+              <main className="main-homepage-content">
                 <HeroSection onPaymentClick={handlePaymentClick} />
-                <MetricsBubble />
-                <FeaturesSection />
-                <AboutSection />
+                <div className="problem-solution-container">
+                  <ProblemStatementSection />
+                  <SolutionOverviewSection />
+                </div>
+                <RecipePreviewSection />
+                <ScientificValidationSection />
+                <TrustIndicatorsSection />
                 <TestimonialsSection />
                 <FAQSection />
               </main>
@@ -116,21 +143,21 @@ function App({ initialState }: AppProps) {
             {/* Floating Action Button */}
             <div className="floating-action-button">
               <div className="fab-pricing">
-                <div className="fab-discount">95% OFF</div>
-                <div className="fab-price">₹99</div>
-                <div className="fab-original">₹1,980</div>
+                <div className="fab-discount">{t('fab.discount')}</div>
+                <div className="fab-price">{t('fab.price')}</div>
+                <div className="fab-original">{t('fab.original')}</div>
               </div>
               <button
                 className="fab-cta"
                 onClick={handlePaymentClick}
-                aria-label="Get E-Book Now"
+                aria-label={t('fab.cta')}
               >
-                Get E-Book Now
+                {t('fab.cta')}
               </button>
               <button
                 className="fab-scroll-top"
                 onClick={() => window.scrollTo({ top: 0, behavior: UI.ANIMATIONS.SCROLL_BEHAVIOR })}
-                aria-label="Scroll to top"
+                aria-label={t('fab.scrollTop')}
               >
                 ↑
               </button>
@@ -143,7 +170,11 @@ function App({ initialState }: AppProps) {
   return (
     <div className="app">
       <main className="app-main">
-        {renderRouteContent()}
+        {isMobile ? (
+          <MobileHomepage onPaymentClick={handlePaymentClick} />
+        ) : (
+          renderRouteContent()
+        )}
       </main>
     </div>
   );

@@ -2,7 +2,7 @@
 
 A modern full-stack wellness platform built with React (frontend) and Node.js/Express (backend) that can be run with a single command. **Now with Server-Side Rendering (SSR) enabled for all routes!**
 
-**Production Domain**: [samadhanhub.com](https://samadhanhub.com)
+**Production Domain**: [samadhaanhub.co.in](https://samadhaanhub.co.in)
 
 ## ✨ Features
 

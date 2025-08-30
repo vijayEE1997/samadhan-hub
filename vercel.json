@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "name": "samadhanhub",
+  "name": "samadhaanhub",
   "alias": [
-    "samadhanhub.com"
+    "samadhaanhub.co.in"
   ],
   "buildCommand": "npm run vercel-build",
   "outputDirectory": "client-agnivirya/dist",
@@ -30,6 +30,6 @@
     "NODE_ENV": "production",
     "APP_MODE": "prod",
     "ENVIRONMENT": "vercel",
-    "PROD_DOMAIN": "samadhanhub.com"
+    "PROD_DOMAIN": "samadhaanhub.co.in"
   }
 }

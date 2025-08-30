@@ -1,9 +1,12 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { Button } from "@/components/ui/button";
-import { Download as DownloadIcon, CheckCircle, Star, AlertCircle, Loader2, ArrowLeft, Gift, RefreshCw, XCircle } from 'lucide-react';
+import { Download as DownloadIcon, CheckCircle, Star, AlertCircle, Loader2, ArrowLeft, Gift, RefreshCw, XCircle, Home } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { usePayment } from "@/hooks/usePayment";
 import { getImagePath, getPdfPath } from "@/utils/assetUtils";
+
+// Import DownloadPage styles
+import './DownloadPage.css';
 
 interface DownloadPageProps {
   onBackToHome?: () => void;
@@ -67,6 +70,15 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
     };
 
     fetchConfig();
+  }, []);
+
+  // Manage body class for padding override
+  useEffect(() => {
+    document.body.classList.add('download-page-active');
+
+    return () => {
+      document.body.classList.remove('download-page-active');
+    };
   }, []);
 
   // Payment verification logic
@@ -238,13 +250,13 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
                       }
                     }
 
-                    if (isMounted) {
-                      toastRef.current({
-                        title: "Payment Verified!",
-                        description: "Your payment has been confirmed successfully.",
-                        variant: "default"
-                      });
-                    }
+                                         if (isMounted) {
+                       toastRef.current({
+                         title: "🎉 Payment Confirmed!",
+                         description: "Your wellness guide is now ready for download.",
+                         variant: "default"
+                       });
+                     }
 
                     return;
                   }
@@ -288,36 +300,35 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
               });
             }
           }
-        } else if (isMounted) {
-          setVerificationState({
-            status: 'failed',
-            message: 'No order information found',
-            attempts: 0,
-            lastAttempt: null,
-            error: 'Please complete a payment first'
-          });
+        } else {
+          // No stored order found
+          if (isMounted) {
+            setVerificationState({
+              status: 'failed',
+              message: 'No order information found',
+              attempts: 0,
+              lastAttempt: null,
+              error: 'Please return to the payment page to complete your purchase'
+            });
+          }
         }
-
       } catch (error) {
-        console.error('Payment verification initialization error:', error);
+        console.error('❌ Error in payment verification:', error);
         if (isMounted) {
           setVerificationState({
             status: 'failed',
-            message: 'Failed to initialize payment verification',
+            message: 'Unexpected error occurred',
             attempts: 0,
             lastAttempt: null,
-            error: error instanceof Error ? error.message : 'Unknown error occurred'
+            error: 'An unexpected error occurred during verification'
           });
         }
       }
     };
 
-    // Start payment verification
     startPaymentVerification();
 
-    // Cleanup function
     return () => {
-      console.log('🧹 Payment verification useEffect cleanup');
       isMounted = false;
       if (pollIntervalRef.current) {
         clearInterval(pollIntervalRef.current);
@@ -402,6 +413,7 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
     }
   }, [verificationState.status, verifyPaymentStatus]);
 
+  // Handle download
   const handleDownload = async () => {
     if (isDownloading) return;
 
@@ -423,11 +435,11 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
         document.body.removeChild(a);
 
         setDownloadCompleted(true);
-        toastRef.current({
-          title: "Download Started!",
-          description: "Your AgniVirya Wellness Guide is being downloaded.",
-          variant: "default"
-        });
+                 toastRef.current({
+           title: "🚀 Download Started!",
+           description: "Your personalized wellness guide is on its way!",
+           variant: "default"
+         });
       } else {
         throw new Error(`Download failed: ${response.status} ${response.statusText}`);
       }
@@ -436,423 +448,241 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
       const errorMessage = error instanceof Error ? error.message : 'Download failed';
       setDownloadError(errorMessage);
 
-      toastRef.current({
-        title: "Download Error",
-        description: errorMessage,
-        variant: "destructive"
-      });
+             toastRef.current({
+         title: "⚠️ Download Issue",
+         description: errorMessage,
+         variant: "destructive"
+       });
     } finally {
       setIsDownloading(false);
     }
   };
 
+  // Handle retry download
   const handleRetryDownload = () => {
     setDownloadError(null);
     handleDownload();
   };
 
-  const handleBackToPayment = () => {
-    if (onBackToPayment) {
-      onBackToPayment();
-    } else {
-      window.history.pushState({}, '', '/payment');
-      window.location.reload();
-    }
-  };
-
+  // Handle back to home
   const handleBackToHome = () => {
     if (onBackToHome) {
       onBackToHome();
     } else {
       window.history.pushState({}, '', '/');
-      window.location.reload();
+      window.dispatchEvent(new PopStateEvent('popstate'));
     }
   };
 
-  // Render different content based on verification status
-  const renderMainContent = () => {
-    if (verificationState.status === 'failed') {
-      return (
-        <div className="failed-payment-container">
-          <AlertCircle className="w-20 h-20 text-red-500" />
-          <h1 className="failed-title">Payment Verification Failed</h1>
-          <p className="failed-description">
-            {verificationState.message}
-          </p>
-          <div className="failed-actions">
-            <button
-              onClick={handleRetryVerification}
-              className="back-button-improved retry-payment-button"
-              disabled={isVerifying}
-            >
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Retry Verification
-            </button>
-            <button
-              onClick={handleBackToPayment}
-              className="back-button-improved"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Try Payment Again
-            </button>
-            <button
-              onClick={handleBackToHome}
-              className="back-button-improved"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Back to Home</span>
-            </button>
-          </div>
-
-          {orderDetails && (
-            <div className="order-details-failed">
-              <h3>Order Details</h3>
-              <div className="order-info">
-                <p><strong>Order ID:</strong> {orderDetails.orderId}</p>
-                <p><strong>Customer:</strong> {orderDetails.customerData?.customerName}</p>
-                <p><strong>Email:</strong> {orderDetails.customerData?.customerEmail}</p>
-                <p><strong>Verification Attempts:</strong> {verificationState.attempts}</p>
-                {verificationState.lastAttempt && (
-                  <p><strong>Last Attempt:</strong> {verificationState.lastAttempt.toLocaleString()}</p>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      );
+  // Handle retry payment
+  const handleRetryPayment = () => {
+    if (onBackToPayment) {
+      onBackToPayment();
+    } else {
+      window.history.pushState({}, '', '/payment');
+      window.dispatchEvent(new PopStateEvent('popstate'));
     }
+  };
 
-    if (verificationState.status === 'pending') {
-      return (
-        <div className="pending-verification-container">
-          <div className="verification-status-card">
-            <div className="verification-icon">
-              <Loader2 className="w-16 h-16 text-orange-500 animate-spin" />
-            </div>
-            <h2 className="verification-title">Initializing Payment Verification</h2>
-            <p className="verification-description">
-              {verificationState.message}
-            </p>
-
-            <div className="verification-progress">
-              <div className="progress-dots">
-                <div className="dot active"></div>
-                <div className="dot active"></div>
-                <div className="dot"></div>
-              </div>
-              <p className="verification-status-text">
-                Setting up verification process...
-              </p>
-            </div>
-
-            {orderDetails && (
-              <div className="order-preview">
-                <h3>Order Preview</h3>
-                <div className="order-summary">
-                  <p><strong>Product:</strong> {productName}</p>
-                  <p><strong>Order ID:</strong> {orderDetails.orderId}</p>
-                  <p><strong>Customer:</strong> {orderDetails.customerData?.customerName}</p>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      );
-    }
-
-    if (verificationState.status === 'verifying') {
-      return (
-        <div className="verifying-payment-container">
-          <div className="verification-status-card">
-            <div className="verification-icon">
-              <Loader2 className="w-16 h-16 text-blue-500 animate-spin" />
-            </div>
-            <h2 className="verification-title">Verifying Your Payment</h2>
-            <p className="verification-description">
-              {verificationState.message}
-            </p>
-
-            <div className="verification-progress">
-              <div className="progress-dots">
-                <div className="dot active"></div>
-                <div className="dot active"></div>
-                <div className="dot active"></div>
-              </div>
-                             <p className="verification-status-text">
-                 Actively checking payment status every 2 seconds...
-               </p>
-
-              {/* Polling Status Indicator */}
-              <div className="polling-status">
-                <div className="polling-indicator">
-                  <div className="pulse-dot"></div>
-                  <span>Verification in progress...</span>
-                </div>
-                <div className="polling-details">
-                  <small>Attempt {verificationState.attempts} • Last check: {verificationState.lastAttempt ? verificationState.lastAttempt.toLocaleTimeString() : 'N/A'}</small>
-                </div>
-              </div>
-            </div>
-
-            {orderDetails && (
-              <div className="order-preview">
-                <h3>Order Details</h3>
-                <div className="order-summary">
-                  <p><strong>Product:</strong> {productName}</p>
-                  <p><strong>Order ID:</strong> {orderDetails.orderId}</p>
-                  <p><strong>Customer:</strong> {orderDetails.customerData?.customerName}</p>
-                  <p><strong>Email:</strong> {orderDetails.customerData?.customerEmail}</p>
-                </div>
-              </div>
-            )}
-
-            {/* Manual retry option */}
-            <div className="manual-retry-section">
-              <button
-                onClick={handleRetryVerification}
-                className="retry-button-improved"
-                disabled={isVerifying}
-              >
-                <RefreshCw className="w-4 h-4 mr-2" />
-                Manual Retry
-              </button>
-              <p className="retry-note">
-                If verification seems stuck, you can manually retry
-              </p>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    if (verificationState.status === 'timeout') {
-      return (
-        <div className="timeout-verification-container">
-          <XCircle className="w-20 h-20 text-red-500" />
-          <h1 className="timeout-title">Payment Verification Timed Out</h1>
-          <p className="timeout-description">
-            We couldn't verify your payment within the expected time. Please try again or contact support.
-          </p>
-
-          <div className="timeout-actions">
-            <button
-              onClick={handleRetryVerification}
-              className="back-button-improved retry-payment-button"
-            >
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Retry Verification
-            </button>
-            <button
-              onClick={handleBackToHome}
-              className="back-button-improved"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Back to Home</span>
-            </button>
-          </div>
-
-          {orderDetails && (
-            <div className="order-details-failed">
-              <h3>Order Details</h3>
-              <div className="order-info">
-                <p><strong>Order ID:</strong> {orderDetails.orderId}</p>
-                <p><strong>Customer:</strong> {orderDetails.customerData?.customerName}</p>
-                <p><strong>Email:</strong> {orderDetails.customerData?.customerEmail}</p>
-              </div>
-            </div>
-          )}
-        </div>
-      );
-    }
-
-    // Success state
-    return (
-      <div className="success-download-container">
-        <div className="download-layout-improved">
-          {/* Left Column - Success Summary */}
-          <div className="success-summary-improved">
-            <div className="success-header">
-              <div className="success-icon-large">
-                <CheckCircle className="w-20 h-20 text-green-500" />
-              </div>
-              <h1 className="success-title-improved">Payment Successful!</h1>
-              <p className="success-subtitle">Your wellness guide is ready for download</p>
-            </div>
-
-            <div className="product-details-improved">
-              <div className="product-card">
-                <div className="product-icon">
-                  <Gift className="w-8 h-8 text-orange-500" />
-                </div>
-                <div className="product-info">
-                  <h3>{productName}</h3>
-                  <p>Complete PDF Guide • 200+ Pages</p>
-                  <div className="product-badge">Ready to Download</div>
-                </div>
-              </div>
-            </div>
-
-            {orderDetails && (
-              <div className="order-details-improved">
-                <h4>Order Information</h4>
-                <div className="order-grid">
-                  <div className="order-item">
-                    <span className="label">Order ID:</span>
-                    <span className="value">{orderDetails.orderId}</span>
-                  </div>
-                  <div className="order-item">
-                    <span className="label">Customer:</span>
-                    <span className="value">{orderDetails.customerData?.customerName}</span>
-                  </div>
-                  <div className="order-item">
-                    <span className="label">Email:</span>
-                    <span className="value">{orderDetails.customerData?.customerEmail}</span>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Right Column - Download Actions */}
-          <div className="download-actions-improved">
-            <div className="download-card">
-              <div className="download-header">
-                <DownloadIcon className="w-8 h-8 text-blue-500" />
-                <h2>Download Your Guide</h2>
-              </div>
-
-              {/* Language Selection */}
-              <div className="language-selector">
-                <label className="language-label">Choose Language:</label>
-                <div className="language-options">
-                  <button
-                    type="button"
-                    className={`language-option ${selectedLanguage === 'english' ? 'active' : ''}`}
-                    onClick={() => setSelectedLanguage('english')}
-                    disabled={isDownloading}
-                  >
-                    🇺🇸 English
-                  </button>
-                  <button
-                    type="button"
-                    className={`language-option ${selectedLanguage === 'hindi' ? 'active' : ''}`}
-                    onClick={() => setSelectedLanguage('hindi')}
-                    disabled={isDownloading}
-                  >
-                    🇮🇳 Hindi
-                  </button>
-                </div>
-              </div>
-
-              <Button
-                className="download-button-improved"
-                onClick={handleDownload}
-                disabled={isDownloading}
-                size="lg"
-              >
-                {isDownloading ? (
-                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                ) : (
-                  <DownloadIcon className="w-5 h-5 mr-2" />
-                )}
-                {isDownloading ? 'Downloading...' : 'Download Now'}
-              </Button>
-
-              {/* Download Progress */}
-              {isDownloading && (
-                <div className="download-progress-improved">
-                  <div className="progress-bar-improved">
-                    <div className="progress-fill-improved"></div>
-                  </div>
-                  <span className="progress-text">Preparing your download...</span>
-                </div>
-              )}
-
-              {/* Download Error */}
-              {downloadError && (
-                <div className="download-error-improved">
-                  <AlertCircle className="w-5 h-5 text-red-500" />
-                  <span>{downloadError}</span>
-                  <Button
-                    onClick={handleRetryDownload}
-                    variant="outline"
-                    size="sm"
-                    className="retry-button"
-                    disabled={isDownloading}
-                  >
-                    Retry Download
-                  </Button>
-                </div>
-              )}
-
-              {/* Download Completion */}
-              {downloadCompleted && !downloadError && (
-                <div className="download-completion-improved">
-                  <CheckCircle className="w-5 h-5 text-green-500" />
-                  <span>Download completed successfully!</span>
-                </div>
-              )}
-            </div>
-
-            {/* Bonus Content */}
-            <div className="bonus-content-improved">
-              <div className="bonus-header">
-                <Star className="w-6 h-6 text-yellow-500" />
-                <h3>Bonus Content Included</h3>
-              </div>
-              <div className="bonus-items-improved">
-                <div className="bonus-item">
-                  <CheckCircle className="w-4 h-4 text-green-500" />
-                  <span>100+ Ayurvedic Remedy Recipes</span>
-                </div>
-                <div className="bonus-item">
-                  <CheckCircle className="w-4 h-4 text-green-500" />
-                  <span>Daily Wellness Routine Checklist</span>
-                </div>
-                <div className="bonus-item">
-                  <CheckCircle className="w-4 h-4 text-green-500" />
-                  <span>Meditation & Breathing Techniques</span>
-                </div>
-                <div className="bonus-item">
-                  <CheckCircle className="w-4 h-4 text-green-500" />
-                  <span>Seasonal Health Tips Calendar</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Navigation */}
-            <div className="navigation-improved">
-              <button
-                onClick={handleBackToHome}
-                className="back-button-improved"
-                disabled={isDownloading}
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span>Back to Home</span>
-              </button>
-            </div>
-          </div>
-        </div>
+  // Render verifying/pending state
+  const renderVerifyingState = () => (
+    <div className="state-card verifying">
+      <div className="state-icon">
+        <Loader2 className="icon animate-spin" />
       </div>
-    );
+      <h1 className="state-title">Securing Your Access...</h1>
+      <p className="state-message">We're confirming your payment to unlock your wellness guide</p>
+      <div className="verification-progress">
+        <div className="progress-ring">
+          <div className="progress-fill"></div>
+        </div>
+        <span className="progress-text">Verifying payment security...</span>
+      </div>
+      
+      {/* Manual retry option */}
+      <div className="manual-retry-section">
+        <button
+          onClick={handleRetryVerification}
+          className="retry-button"
+          disabled={isVerifying}
+        >
+          <RefreshCw className="icon" />
+          Retry Verification
+        </button>
+        <p className="retry-note">
+          If verification takes longer than expected, click here to retry
+        </p>
+      </div>
+    </div>
+  );
+
+  // Render success state
+  const renderSuccessState = () => (
+    <div className="state-card success">
+      <div className="state-icon">
+        <CheckCircle className="icon" />
+      </div>
+      <h1 className="state-title">🎉 Access Granted!</h1>
+      <p className="state-message">Your AgniVirya Wellness Guide is ready to transform your life</p>
+      
+      {/* Language Selection */}
+      <div className="language-selector">
+        <label className="language-label">Select Your Language:</label>
+        <div className="language-options">
+                     <button
+             type="button"
+             className={`language-option ${selectedLanguage === 'english' ? 'active' : ''}`}
+             onClick={() => setSelectedLanguage('english')}
+             disabled={isDownloading}
+           >
+             <span className="text">English</span>
+           </button>
+           <button
+             type="button"
+             className={`language-option ${selectedLanguage === 'hindi' ? 'active' : ''}`}
+             onClick={() => setSelectedLanguage('hindi')}
+             disabled={isDownloading}
+           >
+             <span className="text">हिंदी (Hindi)</span>
+           </button>
+        </div>
+        <p className="language-note">Choose your preferred language to start your wellness journey</p>
+      </div>
+
+      {/* Primary Download Button */}
+      <button
+        className="download-button"
+        onClick={handleDownload}
+        disabled={isDownloading}
+      >
+        {isDownloading ? (
+          <Loader2 className="icon animate-spin" />
+        ) : (
+          <DownloadIcon className="icon" />
+        )}
+        {isDownloading ? 'Preparing Your Guide...' : 'Get Your Wellness Guide Now'}
+      </button>
+
+      {/* Download Progress */}
+      {isDownloading && (
+        <div className="download-progress">
+          <div className="progress-bar">
+            <div className="progress-fill"></div>
+          </div>
+          <span className="progress-text">Creating your personalized wellness guide...</span>
+        </div>
+      )}
+
+      {/* Download Error */}
+      {downloadError && (
+        <div className="download-error">
+          <AlertCircle className="icon" />
+          <span>{downloadError}</span>
+          <button
+            onClick={handleRetryDownload}
+            className="retry-button"
+            disabled={isDownloading}
+          >
+            Try Again
+          </button>
+        </div>
+      )}
+
+      {/* Download Completion */}
+      {downloadCompleted && !downloadError && (
+        <div className="download-completion">
+          <CheckCircle className="icon" />
+          <span>🎯 Your wellness guide is ready!</span>
+        </div>
+      )}
+
+      {/* Order Summary */}
+      {orderDetails && (
+        <div className="order-summary">
+          <div className="order-item">
+            <span className="label">Order ID:</span>
+            <span className="value">{orderDetails.orderId}</span>
+          </div>
+          <div className="order-item">
+            <span className="label">Email:</span>
+            <span className="value">{orderDetails.customerData?.customerEmail || 'N/A'}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Bonus Content */}
+      <div className="bonus-content">
+        <span className="bonus-text">✨ Bonus: Exclusive Wellness Tips & Recipes Included</span>
+      </div>
+    </div>
+  );
+
+  // Render failed/timeout state
+  const renderFailedState = () => (
+    <div className="state-card failed">
+      <div className="state-icon">
+        <XCircle className="icon" />
+      </div>
+      <h1 className="state-title">
+        {verificationState.status === 'timeout' ? 'Verification Timeout' : 'Payment Issue Detected'}
+      </h1>
+      <p className="state-message">
+        {verificationState.error || 'We encountered a temporary issue with payment verification. This is usually resolved quickly.'}
+      </p>
+      
+      <div className="action-buttons">
+        <button
+          className="primary-action"
+          onClick={handleRetryPayment}
+        >
+          <RefreshCw className="icon" />
+          Retry Payment
+        </button>
+        <button
+          className="secondary-action"
+          onClick={handleBackToHome}
+        >
+          <Home className="icon" />
+          Return to Home
+        </button>
+      </div>
+    </div>
+  );
+
+  // Render main content based on state
+  const renderMainContent = () => {
+    switch (verificationState.status) {
+      case 'verifying':
+      case 'pending':
+        return renderVerifyingState();
+      case 'success':
+        return renderSuccessState();
+      case 'failed':
+      case 'timeout':
+        return renderFailedState();
+      default:
+        return renderVerifyingState();
+    }
   };
 
   return (
-    <div className="download-page-improved">
-      <div className="download-container-improved">
-        {/* Header */}
-        <div className="download-header-improved">
-          <button onClick={onBackToHome} className="back-button-improved">
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back to Home</span>
-          </button>
-                     <div className="header-logo-improved">
-             <img src={getImagePath('agnivirya-logo.png')} alt="AgniVirya" className="logo-image-improved" />
-           </div>
+    <div className="download-page">
+      {/* Page Header - Outside Container */}
+      <div className="download-header">
+        <div className="header-content">
+                     <button onClick={handleBackToHome} className="back-button">
+             <ArrowLeft className="icon" />
+             <span>Back to Home</span>
+           </button>
+          <div className="header-logo">
+            <img src={getImagePath('agnivirya-logo.png')} alt="AgniVirya" className="logo-image" />
+          </div>
         </div>
+      </div>
 
-        {/* Main Content */}
-        <div className="main-content-improved">
+      {/* Main Content Container - Centered */}
+      <div className="main-content">
+        <div className="download-container">
           {renderMainContent()}
         </div>
       </div>

@@ -1,17 +1,24 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import {
-  ArrowLeft,
-  Check,
   Shield,
   Lock,
+  BookOpen,
+  Zap,
+  Heart,
+  Award,
+  ArrowLeft,
   Loader2,
   AlertTriangle,
-  CreditCard
+  Check,
+  XCircle
 } from 'lucide-react';
 
 // Import constants
 import { API_ENDPOINTS } from '@/constants';
 import { getImagePath } from '@/utils/assetUtils';
+
+// Import PaymentPage styles
+import './PaymentPage.css';
 
 // Declare Cashfree global type
 declare global {
@@ -45,6 +52,21 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
   const [orderId, setOrderId] = useState<string | null>(null);
   const [paymentSessionId, setPaymentSessionId] = useState<string | null>(null);
   const [cashfreeSDKReady, setCashfreeSDKReady] = useState(false);
+  const emailInputRef = useRef<HTMLInputElement>(null);
+
+  // Manage body class for padding override and auto-focus email field
+  useEffect(() => {
+    document.body.classList.add('payment-page-active');
+
+    // Auto-focus on email field when component mounts
+    if (emailInputRef.current) {
+      emailInputRef.current.focus();
+    }
+
+    return () => {
+      document.body.classList.remove('payment-page-active');
+    };
+  }, []);
 
   // Load Cashfree SDK and payment configuration on component mount
   useEffect(() => {
@@ -75,13 +97,13 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
         if (response.ok) {
           const config = await response.json();
           setPaymentConfig(config);
-          setConfigError('');
+          console.log('✅ Payment config loaded successfully');
         } else {
-          throw new Error('Failed to load payment configuration');
+          throw new Error(`Failed to load config: ${response.status}`);
         }
       } catch (error) {
-        console.error('Failed to load payment config:', error);
-        setConfigError('Unable to load payment configuration. Please refresh the page.');
+        console.error('❌ Error loading payment config:', error);
+        setConfigError('Failed to load payment configuration');
       } finally {
         setIsLoadingConfig(false);
       }
@@ -91,404 +113,358 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
     loadPaymentConfig();
   }, []);
 
-  // Open Cashfree checkout using the SDK with fallback
-  const openCashfreeCheckout = useCallback(async (sessionId: string) => {
-    try {
-      console.log('🔄 Opening Cashfree checkout...');
-
-      // Wait for SDK to be ready
-      if (!cashfreeSDKReady) {
-        console.log('⏳ Waiting for SDK...');
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        if (!cashfreeSDKReady) {
-          throw new Error('Cashfree SDK not ready. Please refresh and try again.');
-        }
-      }
-
-      // Try to use Cashfree SDK first
-      if (window.Cashfree) {
-        const cashfree = window.Cashfree({
-          mode: paymentConfig?.mode || 'production'
-        });
-
-        const checkoutOptions = {
-          paymentSessionId: sessionId,
-          redirectTarget: '_self',
-        };
-
-        await cashfree.checkout(checkoutOptions);
-        console.log('✅ Checkout opened successfully with SDK');
-      } else {
-        throw new Error('Cashfree SDK not available');
-      }
-
-    } catch (error) {
-      console.error('❌ SDK checkout failed, using fallback:', error);
-
-      // Fallback: redirect to Cashfree hosted checkout
-      const checkoutUrl = paymentConfig?.mode === 'production'
-        ? `https://checkout.cashfree.com/pg/view/sessions/${sessionId}`
-        : `https://sandbox.cashfree.com/pg/view/sessions/${sessionId}`;
-
-      console.log('🔄 Redirecting to:', checkoutUrl);
-      window.location.href = checkoutUrl;
-    }
-  }, [cashfreeSDKReady, paymentConfig]);
-
-  console.log(orderId);
-  console.log(paymentSessionId);
-
-  const validateField = (name: string, value: string) => {
-    let error = '';
-
-    if (name === 'email') {
-      if (!value.trim()) {
-        error = 'Email address is required';
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-        error = 'Please enter a valid email address';
-      }
-    }
-
-    return error;
-  };
-
+  // Handle form input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-
+    
     // Clear error when user starts typing
     if (errors[name as keyof typeof errors]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
   };
 
+  // Handle input blur for validation
   const handleInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+    const { name } = e.target;
     setTouched(prev => ({ ...prev, [name]: true }));
-
-    const error = validateField(name, value);
-    setErrors(prev => ({ ...prev, [name]: error }));
+    
+    // Validate on blur
+    validateField(name, formData[name as keyof typeof formData]);
   };
 
+  // Validate individual field
+  const validateField = (name: string, value: string) => {
+    let error = '';
+    
+    if (name === 'email') {
+      if (!value.trim()) {
+        error = 'Email is required';
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        error = 'Please enter a valid email address';
+      }
+    }
+    
+    setErrors(prev => ({ ...prev, [name]: error }));
+    return !error;
+  };
+
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    
     // Validate all fields
-    const newErrors = {
-      email: validateField('email', formData.email)
-    };
-
-    setErrors(newErrors);
-    setTouched({
-      email: true
-    });
-
-    // Check if there are any errors
-    if (Object.values(newErrors).some(error => error)) {
+    const isEmailValid = validateField('email', formData.email);
+    
+    if (!isEmailValid) {
       return;
     }
 
-    setIsProcessing(true);
-
     try {
-      // Extract customer name from email prefix
-      const customerName = formData.email.split('@')[0];
-
-      // Create payment order with Cashfree
-      const response = await fetch(API_ENDPOINTS.PAYMENT.INITIATE, {
+      setIsProcessing(true);
+      
+      // Create order
+      const orderResponse = await fetch(API_ENDPOINTS.PAYMENT.INITIATE, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          customerName: customerName,
-          customerEmail: formData.email,
-          customerPhone: '8305940684',
-          currency: 'INR',
-          returnUrl: `${window.location.origin}/download`
+          email: formData.email,
+          amount: 99,
+          currency: 'INR'
         }),
       });
 
-      if (!response.ok) {
-        throw new Error(`Failed to create order: ${response.status}`);
+      if (!orderResponse.ok) {
+        throw new Error('Failed to create order');
       }
 
-      const result = await response.json();
+      const orderData = await orderResponse.json();
+      setOrderId(orderData.orderId);
+      setPaymentSessionId(orderData.paymentSessionId);
 
-      if (result.success) {
-        // Show success message and prepare for redirect
-        setErrors(prev => ({ ...prev, email: '' }));
+      // Initialize Cashfree payment
+      if (window.Cashfree && cashfreeSDKReady) {
         setIsRedirecting(true);
+        
+        const cashfree = new window.Cashfree({
+          mode: paymentConfig.mode || 'sandbox'
+        });
 
-        if (result.sessionId) {
-          // Store order details in localStorage for tracking
-          localStorage.setItem('agnivirya-order', JSON.stringify({
-            orderId: result.orderId,
-            cfOrderId: result.cfOrderId,
-            sessionId: result.sessionId,
-            customerData: {
-              customerName: customerName,
-              customerEmail: formData.email
-            },
-            timestamp: Date.now(),
-            config: {
-              mode: result.mode,
-              product: result.product?.name || 'AgniVirya Complete Guide',
-              price: result.product?.price || '99.00',
-              currency: result.product?.currency || 'INR',
-            },
-            amount: 99,
-            paymentVerified: false,
-            paymentStatus: 'pending'
-          }));
+        const paymentOptions = {
+          sessionId: orderData.paymentSessionId,
+          returnUrl: `${window.location.origin}/payment-success`,
+          onSuccess: (data: any) => {
+            console.log('Payment successful:', data);
+            // Handle success - redirect to success page
+            window.location.href = '/payment-success';
+          },
+          onFailure: (data: any) => {
+            console.log('Payment failed:', data);
+            setIsRedirecting(false);
+            // Handle failure - show error message
+            alert('Payment failed. Please try again.');
+          },
+          onClose: () => {
+            console.log('Payment window closed');
+            setIsRedirecting(false);
+          }
+        };
 
-          // Set order details in state
-          setOrderId(result.orderId);
-          setPaymentSessionId(result.sessionId);
-
-          // Add a small delay to show success message
-          setTimeout(async () => {
-            console.log('🔄 Opening Cashfree checkout...');
-            console.log('🔗 Session ID:', result.sessionId);
-
-            try {
-              // Try to open Cashfree checkout
-              await openCashfreeCheckout(result.sessionId);
-            } catch (error) {
-              console.error('❌ Failed to open checkout:', error);
-              // Fallback to direct redirect if available
-              if (result.paymentUrl) {
-                window.location.href = result.paymentUrl;
-              }
-            }
-          }, 1500);
-        } else {
-          throw new Error('Payment session ID not received from server');
-        }
+        cashfree.init(paymentOptions);
       } else {
-        throw new Error(result.message || 'Failed to create payment order');
+        throw new Error('Cashfree SDK not ready');
       }
-
     } catch (error) {
-      console.error('❌ Payment error:', error);
-      setErrors(prev => ({ ...prev, email: error instanceof Error ? error.message : 'Payment failed' }));
-    } finally {
+      console.error('Payment error:', error);
       setIsProcessing(false);
+      alert('Payment initialization failed. Please try again.');
     }
   };
 
+  // Simplified content data
+  const keyBenefits = [
+    {
+      icon: BookOpen,
+      title: "200+ Pages of Wisdom",
+      description: "Comprehensive guide with practical solutions"
+    },
+    {
+      icon: Zap,
+      title: "Instant Access",
+      description: "Get your guide immediately after payment"
+    },
+    {
+      icon: Heart,
+      title: "Proven Results",
+      description: "See improvements in 3-4 weeks"
+    },
+    {
+      icon: Award,
+      title: "Pure & Safe",
+      description: "Natural ingredients, no side effects"
+    }
+  ];
+
+  const trustFeatures = [
+    {
+      icon: Shield,
+      title: "100% Secure",
+      description: "256-bit SSL encryption"
+    },
+    {
+      icon: Lock,
+      title: "Trusted by 10,000+",
+      description: "Satisfied customers worldwide"
+    },
+    {
+      icon: Award,
+      title: "Scientifically Proven",
+      description: "Research-backed methods"
+    }
+  ];
+
   return (
-    <div className="payment-container">
-      <div className="content-wrapper">
-        {/* Page Header - Wondershare Style */}
-        <div className="page-header">
-          <div className="header-top">
-            <div className="header-left">
-              <button onClick={onBackToHome} className="back-button">
-                <ArrowLeft className="icon" />
-                <span>Back to Home</span>
-              </button>
-            </div>
-            <div className="header-right">
-              <div className="header-logo">
-                <img src={getImagePath('agnivirya-logo.png')} alt="AgniVirya" className="logo-image" />
-              </div>
-            </div>
+    <div className="payment-page">
+      {/* Background Elements */}
+      <div className="bg-gradient"></div>
+      <div className="floating-shapes">
+        <div className="shape shape-1"></div>
+        <div className="shape shape-2"></div>
+        <div className="shape shape-3"></div>
+      </div>
+
+      {/* Page Header */}
+      <div className="page-header">
+        <div className="header-container">
+          <button className="back-button" onClick={onBackToHome}>
+            <ArrowLeft className="icon" />
+            <span>Back to Home</span>
+          </button>
+          <div className="header-logo">
+            <img src={getImagePath('agnivirya-logo.png')} alt="AgniVirya" className="logo-image" />
           </div>
         </div>
+      </div>
 
-        {/* Two-Column Layout - Inspired by Wondershare */}
-        <div className="payment-layout">
-          {/* Left Column - Order Summary */}
-          <div className="order-summary-column">
-            <div className="summary-card">
-              <div className="summary-header">
-                <h2>Order Summary</h2>
-                <div className="currency-selector">
-                  <span>INR</span>
-                </div>
-              </div>
-
-              {/* Product Details */}
-              <div className="product-details">
-                <div className="product-item">
-                  <div className="product-info">
-                    <h3>AgniVirya Complete Guide</h3>
-                    <p>200+ pages PDF • Lifetime Access • 30-Day Guarantee</p>
-                    <div className="product-price">₹99.00</div>
-                  </div>
-                </div>
-
-                <div className="product-item bonus">
-                  <div className="product-info">
-                    <h3>Bonus: Creative Assets & Templates</h3>
-                    <p>Additional resources and templates for enhanced learning</p>
-                    <div className="product-price">₹0.00</div>
-                    <div className="bonus-badge">Free Bonus</div>
-                  </div>
-                </div>
-              </div>
-
-
-
-              {/* Cashfree Trust Section */}
-              <div className="cashfree-trust">
-                <div className="trust-header">
-                  <Lock className="icon" />
-                  <span>Secure Payment Gateway</span>
-                </div>
-                <div className="trust-badges">
-                  <div className="trust-badge">
-                    <Shield className="icon" />
-                    <span>PCI DSS Compliant</span>
-                  </div>
-                  <div className="trust-badge">
-                    <Check className="icon" />
-                    <span>256-bit SSL</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Price Breakdown */}
-              <div className="price-breakdown">
-                <div className="price-row">
-                  <span>Subtotal</span>
-                  <span>₹99.00</span>
-                </div>
-                <div className="price-row discount">
-                  <span>95% Discount Applied</span>
-                  <span>-₹1,881.00</span>
-                </div>
-                <div className="price-row">
-                  <span>GST (18%)</span>
-                  <span>₹0.00</span>
-                </div>
-                <div className="total-row">
-                  <span>Total</span>
-                  <span className="total-amount">₹99.00</span>
-                </div>
-                <div className="savings-info">
-                  You save ₹1,881.00 (95% OFF!)
-                </div>
-              </div>
+      {/* Main Content - Single Column Layout */}
+      <div className="payment-main-section">
+        <div className="payment-container">
+          
+          {/* Purchase Summary - Main Focal Point */}
+          <div className="purchase-summary">
+            <div className="summary-header">
+              <h1>Complete Your Purchase</h1>
+              <p>Get instant access to your complete wellness guide</p>
             </div>
-          </div>
 
-          {/* Right Column - Payment Form */}
-          <div className="payment-form-column">
-            <div className="form-container">
-              <div className="form-header">
-                <h2>Complete Your Purchase</h2>
-                <p>Enter your email address to proceed to secure Cashfree payment gateway</p>
+            {isLoadingConfig && (
+              <div className="config-loading">
+                <div className="loading-spinner">
+                  <Loader2 className="icon animate-spin" />
+                </div>
+                <p>Loading payment configuration...</p>
               </div>
+            )}
 
-              {/* Configuration Loading/Error States */}
-              {isLoadingConfig && (
-                <div className="config-loading">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-500 mx-auto mb-4"></div>
-                  <p className="text-center text-gray-600">Loading payment configuration...</p>
+            {configError && (
+              <div className="config-error">
+                <div className="error-header">
+                  <AlertTriangle className="icon" />
+                  <span>Configuration Error</span>
                 </div>
-              )}
-
-              {configError && (
-                <div className="config-error bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-                  <div className="flex items-center gap-2 text-red-600 mb-2">
-                    <AlertTriangle className="w-5 h-5" />
-                    <span className="font-medium">Configuration Error</span>
-                  </div>
-                  <p className="text-red-600 text-sm">{configError}</p>
-                </div>
-              )}
-
-              {/* Cashfree SDK Status */}
-              <div className="cashfree-status bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-                <div className="flex items-center gap-2 text-blue-600 text-sm">
-                  {!cashfreeSDKReady && (
-                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600"></div>
-                  )}
-                </div>
+                <p>Please try again later or contact support.</p>
               </div>
+            )}
 
-              <form className={`payment-form ${isLoadingConfig || configError ? 'opacity-50 pointer-events-none' : ''}`} onSubmit={handleSubmit}>
-
-                <div className="form-group">
-                  <label htmlFor="email" className={`form-label ${touched.email && errors.email ? 'error' : ''}`}>
-                    Email Address *
-                  </label>
-                  <div className="input-wrapper">
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      onBlur={handleInputBlur}
-                      className={`form-input ${touched.email && errors.email ? 'error' : ''} ${touched.email && !errors.email ? 'success' : ''}`}
-                      placeholder="Enter your email address"
-                      required
-                    />
-                    {touched.email && !errors.email && (
-                      <div className="input-icon success">
-                        <Check className="icon" />
-                      </div>
-                    )}
+            {!isLoadingConfig && !configError && (
+              <>
+                {/* Product Summary */}
+                <div className="product-summary">
+                  <div className="product-info">
+                    <div className="product-icon">
+                      <BookOpen className="icon" />
+                    </div>
+                    <div className="product-details">
+                      <h2>Complete Wellness Guide</h2>
+                      <p>Comprehensive eBook with practical solutions for modern wellness</p>
+                    </div>
                   </div>
-                  <div className="message-container">
-                    {touched.email && errors.email && (
+                  
+                  {/* Pricing */}
+                  <div className="pricing-section">
+                    <div className="price-display">
+                      <div className="current-price">₹99</div>
+                      <div className="original-price">₹1980</div>
+                      <div className="discount-badge">95% OFF</div>
+                    </div>
+                    <div className="savings-text">You save ₹1881</div>
+                  </div>
+                </div>
+
+                {/* Payment Form */}
+                <form className="payment-form" onSubmit={handleSubmit}>
+                  <div className="form-group">
+                    <label className={`form-label ${errors.email ? 'error' : ''}`}>
+                      Email Address
+                    </label>
+                    <div className="input-wrapper">
+                      <input
+                        ref={emailInputRef}
+                        type="email"
+                        name="email"
+                        className={`form-input ${errors.email ? 'error' : ''}`}
+                        placeholder="Enter your email address"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        onBlur={handleInputBlur}
+                        required
+                      />
+                      {touched.email && !errors.email && (
+                        <div className="input-icon success">
+                          <Check className="icon" />
+                        </div>
+                      )}
+                    </div>
+                    {errors.email && (
                       <div className="error-message">
-                        <Shield className="icon" />
+                        <XCircle className="icon" />
                         <span>{errors.email}</span>
                       </div>
                     )}
+                    <div className="form-help">
+                      We'll send your guide to this email address
+                    </div>
                   </div>
-                  <small className="form-help">We'll create an account if you're new, or ask you to sign in.</small>
-                </div>
 
+                  {/* CTA Button */}
+                  <button
+                    type="submit"
+                    className="submit-button"
+                    disabled={isProcessing || isRedirecting}
+                  >
+                    {isProcessing ? (
+                      <>
+                        <Loader2 className="icon animate-spin" />
+                        <span>Creating Order...</span>
+                      </>
+                    ) : isRedirecting ? (
+                      <>
+                        <Loader2 className="icon animate-spin" />
+                        <span>Opening Payment Gateway...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Shield className="icon" />
+                        <span>Get My Guide - ₹99</span>
+                      </>
+                    )}
+                  </button>
 
+                  {/* Trust & Security Badge */}
+                  <div className="security-badge">
+                    <Lock className="icon" />
+                    <span>256-bit SSL Encrypted • Secure Payment</span>
+                  </div>
+                </form>
+              </>
+            )}
+          </div>
 
-                {/* Consent Section */}
-                <div className="consent-section">
-                  <p className="consent-text">
-                    By clicking "Proceed to Payment", I agree that AgniVirya can keep me informed by sending personalized emails about products and services. See our <a href="#" className="privacy-link">Privacy Policy</a> for details.
-                  </p>
-                </div>
+          {/* Bottom Row - Compact Cards Side by Side */}
+          <div className="bottom-row">
+            {/* Key Benefits Section */}
+            <div className="benefits-section">
+              <h3>What You'll Get</h3>
+              <div className="benefits-grid">
+                {keyBenefits.map((benefit, index) => (
+                  <div key={index} className="benefit-item">
+                    <div className="benefit-icon">
+                      <benefit.icon className="icon" />
+                    </div>
+                    <div className="benefit-content">
+                      <h4>{benefit.title}</h4>
+                      <p>{benefit.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-                <button
-                  type="submit"
-                  className="submit-button"
-                  disabled={isProcessing || isRedirecting}
-                >
-                  {isProcessing ? (
-                    <>
-                      <Loader2 className="icon animate-spin" />
-                      <span>Creating Order...</span>
-                    </>
-                  ) : isRedirecting ? (
-                    <>
-                      <Loader2 className="icon animate-spin" />
-                      <span>Opening Payment Gateway...</span>
-                    </>
-                  ) : (
-                    <>
-                      <CreditCard className="icon" />
-                      <span>Pay with Cashfree</span>
-                      <div className="discount-badge">95% OFF</div>
-                    </>
-                  )}
-                </button>
-              </form>
-
-              {/* Security Badge */}
-              <div className="security-badge">
-                <CreditCard className="icon" />
-                <span>Powered by Cashfree - 100% Secure & Encrypted</span>
-                <div className="text-xs text-gray-500 mt-1">
-                  {cashfreeSDKReady ? 'SDK Ready' : 'SDK Loading...'}
-                </div>
+            {/* Trust & Security Section */}
+            <div className="trust-section">
+              <h3>Trust & Security</h3>
+              <div className="trust-grid">
+                {trustFeatures.map((feature, index) => (
+                  <div key={index} className="trust-item">
+                    <div className="trust-icon">
+                      <feature.icon className="icon" />
+                    </div>
+                    <div className="trust-content">
+                      <h4>{feature.title}</h4>
+                      <p>{feature.description}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
+
+          {/* Consent Section */}
+          <div className="consent-section">
+            <p className="consent-text">
+              By proceeding, you agree to our{' '}
+              <a href="#" className="privacy-link">
+                Privacy Policy
+              </a>{' '}
+              and{' '}
+              <a href="#" className="privacy-link">
+                Terms of Service
+              </a>
+            </p>
+          </div>
+
         </div>
       </div>
     </div>

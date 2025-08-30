@@ -2,9 +2,9 @@
 
 // App Configuration
 export const APP_CONFIG = {
-  NAME: 'Agnivirya',
-  SUBTITLE: 'Ancient Wisdom, Modern Strength',
-  DESCRIPTION: 'Ancient Modern Wellness',
+  NAME: 'अग्निवीर्य',
+  SUBTITLE: 'प्राचीन ज्ञान, आधुनिक बल',
+  DESCRIPTION: 'Ancient Ayurvedic Wisdom for Modern Men',
   VERSION: '1.0.0',
   LOGO_PATH: '/assets/agnivirya-logo.png',
 } as const;
@@ -12,96 +12,16 @@ export const APP_CONFIG = {
 // Navigation Constants
 export const NAVIGATION = {
   ITEMS: [
-    { href: '#home', label: { en: 'Home', hi: 'होम' } },
-    { href: '#about', label: { en: 'About Us', hi: 'हमारे बारे में' } },
-    { href: '#features', label: { en: 'Features', hi: 'विशेषताएं' } },
-    { href: '#testimonials', label: { en: 'Testimonials', hi: 'प्रशंसापत्र' } },
+    { href: '#problem', label: { en: 'Problem', hi: 'समस्या' } },
+    { href: '#solution', label: { en: 'Solution', hi: 'समाधान' } },
+    { href: '#recipes', label: { en: 'Recipes', hi: 'नुस्खे' } },
+    { href: '#science', label: { en: 'Science', hi: 'विज्ञान' } },
+    { href: '#trust', label: { en: 'Trust', hi: 'भरोसा' } },
+    { href: '#testimonials', label: { en: 'Results', hi: 'परिणाम' } },
     { href: '#faq', label: { en: 'FAQ', hi: 'सवाल-जवाब' } }
   ],
-  CTA_TEXT: { en: 'Get E-Book Now', hi: 'ई-बुक पाएँ' },
+  CTA_TEXT: { en: 'Get eBook', hi: 'ई-बुक पाएँ' },
   HEADER_HEIGHT: 80,
-} as const;
-
-// Language Constants
-export const LANGUAGES = {
-  SUPPORTED: [
-    { code: 'en', name: 'English', flag: '🇺🇸' },
-    { code: 'hi', name: 'Hindi', flag: '🇮🇳' }
-  ],
-  DEFAULT: 'en',
-} as const;
-
-// Download Items Configuration
-export const DOWNLOAD_ITEMS = [
-  {
-    name: 'Agnivirya Ancient Modern Wellness eBook',
-    format: 'PDF',
-    size: '2.4 MB',
-    icon: 'BookOpen',
-    description: 'Complete wellness guide with ancient wisdom'
-  },
-  {
-    name: 'Meditation Audio Collection',
-    format: 'MP3',
-    size: '15.2 MB',
-    icon: 'Heart',
-    description: 'Guided meditation sessions for daily practice'
-  },
-  {
-    name: 'Wellness Checklist & Tracker',
-    format: 'PDF',
-    size: '0.8 MB',
-    icon: 'CheckCircle',
-    description: 'Printable wellness tracking tools'
-  },
-  {
-    name: 'Bonus: Ancient Remedies Guide',
-    format: 'PDF',
-    size: '1.1 MB',
-    icon: 'Gift',
-    description: 'Exclusive bonus content'
-  }
-] as const;
-
-// Next Steps Configuration
-export const NEXT_STEPS = [
-  {
-    step: 1,
-    title: 'Download Your Materials',
-    description: 'All files are ready for instant download',
-    icon: 'Download',
-    color: 'text-blue-600'
-  },
-  {
-    step: 2,
-    title: 'Start Reading',
-    description: 'Begin with the main eBook for foundational knowledge',
-    icon: 'BookOpen',
-    color: 'text-green-600'
-  },
-  {
-    step: 3,
-    title: 'Practice Daily',
-    description: 'Implement one wellness practice each day',
-    icon: 'Heart',
-    color: 'text-purple-600'
-  },
-  {
-    step: 4,
-    title: 'Track Progress',
-    description: 'Use the checklist to monitor your wellness journey',
-    icon: 'CheckCircle',
-    color: 'text-orange-600'
-  }
-] as const;
-
-// Success Page Configuration
-export const SUCCESS_PAGE = {
-  COUNTDOWN_DURATION: 5,
-  SUCCESS_TITLE: '🎉 Payment Successful!',
-  SUCCESS_DESCRIPTION: 'Welcome to your wellness transformation! Your ancient wisdom journey begins now.',
-  COUNTDOWN_MESSAGE: '⏰ Your downloads will be ready in',
-  ORDER_SUMMARY_TITLE: 'Order Summary',
 } as const;
 
 // Footer Configuration
@@ -129,17 +49,11 @@ export const FOOTER = {
     { href: '#', label: 'LinkedIn', icon: '💼' }
   ],
   CONTACT_INFO: {
-    email: 'info@agnivirya.com',
+    email: 'info@samadhaanhub.co.in',
     phone: '+91 98765 43210',
     address: 'Mumbai, Maharashtra, India',
     hours: 'Mon-Fri: 9AM-6PM'
-  },
-  TRUST_BADGES: [
-    { icon: 'Shield', label: 'Secure & Trusted' },
-    { icon: 'Award', label: 'Quality Assured' },
-    { icon: 'Users', label: '10K+ Users' },
-    { icon: 'Heart', label: 'Customer First' }
-  ]
+  }
 } as const;
 
 // Floating Action Button Configuration

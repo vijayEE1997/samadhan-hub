@@ -1,136 +1,182 @@
 import React from 'react';
 import {
-  BookOpen,
-  Zap,
-  Shield,
-  Star,
-  Clock,
-  CheckCircle,
-  Gift,
-  ArrowRight
+  Leaf,
+  Award,
+  TrendingUp,
+  Heart
 } from 'lucide-react';
 import { getImagePath } from '@/utils/assetUtils';
+import { useLanguage } from '@/contexts/LanguageContext';
+import './HeroSection.css';
 
 interface HeroSectionProps {
   onPaymentClick: () => void;
 }
 
 const HeroSection: React.FC<HeroSectionProps> = ({ onPaymentClick }) => {
-  const features = [
-    {
-      icon: BookOpen,
-      title: "Complete Guide",
-      description: "200+ pages of comprehensive content"
-    },
-    {
-      icon: Clock,
-      title: "Lifetime Access",
-      description: "Learn at your own pace, forever"
-    },
-    {
-      icon: Zap,
-      title: "Instant Download",
-      description: "Get started immediately after purchase"
-    },
-    {
-      icon: Gift,
-      title: "Bonus Templates",
-      description: "Free creative assets included"
-    }
-  ];
+  const { language, t } = useLanguage();
 
-  const trustBadges = [
+  const keyBenefits = [
     {
-      icon: Shield,
-      text: "100% Secure"
+      icon: Leaf,
+      title: t('hero.benefits.natural.title'),
+      description: t('hero.benefits.natural.description'),
+      highlight: "100% Natural"
     },
     {
-      icon: CheckCircle,
-      text: "Money Back"
+      icon: Award,
+      title: t('hero.benefits.scientific.title'),
+      description: t('hero.benefits.scientific.description'),
+      highlight: "Scientifically Backed"
     },
     {
-      icon: Clock,
-      text: "Instant Access"
+      icon: TrendingUp,
+      title: t('hero.benefits.results.title'),
+      description: t('hero.benefits.results.description'),
+      highlight: "3-4 Weeks"
+    },
+    {
+      icon: Heart,
+      title: t('hero.benefits.price.title'),
+      description: t('hero.benefits.price.description'),
+      highlight: "₹99"
     }
   ];
 
   return (
     <section className="hero-section">
       <div className="hero-container">
-        {/* Main Hero Content */}
-        <div className="hero-main-content">
-          <div className="hero-text-content">
-            <div className="hero-badge">
-              <Star className="icon" />
-              <span>Trusted by 10K+ Customers</span>
-            </div>
-
+        {/* Hero Top Row - Sales Pitch Left, eBook Visual Right */}
+        <div className="hero-top-row">
+          {/* Left Column - Sales Pitch */}
+          <div className="hero-sales-pitch">
+            {/* Main Headline */}
             <h1 className="hero-title">
-              Master Your Success with
-              <span className="title-highlight"> AgniVirya</span>
+              {language === 'en' 
+                ? 'Ancient Knowledge, Modern Strength'
+                : 'प्राचीन ज्ञान, आधुनिक शक्ति'
+              }
             </h1>
 
+            {/* Clear Value Description */}
             <p className="hero-description">
-              Unlock the secrets to achieving your goals with our comprehensive 200+ page guide.
-              Learn proven strategies, techniques, and insights that have transformed thousands of lives.
+              {language === 'en'
+                ? 'Transform your life with ancient secrets that modern science now validates. This comprehensive guide contains everything you need to unlock your natural strength and vitality.'
+                : 'आधुनिक विज्ञान द्वारा अब मान्यता प्राप्त प्राचीन रहस्यों के साथ अपना जीवन बदलें। इस व्यापक गाइड में आपकी प्राकृतिक शक्ति और जीवन शक्ति को अनलॉक करने के लिए आवश्यक सब कुछ शामिल है।'
+              }
             </p>
 
-            {/* Hero CTA Section */}
-            <div className="hero-cta-section">
-              <div className="hero-pricing">
-                <div className="price-display">
-                  <div className="price-original">₹1,980</div>
-                  <div className="price-current">₹99</div>
-                  <div className="discount-badge">95% OFF</div>
+            {/* Prominent CTA Card */}
+            <div className="hero-cta-card">
+              {/* Urgency Line */}
+              <div className="urgency-line">
+                <span className="urgency-text">
+                  {language === 'en' ? 'Limited Time Offer – Only Today ₹99' : 'सीमित समय का प्रस्ताव – आज केवल ₹99'}
+                </span>
+              </div>
+              
+              {/* Main CTA Button */}
+              <button
+                className="hero-cta-button"
+                onClick={onPaymentClick}
+              > 
+                <span className="cta-text">
+                  {language === 'en' ? 'Get My Guide at ₹99' : '₹99 में मेरी गाइड प्राप्त करें'}
+                </span>
+                <span className="cta-price">
+                  <span className="price-number">₹99</span>
+                  <span className="cta-original">₹1,980</span>
+                </span>
+                <div className="cta-badge">
+                  <span className="discount-number">95%</span> OFF
                 </div>
-                <button onClick={onPaymentClick} className="hero-cta-button">
-                  <Zap className="icon" />
-                  <span>Get Instant Access</span>
-                  <ArrowRight className="icon" />
-                </button>
-              </div>
+              </button>
 
-              <div className="hero-guarantee">
-                <Shield className="icon" />
-                <span>30-Day Money Back Guarantee</span>
-              </div>
+              {/* Money-back Guarantee */}
+              <p className="cta-guarantee">
+                {language === 'en' 
+                  ? '30-Day Money-Back Guarantee • Instant Download'
+                  : '30-दिन का पैसा वापसी गारंटी • तुरंत डाउनलोड'
+                }
+              </p>
             </div>
           </div>
 
-          <div className="hero-visual">
-            <div className="hero-logo-large">
-              <img src={getImagePath('agnivirya-logo.png')} alt="AgniVirya" className="logo-image" />
+          {/* Right Column - eBook Visual */}
+          <div className="hero-ebook-visual">
+            <div className="ebook-container">
+              {/* eBook Mockup */}
+              <div className="ebook-mockup">
+                <div className="ebook-cover">
+                  <img
+                    src={getImagePath('agnivirya-logo.png')}
+                    alt="AgniVirya Ayurvedic Guide"
+                    className="ebook-image"
+                  />
+                  <div className="ebook-glow"></div>
+                </div>
+                
+                {/* 3D Effect Elements */}
+                <div className="ebook-shadow"></div>
+                <div className="ebook-highlight"></div>
+              </div>
+              
+              {/* eBook Details */}
+              <div className="ebook-details">
+                <div className="ebook-pages">
+                  <span className="pages-icon">📖</span>
+                  <span className="pages-text">
+                    {language === 'en' ? '200+ Pages' : '200+ पेज'}
+                  </span>
+                </div>
+                <div className="ebook-format">
+                  <span className="format-icon">📱</span>
+                  <span className="format-text">
+                    {language === 'en' ? 'PDF + Mobile' : 'PDF + मोबाइल'}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Hero Features */}
+        {/* Feature Row - Below Hero */}
         <div className="hero-features">
-          {features.map((feature, index) => {
-            const IconComponent = feature.icon;
-            return (
-              <div key={index} className="feature-card">
-                <div className="feature-icon">
-                  <IconComponent className="icon" />
-                </div>
-                <h4 className="feature-title">{feature.title}</h4>
-                <p className="feature-description">{feature.description}</p>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Trust Badges */}
-        <div className="hero-trust-badges">
-          {trustBadges.map((badge, index) => {
-            const IconComponent = badge.icon;
-            return (
-              <div key={index} className="trust-badge">
-                <IconComponent className="icon" />
-                <span>{badge.text}</span>
-              </div>
-            );
-          })}
+          <div className="feature-item">
+            <div className="feature-icon">🌿</div>
+            <div className="feature-content">
+              <span className="feature-title">
+                {language === 'en' ? '100% Natural' : '100% प्राकृतिक'}
+              </span>
+            </div>
+          </div>
+          
+          <div className="feature-item">
+            <div className="feature-icon">🔬</div>
+            <div className="feature-content">
+              <span className="feature-title">
+                {language === 'en' ? 'Scientifically Backed' : 'वैज्ञानिक रूप से समर्थित'}
+              </span>
+            </div>
+          </div>
+          
+          <div className="feature-item">
+            <div className="feature-icon">⚡</div>
+            <div className="feature-content">
+              <span className="feature-title">
+                {language === 'en' ? '3-4 Weeks Results' : '3-4 सप्ताह के परिणाम'}
+              </span>
+            </div>
+          </div>
+          
+          <div className="feature-item">
+            <div className="feature-icon">♾️</div>
+            <div className="feature-content">
+              <span className="feature-title">
+                {language === 'en' ? 'Lifetime Access' : 'आजीवन पहुंच'}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </section>

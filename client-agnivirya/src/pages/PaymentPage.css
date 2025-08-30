@@ -1,0 +1,2891 @@
+/* =============================
+   PaymentPage - Premium Single Column Design (100vh Fit)
+   ============================= */
+
+/* Override body padding for payment page */
+.payment-page {
+  padding-top: 0 !important;
+}
+
+/* Ensure payment page body has no top padding and no scroll */
+body.payment-page-active {
+  padding-top: 0 !important;
+}
+
+/* Only apply 100vh constraints to the payment page itself */
+.payment-page {
+  overflow: hidden !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
+}
+
+.payment-page {
+  height: 100vh;
+  max-height: 100vh;
+  background: linear-gradient(135deg, var(--soft-white) 0%, var(--soft-ivory) 25%, var(--soft-sage) 50%, var(--soft-gold) 75%, var(--cream-light) 100%);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Background Elements */
+.payment-page .bg-gradient {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(19, 136, 8, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 153, 51, 0.02) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.payment-page .floating-shapes {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.payment-page .shape {
+  position: absolute;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255, 153, 51, 0.08), rgba(19, 136, 8, 0.06));
+  animation: float 8s ease-in-out infinite;
+}
+
+.payment-page .shape-1 {
+  width: 40px;
+  height: 40px;
+  top: 15%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.payment-page .shape-2 {
+  width: 60px;
+  height: 60px;
+  top: 65%;
+  right: 15%;
+  animation-delay: 2s;
+}
+
+.payment-page .shape-3 {
+  width: 30px;
+  height: 30px;
+  bottom: 20%;
+  left: 20%;
+  animation-delay: 4s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(180deg); }
+}
+
+/* Page Header - Compact */
+.payment-page .page-header {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-lighter);
+  position: relative;
+  z-index: 100;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  box-shadow: var(--shadow-ultra-soft);
+  height: 60px;
+  min-height: 60px;
+  max-height: 60px;
+}
+
+.payment-page .header-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0.75rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.payment-page .back-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-lg);
+  transition: all 0.3s ease;
+}
+
+.payment-page .back-button:hover {
+  background: rgba(19, 136, 8, 0.05);
+  color: var(--deep-green);
+  transform: translateX(-2px);
+}
+
+.payment-page .back-button .icon {
+  width: 16px;
+  height: 16px;
+}
+
+.payment-page .header-logo {
+  display: flex;
+  align-items: center;
+}
+
+.payment-page .logo-image {
+  height: 32px;
+  width: auto;
+}
+
+/* Main Content Section - Compact for 100vh */
+.payment-main-section {
+  flex: 1;
+  padding: 1.5rem 0;
+  position: relative;
+  z-index: 10;
+  overflow: hidden;
+  min-height: 0;
+  max-height: calc(100vh - 60px); /* Account for header height */
+}
+
+.payment-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  height: 100%;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Purchase Summary - Main Focal Point (Larger) */
+.purchase-summary {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: var(--radius-2xl);
+  padding: 2.5rem 2rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-premium);
+  border: 1px solid var(--border-soft);
+  position: relative;
+  overflow: hidden;
+  flex: 1;
+  min-height: 0;
+  max-height: calc(100vh - 300px); /* Prevent overflow */
+}
+
+.purchase-summary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(19, 136, 8, 0.02) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 153, 51, 0.015) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.summary-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.summary-header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.25rem, 3.5vw, 2.75rem);
+  font-weight: 700;
+  margin: 0 0 0.75rem 0;
+  background: linear-gradient(135deg, var(--deep-green) 0%, var(--saffron) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+}
+
+.summary-header p {
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(1rem, 1.25vw, 1.125rem);
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+  opacity: 0.9;
+}
+
+/* Product Summary - Compact */
+.product-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-lighter);
+  position: relative;
+  z-index: 1;
+}
+
+.product-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.product-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, var(--deep-green) 0%, var(--deep-green-light) 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: var(--shadow-soft);
+}
+
+.product-icon .icon {
+  width: 24px;
+  height: 24px;
+}
+
+.product-details h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem 0;
+  color: var(--deep-green);
+  line-height: 1.3;
+}
+
+.product-details p {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.4;
+  opacity: 0.8;
+}
+
+/* Pricing Section */
+.pricing-section {
+  text-align: right;
+  position: relative;
+}
+
+.price-display {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.25rem;
+  justify-content: flex-end;
+}
+
+.current-price {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--saffron);
+  line-height: 1;
+}
+
+.original-price {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  color: var(--text-light);
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+.discount-badge {
+  background: linear-gradient(135deg, var(--deep-green) 0%, var(--deep-green-light) 100%);
+  color: white;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: var(--shadow-soft);
+}
+
+.savings-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  color: var(--success);
+  font-weight: 600;
+}
+
+/* Payment Form - Compact */
+.payment-form {
+  position: relative;
+  z-index: 1;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.form-label.error {
+  color: var(--error);
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  border: 2px solid var(--border-lighter);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--deep-green);
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 0 0 3px rgba(19, 136, 8, 0.1);
+}
+
+.form-input.error {
+  border-color: var(--error);
+}
+
+.form-input::placeholder {
+  color: var(--text-light);
+  opacity: 0.7;
+}
+
+.input-icon {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+}
+
+.input-icon.success {
+  color: var(--success);
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  color: var(--error);
+}
+
+.error-message .icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.form-help {
+  margin-top: 0.5rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  color: var(--text-light);
+  opacity: 0.8;
+}
+
+/* Submit Button - Compact */
+.submit-button {
+  width: 100%;
+  background: linear-gradient(135deg, var(--saffron) 0%, var(--saffron-dark) 100%);
+  color: white;
+  border: none;
+  border-radius: var(--radius-xl);
+  padding: 1.25rem 2rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-gentle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid transparent;
+  margin-bottom: 1rem;
+}
+
+.submit-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.8s ease;
+}
+
+.submit-button:hover::before {
+  left: 100%;
+}
+
+.submit-button:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-premium);
+  border-color: var(--deep-green);
+  background: linear-gradient(135deg, var(--saffron-dark) 0%, var(--saffron) 100%);
+}
+
+.submit-button:active {
+  transform: translateY(-1px);
+}
+
+.submit-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.submit-button .icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Security Badge - Compact */
+.security-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: rgba(19, 136, 8, 0.05);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-lighter);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  color: var(--deep-green);
+  font-weight: 500;
+}
+
+.security-badge .icon {
+  width: 16px;
+  height: 16px;
+  color: var(--deep-green);
+}
+
+/* Bottom Row - Compact Cards Side by Side */
+.bottom-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  height: 0;
+  flex: 1;
+  min-height: 0;
+  max-height: calc(100vh - 600px); /* Prevent overflow */
+}
+
+/* Benefits Section - Compact */
+.benefits-section {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20px);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--border-lighter);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.benefits-section h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-align: center;
+  margin: 0 0 1rem 0;
+  color: var(--deep-green);
+  line-height: 1.2;
+}
+
+.benefits-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.benefit-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-lighter);
+  transition: all 0.3s ease;
+}
+
+.benefit-item:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-soft);
+}
+
+.benefit-icon {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, var(--deep-green) 0%, var(--deep-green-light) 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-soft);
+}
+
+.benefit-icon .icon {
+  width: 16px;
+  height: 16px;
+}
+
+.benefit-content h4 {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem 0;
+  color: var(--deep-green);
+  line-height: 1.3;
+}
+
+.benefit-content p {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Trust Section - Compact */
+.trust-section {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20px);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--border-lighter);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.trust-section h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-align: center;
+  margin: 0 0 1rem 0;
+  color: var(--deep-green);
+  line-height: 1.2;
+}
+
+.trust-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.trust-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-lighter);
+  transition: all 0.3s ease;
+}
+
+.trust-item:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-soft);
+}
+
+.trust-icon {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, var(--saffron) 0%, var(--saffron-dark) 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-soft);
+}
+
+.trust-icon .icon {
+  width: 16px;
+  height: 16px;
+}
+
+.trust-content h4 {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem 0;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.trust-content p {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Consent Section - Compact */
+.consent-section {
+  text-align: center;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-lighter);
+  margin-top: 1rem;
+}
+
+.consent-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.privacy-link {
+  color: var(--deep-green);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.privacy-link:hover {
+  color: var(--saffron);
+  text-decoration: underline;
+}
+
+/* Loading and Error States - Compact */
+.config-loading,
+.config-error {
+  text-align: center;
+  padding: 2rem 1.5rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-lighter);
+  margin-bottom: 1.5rem;
+}
+
+.loading-spinner {
+  margin-bottom: 0.75rem;
+}
+
+.loading-spinner .icon {
+  width: 36px;
+  height: 36px;
+  color: var(--deep-green);
+}
+
+.config-loading p {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.error-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  color: var(--error);
+}
+
+.error-header .icon {
+  width: 20px;
+  height: 20px;
+}
+
+.error-header span {
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.config-error p {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Responsive Design for 100vh */
+@media (max-width: 1024px) {
+  .payment-container {
+    max-width: 1000px;
+    padding: 0 1.5rem;
+  }
+  
+  .product-summary {
+    flex-direction: column;
+    gap: 1.5rem;
+    text-align: center;
+    padding: 1.25rem;
+  }
+  
+  .pricing-section {
+    text-align: center;
+  }
+  
+  .price-display {
+    justify-content: center;
+  }
+  
+  .bottom-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    max-height: calc(100vh - 700px);
+  }
+  
+  .purchase-summary {
+    padding: 2rem 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .summary-header h1 {
+    font-size: clamp(1.875rem, 3vw, 2.5rem);
+  }
+  
+  .summary-header p {
+    font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+  }
+}
+
+@media (max-width: 768px) {
+  .payment-main-section {
+    padding: 1rem 0;
+  }
+  
+  .payment-container {
+    padding: 0 1rem;
+  }
+  
+  .purchase-summary {
+    padding: 1.5rem 1rem;
+    margin-bottom: 1rem;
+    max-height: calc(100vh - 250px);
+  }
+  
+  .summary-header h1 {
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .summary-header p {
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .product-summary {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .product-info {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.75rem;
+  }
+  
+  .product-icon {
+    width: 44px;
+    height: 44px;
+  }
+  
+  .product-icon .icon {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .product-details h2 {
+    font-size: 1.125rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  .product-details p {
+    font-size: 0.8rem;
+  }
+  
+  .current-price {
+    font-size: 1.5rem;
+  }
+  
+  .original-price {
+    font-size: 0.9rem;
+  }
+  
+  .discount-badge {
+    font-size: 0.65rem;
+    padding: 0.15rem 0.5rem;
+  }
+  
+  .savings-text {
+    font-size: 0.7rem;
+  }
+  
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+  
+  .form-label {
+    font-size: 0.75rem;
+    margin-bottom: 0.375rem;
+  }
+  
+  .form-input {
+    padding: 0.75rem 0.875rem;
+    font-size: 0.9rem;
+  }
+  
+  .form-help {
+    font-size: 0.75rem;
+    margin-top: 0.375rem;
+  }
+  
+  .submit-button {
+    padding: 1rem 1.5rem;
+    font-size: 0.9rem;
+    margin-bottom: 0.875rem;
+  }
+  
+  .submit-button .icon {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .security-badge {
+    padding: 0.625rem;
+    font-size: 0.75rem;
+  }
+  
+  .security-badge .icon {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .benefits-section,
+  .trust-section {
+    padding: 1rem;
+  }
+  
+  .benefits-section h3,
+  .trust-section h3 {
+    font-size: 1.125rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .benefit-item,
+  .trust-item {
+    padding: 0.625rem;
+    gap: 0.625rem;
+  }
+  
+  .benefit-icon,
+  .trust-icon {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .benefit-icon .icon,
+  .trust-icon .icon {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .benefit-content h4,
+  .trust-content h4 {
+    font-size: 0.8rem;
+    margin-bottom: 0.125rem;
+  }
+  
+  .benefit-content p,
+  .trust-content p {
+    font-size: 0.7rem;
+  }
+  
+  .bottom-row {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    max-height: calc(100vh - 500px);
+  }
+  
+  .consent-section {
+    padding: 0.75rem;
+    margin-top: 0.75rem;
+  }
+  
+  .consent-text {
+    font-size: 0.7rem;
+  }
+  
+  .config-loading,
+  .config-error {
+    padding: 1.5rem 1rem;
+    margin-bottom: 1.25rem;
+  }
+  
+  .loading-spinner .icon {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .config-loading p {
+    font-size: 0.85rem;
+  }
+  
+  .error-header .icon {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .error-header span {
+    font-size: 0.9rem;
+  }
+  
+  .config-error p {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .payment-container {
+    padding: 0 0.75rem;
+  }
+  
+  .purchase-summary {
+    padding: 1rem 0.75rem;
+    margin-bottom: 0.75rem;
+    max-height: calc(100vh - 200px);
+  }
+  
+  .summary-header h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.375rem;
+  }
+  
+  .summary-header p {
+    font-size: 0.85rem;
+    margin-bottom: 1.25rem;
+  }
+  
+  .product-summary {
+    padding: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+  
+  .product-icon {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .product-icon .icon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .product-details h2 {
+    font-size: 1rem;
+  }
+  
+  .product-details p {
+    font-size: 0.75rem;
+  }
+  
+  .current-price {
+    font-size: 1.25rem;
+  }
+  
+  .original-price {
+    font-size: 0.8rem;
+  }
+  
+  .discount-badge {
+    font-size: 0.6rem;
+    padding: 0.125rem 0.4rem;
+  }
+  
+  .savings-text {
+    font-size: 0.65rem;
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  .form-label {
+    font-size: 0.7rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  .form-input {
+    padding: 0.625rem 0.75rem;
+    font-size: 0.85rem;
+  }
+  
+  .form-help {
+    font-size: 0.7rem;
+    margin-top: 0.25rem;
+  }
+  
+  .submit-button {
+    padding: 0.875rem 1.25rem;
+    font-size: 0.85rem;
+    margin-bottom: 0.625rem;
+  }
+  
+  .submit-button .icon {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .security-badge {
+    padding: 0.5rem;
+    font-size: 0.7rem;
+  }
+  
+  .security-badge .icon {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .benefits-section,
+  .trust-section {
+    padding: 0.75rem;
+  }
+  
+  .benefits-section h3,
+  .trust-section h3 {
+    font-size: 1rem;
+    margin-bottom: 0.625rem;
+  }
+  
+  .benefits-grid,
+  .trust-grid {
+    gap: 0.625rem;
+  }
+  
+  .benefit-item,
+  .trust-item {
+    padding: 0.625rem;
+    gap: 0.625rem;
+  }
+  
+  .benefit-icon,
+  .trust-icon {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .benefit-icon .icon,
+  .trust-icon .icon {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .benefit-content h4,
+  .trust-content h4 {
+    font-size: 0.75rem;
+    margin-bottom: 0.125rem;
+  }
+  
+  .benefit-content p,
+  .trust-content p {
+    font-size: 0.65rem;
+  }
+  
+  .bottom-row {
+    gap: 0.5rem;
+    max-height: calc(100vh - 450px);
+  }
+  
+  .consent-section {
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  
+  .consent-text {
+    font-size: 0.65rem;
+  }
+  
+  .config-loading,
+  .config-error {
+    padding: 1.25rem 0.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  .loading-spinner .icon {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .config-loading p {
+    font-size: 0.8rem;
+  }
+  
+  .error-header .icon {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .error-header span {
+    font-size: 0.85rem;
+  }
+  
+  .config-error p {
+    font-size: 0.8rem;
+  }
+  
+  .header-container {
+    padding: 0.5rem 1rem;
+  }
+  
+  .back-button {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.8rem;
+  }
+  
+  .back-button .icon {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .logo-image {
+    height: 28px;
+  }
+}
+
+/* Tablet-specific optimizations */
+@media (min-width: 481px) and (max-width: 768px) {
+  .purchase-summary {
+    max-height: calc(100vh - 280px);
+  }
+  
+  .product-summary {
+    flex-direction: row;
+    text-align: left;
+    gap: 1.25rem;
+  }
+  
+  .product-info {
+    flex-direction: row;
+    text-align: left;
+  }
+  
+  .pricing-section {
+    text-align: right;
+  }
+  
+  .price-display {
+    justify-content: flex-end;
+  }
+  
+  .bottom-row {
+    max-height: calc(100vh - 550px);
+  }
+}
+
+/* Landscape mobile optimization */
+@media (max-width: 768px) and (orientation: landscape) {
+  .payment-main-section {
+    padding: 0.5rem 0;
+  }
+  
+  .purchase-summary {
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 0.75rem;
+    max-height: calc(100vh - 180px);
+  }
+  
+  .summary-header h1 {
+    font-size: 1.75rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  .summary-header p {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+  
+  .product-summary {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .bottom-row {
+    max-height: calc(100vh - 400px);
+  }
+  
+  .benefits-section,
+  .trust-section {
+    padding: 0.875rem;
+  }
+  
+  .benefit-item,
+  .trust-item {
+    padding: 0.5rem;
+  }
+}
+
+/* Additional Mobile Optimizations */
+@media (max-width: 480px) {
+  /* Improve touch targets for mobile */
+  .submit-button,
+  .language-option,
+  .back-button {
+    min-height: 44px; /* iOS recommended touch target size */
+  }
+  
+  /* Optimize spacing for mobile screens */
+  .purchase-summary {
+    margin: 0 0.5rem;
+  }
+  
+  /* Improve text readability on small screens */
+  .summary-header h1,
+  .summary-header p,
+  .product-details h2,
+  .product-details p,
+  .form-label,
+  .form-help {
+    word-wrap: break-word;
+    hyphens: auto;
+  }
+  
+  /* Better mobile form elements */
+  .form-input {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  /* Optimize product summary for mobile */
+  .product-summary {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .product-info {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.75rem;
+  }
+  
+  .pricing-section {
+    text-align: center;
+  }
+  
+  .price-display {
+    justify-content: center;
+  }
+  
+  /* Better mobile button spacing */
+  .submit-button {
+    margin-bottom: 0.75rem;
+  }
+  
+  /* Improve mobile header */
+  .page-header {
+    height: 56px;
+    min-height: 56px;
+    max-height: 56px;
+  }
+  
+  .header-container {
+    padding: 0.5rem 0.75rem;
+  }
+  
+  /* Mobile-friendly logo size */
+  .logo-image {
+    height: 24px;
+  }
+  
+  /* Optimize bottom sections for mobile */
+  .bottom-row {
+    gap: 0.5rem;
+  }
+  
+  .benefits-section,
+  .trust-section {
+    padding: 0.75rem;
+  }
+  
+  .benefit-item,
+  .trust-item {
+    padding: 0.5rem;
+  }
+}
+
+/* Additional mobile optimizations for smaller screens */
+@media (max-width: 480px) {
+  .payment-container {
+    padding: 0 0.5rem;
+  }
+  
+  .purchase-summary {
+    padding: 1rem 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .summary-header h1 {
+    font-size: 1.375rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  .summary-header p {
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+  }
+  
+  .product-summary {
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  .product-info {
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .product-icon {
+    width: 44px;
+    height: 44px;
+  }
+  
+  .product-icon .icon {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .product-details h2 {
+    font-size: 1rem;
+  }
+  
+  .product-details p {
+    font-size: 0.75rem;
+  }
+  
+  .pricing-section {
+    padding: 0.625rem;
+  }
+  
+  .current-price {
+    font-size: 1.5rem;
+  }
+  
+  .original-price {
+    font-size: 0.8rem;
+  }
+  
+  .discount-badge {
+    font-size: 0.65rem;
+    padding: 0.2rem 0.5rem;
+  }
+  
+  .savings-text {
+    font-size: 0.7rem;
+  }
+  
+  .form-group {
+    margin-bottom: 0.875rem;
+  }
+  
+  .form-label {
+    font-size: 0.7rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  .form-input {
+    padding: 0.75rem 0.625rem;
+    font-size: 16px;
+  }
+  
+  .form-help {
+    font-size: 0.65rem;
+    margin-top: 0.25rem;
+  }
+  
+  .submit-button {
+    padding: 0.875rem 1rem;
+    font-size: 0.9rem;
+    margin-bottom: 0.625rem;
+  }
+  
+  .submit-button .icon {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .security-badge {
+    padding: 0.625rem;
+    font-size: 0.7rem;
+  }
+  
+  .security-badge .icon {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .bottom-row {
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .benefits-section,
+  .trust-section {
+    padding: 0.875rem 0.5rem;
+  }
+  
+  .benefits-section h3,
+  .trust-section h3 {
+    font-size: 1rem;
+    margin-bottom: 0.625rem;
+  }
+  
+  .benefits-grid,
+  .trust-grid {
+    gap: 0.625rem;
+  }
+  
+  .benefit-item,
+  .trust-item {
+    padding: 0.625rem;
+    gap: 0.625rem;
+  }
+  
+  .benefit-icon,
+  .trust-icon {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .benefit-icon .icon,
+  .trust-icon .icon {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .benefit-content h4,
+  .trust-content h4 {
+    font-size: 0.75rem;
+    margin-bottom: 0.125rem;
+  }
+  
+  .benefit-content p,
+  .trust-content p {
+    font-size: 0.65rem;
+  }
+  
+  .consent-section {
+    padding: 0.625rem;
+    margin-top: 0.5rem;
+  }
+  
+  .consent-text {
+    font-size: 0.65rem;
+  }
+  
+  .config-loading,
+  .config-error {
+    padding: 1rem 0.5rem;
+    margin-bottom: 0.875rem;
+  }
+  
+  .loading-spinner .icon {
+    width: 28px;
+    height: 28px;
+    margin-bottom: 0.375rem;
+  }
+  
+  .config-loading p {
+    font-size: 0.8rem;
+  }
+  
+  .error-header .icon {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .error-header span {
+    font-size: 0.85rem;
+  }
+  
+  .config-error p {
+    font-size: 0.75rem;
+  }
+}
+
+/* Extra small mobile devices */
+@media (max-width: 360px) {
+  .payment-container {
+    padding: 0 0.375rem;
+  }
+  
+  .purchase-summary {
+    padding: 0.875rem 0.375rem;
+  }
+  
+  .summary-header h1 {
+    font-size: 1.25rem;
+  }
+  
+  .summary-header p {
+    font-size: 0.75rem;
+  }
+  
+  .product-summary {
+    padding: 0.625rem;
+  }
+  
+  .product-icon {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .product-icon .icon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .product-details h2 {
+    font-size: 0.9rem;
+  }
+  
+  .product-details p {
+    font-size: 0.7rem;
+  }
+  
+  .pricing-section {
+    padding: 0.5rem;
+  }
+  
+  .current-price {
+    font-size: 1.375rem;
+  }
+  
+  .original-price {
+    font-size: 0.75rem;
+  }
+  
+  .discount-badge {
+    font-size: 0.6rem;
+    padding: 0.15rem 0.4rem;
+  }
+  
+  .savings-text {
+    font-size: 0.65rem;
+  }
+  
+  .submit-button {
+    padding: 0.75rem 0.875rem;
+    font-size: 0.85rem;
+  }
+  
+  .benefits-section,
+  .trust-section {
+    padding: 0.75rem 0.375rem;
+  }
+  
+  .benefit-item,
+  .trust-item {
+    padding: 0.5rem;
+  }
+  
+  .consent-section {
+    padding: 0.5rem;
+  }
+  
+  .consent-text {
+    font-size: 0.6rem;
+  }
+}
+
+/* Mobile landscape with reduced height optimization */
+@media (max-width: 768px) and (max-height: 600px) {
+  .payment-main-section {
+    padding: 0.5rem 0;
+  }
+  
+  .purchase-summary {
+    padding: 1rem 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .summary-header {
+    margin-bottom: 1rem;
+  }
+  
+  .summary-header h1 {
+    font-size: 1.375rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  .summary-header p {
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+  }
+  
+  .product-summary {
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  .product-info {
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .form-group {
+    margin-bottom: 0.875rem;
+  }
+  
+  .submit-button {
+    padding: 0.875rem 1.25rem;
+    margin-bottom: 0.625rem;
+  }
+  
+  .bottom-row {
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .benefits-section,
+  .trust-section {
+    padding: 0.875rem 0.75rem;
+  }
+  
+  .consent-section {
+    padding: 0.625rem;
+    margin-top: 0.5rem;
+  }
+}
+
+/* Mobile-specific touch improvements */
+@media (max-width: 768px) {
+  /* Better touch targets */
+  .submit-button,
+  .back-button,
+  .form-input {
+    min-height: 44px; /* iOS recommended touch target */
+  }
+  
+  /* Improve touch feedback */
+  .submit-button:active,
+  .back-button:active {
+    transform: scale(0.98);
+  }
+  
+  /* Better mobile scrolling */
+  .payment-page {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+  
+  .payment-main-section {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+  
+  /* Mobile-friendly focus states */
+  .submit-button:focus,
+  .back-button:focus,
+  .form-input:focus {
+    outline: 2px solid var(--deep-green);
+    outline-offset: 2px;
+  }
+  
+  /* Prevent text selection on buttons */
+  .submit-button,
+  .back-button {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  /* Better mobile animations */
+  .purchase-summary,
+  .benefits-section,
+  .trust-section {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .purchase-summary:active,
+  .benefits-section:active,
+  .trust-section:active {
+    transform: scale(0.98);
+  }
+}
+
+/* High DPI mobile devices */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .purchase-summary,
+  .benefits-section,
+  .trust-section,
+  .submit-button,
+  .form-input {
+    border-width: 0.5px;
+  }
+}
+
+/* Mobile landscape with reduced height */
+@media (max-width: 768px) and (max-height: 500px) {
+  .payment-main-section {
+    padding: 0.5rem 0;
+  }
+  
+  .purchase-summary {
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+    max-height: calc(100vh - 160px);
+  }
+  
+  .summary-header h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  .summary-header p {
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+  
+  .product-summary {
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  .product-icon {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .product-icon .icon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .submit-button {
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .bottom-row {
+    max-height: calc(100vh - 350px);
+  }
+  
+  .benefits-section,
+  .trust-section {
+    padding: 0.75rem;
+  }
+  
+  .benefit-item,
+  .trust-item {
+    padding: 0.5rem;
+  }
+}
+
+/* Tablet portrait optimization */
+@media (min-width: 481px) and (max-width: 768px) and (orientation: portrait) {
+  .purchase-summary {
+    max-height: calc(100vh - 300px);
+  }
+  
+  .bottom-row {
+    max-height: calc(100vh - 600px);
+  }
+  
+  .product-summary {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.25rem;
+  }
+  
+  .product-info {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .pricing-section {
+    text-align: center;
+  }
+  
+  .price-display {
+    justify-content: center;
+  }
+}
+
+/* Large tablet optimization */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .payment-container {
+    padding: 0 2rem;
+  }
+  
+  .purchase-summary {
+    padding: 2.25rem 2rem;
+    margin-bottom: 1.75rem;
+  }
+  
+  .summary-header h1 {
+    font-size: clamp(2rem, 3.5vw, 2.5rem);
+  }
+  
+  .summary-header p {
+    font-size: clamp(0.95rem, 1.3vw, 1.1rem);
+  }
+  
+  .product-summary {
+    padding: 1.75rem;
+    margin-bottom: 1.75rem;
+  }
+  
+  .bottom-row {
+    gap: 1.25rem;
+    max-height: calc(100vh - 650px);
+  }
+  
+  .benefits-section,
+  .trust-section {
+    padding: 1.75rem;
+  }
+}
+
+/* Touch-friendly improvements for mobile */
+@media (max-width: 768px) {
+  /* Improve touch scrolling */
+  .payment-page {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+  
+  /* Better touch feedback */
+  .submit-button,
+  .back-button {
+    -webkit-tap-highlight-color: rgba(19, 136, 8, 0.1);
+    touch-action: manipulation;
+  }
+  
+  /* Prevent text selection on buttons */
+  .submit-button,
+  .back-button {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  /* Improve mobile scrolling */
+  .payment-main-section {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+  
+  /* Better mobile animations */
+  .purchase-summary,
+  .benefits-section,
+  .trust-section {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .purchase-summary:active,
+  .benefits-section:active,
+  .trust-section:active {
+    transform: scale(0.98);
+  }
+  
+  /* Mobile-friendly focus states */
+  .submit-button:focus,
+  .back-button:focus,
+  .form-input:focus {
+    outline: 2px solid var(--deep-green);
+    outline-offset: 2px;
+  }
+  
+  /* Better mobile form interaction */
+  .form-input {
+    -webkit-appearance: none;
+    border-radius: var(--radius-lg);
+  }
+  
+  .form-input:focus {
+    -webkit-box-shadow: 0 0 0 3px rgba(19, 136, 8, 0.1);
+    box-shadow: 0 0 0 3px rgba(19, 136, 8, 0.1);
+  }
+}
+
+/* Mobile-specific accessibility improvements */
+@media (max-width: 480px) {
+  /* Increase contrast for better readability */
+  .summary-header h1 {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  }
+  
+  .summary-header p {
+    color: var(--text-primary);
+    opacity: 0.95;
+  }
+  
+  /* Better mobile form accessibility */
+  .form-input:focus {
+    box-shadow: 0 0 0 3px rgba(19, 136, 8, 0.2);
+  }
+  
+  /* Improve mobile button contrast */
+  .submit-button {
+    box-shadow: 0 2px 8px rgba(255, 153, 51, 0.3);
+  }
+  
+  .submit-button:hover {
+    box-shadow: 0 4px 12px rgba(255, 153, 51, 0.4);
+  }
+  
+  /* Mobile-friendly error states */
+  .config-error {
+    border-width: 2px;
+    background: rgba(239, 68, 68, 0.08);
+  }
+  
+  /* Better mobile loading states */
+  .config-loading {
+    border-width: 2px;
+    background: rgba(19, 136, 8, 0.08);
+  }
+  
+  /* Improve mobile benefit and trust items */
+  .benefit-item,
+  .trust-item {
+    transition: all 0.2s ease;
+  }
+  
+  .benefit-item:active,
+  .trust-item:active {
+    transform: scale(0.98);
+    background: rgba(255, 255, 255, 0.95);
+  }
+}
+
+/* Mobile landscape specific improvements */
+@media (max-width: 768px) and (orientation: landscape) {
+  /* Optimize for landscape mobile */
+  .payment-page {
+    height: 100vh;
+    overflow-y: auto;
+  }
+  
+  .payment-main-section {
+    padding: 0.5rem 0;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+  
+  .payment-container {
+    margin-top: 1rem;
+  }
+  
+  .purchase-summary {
+    max-width: 90vw;
+    margin: 0 auto 0.75rem auto;
+  }
+  
+  /* Compact header for landscape */
+  .page-header {
+    height: 48px;
+    min-height: 48px;
+    max-height: 48px;
+  }
+  
+  .header-container {
+    padding: 0.375rem 1rem;
+  }
+  
+  .logo-image {
+    height: 24px;
+  }
+  
+  .back-button {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.8rem;
+  }
+  
+  /* Optimize bottom sections for landscape */
+  .bottom-row {
+    max-height: calc(100vh - 350px);
+    gap: 0.75rem;
+  }
+  
+  .benefits-section,
+  .trust-section {
+    padding: 0.75rem;
+  }
+}
+
+/* Mobile-specific form improvements */
+@media (max-width: 480px) {
+  /* Better mobile input sizing */
+  .form-input {
+    font-size: 16px; /* Prevent zoom on iOS */
+    line-height: 1.4;
+  }
+  
+  /* Improve mobile button sizing */
+  .submit-button {
+    min-height: 48px;
+    line-height: 1.2;
+  }
+  
+  /* Better mobile spacing */
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  .form-label {
+    margin-bottom: 0.25rem;
+  }
+  
+  .form-help {
+    margin-top: 0.25rem;
+  }
+  
+  /* Mobile-friendly pricing display */
+  .price-display {
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: center;
+  }
+  
+  .current-price {
+    font-size: 1.5rem;
+  }
+  
+  .original-price {
+    font-size: 0.8rem;
+  }
+  
+  .discount-badge {
+    font-size: 0.6rem;
+    padding: 0.125rem 0.4rem;
+  }
+  
+  .savings-text {
+    font-size: 0.65rem;
+  }
+}
+
+/* Mobile-specific layout improvements */
+@media (max-width: 768px) {
+  /* Better mobile container spacing */
+  .payment-container {
+    padding: 0 0.75rem;
+  }
+  
+  /* Optimize purchase summary for mobile - PRIORITY 1 */
+  .purchase-summary {
+    padding: 1.25rem 0.75rem;
+    margin-bottom: 0.75rem;
+    max-height: none; /* Remove height constraint for mobile */
+    order: 1; /* Ensure this appears first */
+  }
+  
+  /* Better mobile header spacing */
+  .summary-header {
+    margin-bottom: 1.25rem;
+  }
+  
+  .summary-header h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.375rem;
+    line-height: 1.2;
+  }
+  
+  .summary-header p {
+    font-size: 0.875rem;
+    margin-bottom: 1.25rem;
+    line-height: 1.4;
+  }
+  
+  /* Mobile-optimized product summary */
+  .product-summary {
+    padding: 0.875rem;
+    margin-bottom: 1.25rem;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-lighter);
+  }
+  
+  .product-info {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  .product-icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto;
+  }
+  
+  .product-icon .icon {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .product-details h2 {
+    font-size: 1.125rem;
+    margin-bottom: 0.25rem;
+    color: var(--deep-green);
+  }
+  
+  .product-details p {
+    font-size: 0.8rem;
+    line-height: 1.4;
+    color: var(--text-secondary);
+  }
+  
+  /* Mobile-optimized pricing section */
+  .pricing-section {
+    text-align: center;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-lighter);
+  }
+  
+  .price-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .current-price {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--saffron);
+    line-height: 1;
+  }
+  
+  .original-price {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    text-decoration: line-through;
+    opacity: 0.7;
+  }
+  
+  .discount-badge {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.6rem;
+    background: var(--deep-green);
+    color: white;
+    border-radius: var(--radius-full);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .savings-text {
+    font-size: 0.75rem;
+    color: var(--success);
+    font-weight: 600;
+  }
+  
+  /* Mobile-optimized form - PRIORITY 2 */
+  .payment-form {
+    margin-top: 1rem;
+    order: 2; /* Ensure form appears second */
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  .form-label {
+    font-size: 0.75rem;
+    margin-bottom: 0.25rem;
+    color: var(--text-primary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .form-input {
+    padding: 0.875rem 0.75rem;
+    font-size: 16px; /* Prevent iOS zoom */
+    border: 2px solid var(--border-lighter);
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.95);
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .form-input:focus {
+    border-color: var(--deep-green);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(19, 136, 8, 0.1);
+    outline: none;
+  }
+  
+  .form-help {
+    font-size: 0.7rem;
+    margin-top: 0.25rem;
+    color: var(--text-light);
+    opacity: 0.8;
+  }
+  
+  /* Mobile-optimized submit button - PRIORITY 3 */
+  .submit-button {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--saffron) 0%, var(--saffron-dark) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-xl);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    box-shadow: 0 2px 8px rgba(255, 153, 51, 0.3);
+    transition: all 0.3s ease;
+    /* Ensure button is always visible */
+    position: relative;
+    z-index: 10;
+  }
+  
+  .submit-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 153, 51, 0.4);
+  }
+  
+  .submit-button .icon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  /* Mobile-optimized security badge */
+  .security-badge {
+    padding: 0.75rem;
+    background: rgba(19, 136, 8, 0.05);
+    border: 1px solid var(--border-lighter);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--deep-green);
+    font-weight: 500;
+  }
+  
+  .security-badge .icon {
+    width: 16px;
+    height: 16px;
+    color: var(--deep-green);
+  }
+  
+  /* Mobile-optimized bottom sections - PRIORITY 4 (less important) */
+  .bottom-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    order: 3; /* Ensure this appears after the main form */
+    /* Reduce height to prevent hiding primary content */
+    max-height: none;
+  }
+  
+  .benefits-section,
+  .trust-section {
+    padding: 1rem 0.75rem;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-lighter);
+    box-shadow: var(--shadow-soft);
+    /* Ensure these don't take up too much space */
+    flex-shrink: 1;
+  }
+  
+  .benefits-section h3,
+  .trust-section h3 {
+    font-size: 1.125rem;
+    margin-bottom: 0.75rem;
+    color: var(--deep-green);
+    text-align: center;
+    font-weight: 700;
+  }
+  
+  .benefits-grid,
+  .trust-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .benefit-item,
+  .trust-item {
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-lighter);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.2s ease;
+  }
+  
+  .benefit-item:hover,
+  .trust-item:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-soft);
+  }
+  
+  .benefit-icon,
+  .trust-icon {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, var(--deep-green) 0%, var(--deep-green-light) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+    box-shadow: var(--shadow-soft);
+  }
+  
+  .benefit-icon .icon,
+  .trust-icon .icon {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .benefit-content h4,
+  .trust-content h4 {
+    font-size: 0.875rem;
+    margin-bottom: 0.125rem;
+    color: var(--deep-green);
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  
+  .benefit-content p,
+  .trust-content p {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    margin: 0;
+  }
+  
+  /* Mobile-optimized consent section */
+  .consent-section {
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-lighter);
+    text-align: center;
+    margin-top: 0.75rem;
+    order: 4; /* Ensure this appears last */
+  }
+  
+  .consent-text {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    margin: 0;
+  }
+  
+  .privacy-link {
+    color: var(--deep-green);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  
+  .privacy-link:hover {
+    text-decoration: underline;
+  }
+  
+  /* Mobile-optimized loading and error states */
+  .config-loading,
+  .config-error {
+    padding: 1.25rem 0.75rem;
+    margin-bottom: 1rem;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-lighter);
+    text-align: center;
+  }
+  
+  .loading-spinner .icon {
+    width: 32px;
+    height: 32px;
+    color: var(--deep-green);
+    margin-bottom: 0.5rem;
+  }
+  
+  .config-loading p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+  
+  .error-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--error);
+  }
+  
+  .error-header .icon {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .error-header span {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  
+  .config-error p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+  
+  /* Better mobile grid layout */
+  .bottom-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .benefits-section,
+  .trust-section {
+    flex: 1;
+    min-height: auto;
+  }
+  
+  /* Improve mobile card spacing */
+  .benefit-item,
+  .trust-item {
+    margin-bottom: 0.5rem;
+  }
+  
+  .benefit-item:last-child,
+  .trust-item:last-child {
+    margin-bottom: 0;
+  }
+  
+  /* Better mobile header spacing */
+  .summary-header {
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Mobile-friendly product summary */
+  .product-summary {
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Optimize mobile form spacing */
+  .payment-form {
+    margin-top: 1rem;
+  }
+}
+
+/* Mobile layout fixes */
+@media (max-width: 768px) {
+  .payment-main-section {
+    padding: 1rem 0;
+    overflow: visible; /* Allow content to flow naturally on mobile */
+    max-height: none; /* Remove height constraint on mobile */
+  }
+  
+  .payment-container {
+    padding: 0 0.75rem;
+    height: auto; /* Allow natural height on mobile */
+    max-height: none; /* Remove height constraint on mobile */
+    overflow: visible; /* Allow content to flow */
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem; /* Add consistent spacing between sections */
+  }
+  
+  /* Ensure proper content priority on mobile */
+  .purchase-summary {
+    order: 1;
+    flex-shrink: 0; /* Prevent shrinking */
+  }
+  
+  .bottom-row {
+    order: 2;
+    flex-shrink: 0; /* Prevent shrinking */
+  }
+  
+  .consent-section {
+    order: 3;
+    flex-shrink: 0; /* Prevent shrinking */
+  }
+  
+  /* Remove any height constraints that might hide content */
+  .purchase-summary,
+  .bottom-row,
+  .benefits-section,
+  .trust-section {
+    max-height: none;
+    min-height: auto;
+  }
+}
+
+/* Additional mobile form visibility fixes */
+@media (max-width: 768px) {
+  /* Ensure payment form is always visible */
+  .payment-form {
+    position: relative;
+    z-index: 5;
+    background: rgba(255, 255, 255, 0.98);
+    padding: 1rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-lighter);
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  /* Make submit button highly visible */
+  .submit-button {
+    position: relative;
+    z-index: 10;
+    background: linear-gradient(135deg, var(--saffron) 0%, var(--saffron-dark) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-xl);
+    padding: 1rem 1.25rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 12px rgba(255, 153, 51, 0.4);
+    transition: all 0.3s ease;
+    margin-bottom: 0.75rem;
+    /* Ensure button stands out */
+    border: 2px solid var(--saffron);
+  }
+  
+  .submit-button:hover,
+  .submit-button:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 153, 51, 0.5);
+    background: linear-gradient(135deg, var(--saffron-dark) 0%, var(--saffron) 100%);
+  }
+  
+  .submit-button:active {
+    transform: translateY(0);
+  }
+  
+  /* Ensure form elements are properly spaced */
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+  
+  .form-input {
+    background: white;
+    border: 2px solid var(--border-lighter);
+    padding: 0.875rem 0.75rem;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: var(--radius-lg);
+    transition: all 0.3s ease;
+  }
+  
+  .form-input:focus {
+    border-color: var(--deep-green);
+    box-shadow: 0 0 0 3px rgba(19, 136, 8, 0.1);
+    outline: none;
+    background: white;
+  }
+  
+  /* Make security badge more prominent */
+  .security-badge {
+    background: rgba(19, 136, 8, 0.08);
+    border: 1px solid var(--deep-green);
+    padding: 0.75rem;
+    border-radius: var(--radius-lg);
+    text-align: center;
+    margin-top: 0.5rem;
+  }
+  
+  /* Ensure product summary is compact but visible */
+  .product-summary {
+    background: rgba(255, 255, 255, 0.98);
+    border: 1px solid var(--border-lighter);
+    border-radius: var(--radius-lg);
+    padding: 1rem;
+    margin-bottom: 1.25rem;
+  }
+  
+  /* Make pricing more prominent */
+  .pricing-section {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid var(--border-lighter);
+    border-radius: var(--radius-md);
+    padding: 0.875rem;
+    text-align: center;
+  }
+  
+  .current-price {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--saffron);
+    margin-bottom: 0.25rem;
+  }
+  
+  .discount-badge {
+    background: var(--deep-green);
+    color: white;
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-full);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0.25rem 0;
+  }
+  
+  /* Ensure bottom sections don't interfere with main content */
+  .bottom-row {
+    margin-top: 1rem;
+    gap: 1rem;
+  }
+  
+  .benefits-section,
+  .trust-section {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid var(--border-lighter);
+    border-radius: var(--radius-lg);
+    padding: 1rem 0.75rem;
+    box-shadow: var(--shadow-soft);
+  }
+  
+  /* Make sure consent section is visible but not intrusive */
+  .consent-section {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--border-lighter);
+    border-radius: var(--radius-lg);
+    padding: 0.75rem;
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.7rem;
+  }
+}
+
+/* Final mobile layout fix - ensure payment button is always visible */
+@media (max-width: 768px) {
+  /* Fix container overflow issues */
+  .payment-page {
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+  
+  .payment-main-section {
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+    padding: 1rem 0;
+  }
+  
+  .payment-container {
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  /* Ensure purchase summary doesn't hide content */
+  .purchase-summary {
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+    margin-bottom: 1rem;
+  }
+  
+  /* Make payment form highly visible */
+  .payment-form {
+    background: white !important;
+    border: 2px solid var(--border-lighter) !important;
+    border-radius: var(--radius-lg) !important;
+    padding: 1.25rem !important;
+    margin: 1rem 0 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+    position: relative !important;
+    z-index: 100 !important;
+  }
+  
+  /* Ensure submit button is always visible and prominent */
+  .submit-button {
+    background: linear-gradient(135deg, var(--saffron) 0%, var(--saffron-dark) 100%) !important;
+    color: white !important;
+    border: 2px solid var(--saffron) !important;
+    border-radius: var(--radius-xl) !important;
+    padding: 1.125rem 1.5rem !important;
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.75rem !important;
+    box-shadow: 0 6px 16px rgba(255, 153, 51, 0.4) !important;
+    margin: 1rem 0 !important;
+    position: relative !important;
+    z-index: 200 !important;
+    /* Make button stand out */
+    transform: none !important;
+  }
+  
+  /* Ensure form elements are properly visible */
+  .form-group {
+    margin-bottom: 1.5rem !important;
+  }
+  
+  .form-label {
+    color: var(--text-primary) !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.5rem !important;
+    display: block !important;
+  }
+  
+  .form-input {
+    background: white !important;
+    border: 2px solid var(--border-lighter) !important;
+    padding: 1rem 0.875rem !important;
+    font-size: 16px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    border-radius: var(--radius-lg) !important;
+    color: var(--text-primary) !important;
+  }
+  
+  .form-input:focus {
+    border-color: var(--deep-green) !important;
+    box-shadow: 0 0 0 3px rgba(19, 136, 8, 0.15) !important;
+    outline: none !important;
+    background: white !important;
+  }
+  
+  /* Make security badge visible */
+  .security-badge {
+    background: rgba(19, 136, 8, 0.1) !important;
+    border: 1px solid var(--deep-green) !important;
+    padding: 1rem !important;
+    border-radius: var(--radius-lg) !important;
+    text-align: center !important;
+    margin-top: 1rem !important;
+    color: var(--deep-green) !important;
+    font-weight: 500 !important;
+  }
+  
+  /* Ensure bottom sections don't interfere */
+  .bottom-row {
+    margin-top: 1.5rem !important;
+    gap: 1rem !important;
+  }
+  
+  .benefits-section,
+  .trust-section {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid var(--border-lighter) !important;
+    border-radius: var(--radius-lg) !important;
+    padding: 1.25rem 1rem !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  }
+  
+  /* Make consent section visible but not intrusive */
+  .consent-section {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid var(--border-lighter) !important;
+    border-radius: var(--radius-lg) !important;
+    padding: 1rem !important;
+    text-align: center !important;
+    margin-top: 1.5rem !important;
+    font-size: 0.75rem !important;
+    color: var(--text-secondary) !important;
+  }
+}

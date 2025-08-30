@@ -3,14 +3,20 @@ import {
   Star, 
   Quote, 
   Zap, 
-  Users, 
-  Award, 
-  Shield, 
   CheckCircle,
   ArrowRight
 } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
+import './TestimonialsSection.css';
 
 const TestimonialsSection: React.FC = () => {
+  const { language } = useLanguage();
+  
+  const handleCTAClick = () => {
+    window.history.pushState({}, '', '/payment');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  };
+  
   const testimonials = [
     {
       name: "Priya Sharma",
@@ -69,9 +75,9 @@ const TestimonialsSection: React.FC = () => {
   ];
 
   return (
-    <section className="testimonials-section">
+    <section id="testimonials" className="testimonials-section">
       <div className="testimonials-container">
-        {/* Testimonials Header */}
+        {/* Compact Testimonials Header */}
         <div className="testimonials-header">
           <div className="testimonials-badge">
             <Star className="icon" />
@@ -89,7 +95,7 @@ const TestimonialsSection: React.FC = () => {
           </p>
         </div>
 
-        {/* Testimonials Grid */}
+        {/* Compact Testimonials Grid */}
         <div className="testimonials-grid">
           {testimonials.map((testimonial, index) => (
             <div key={index} className="testimonial-card">
@@ -122,54 +128,16 @@ const TestimonialsSection: React.FC = () => {
           ))}
         </div>
 
-        {/* Trust Indicators */}
-        <div className="trust-indicators">
-          <div className="trust-header">
-            <h3>Why People Trust Us</h3>
-            <p>Proven track record and commitment to your success</p>
-          </div>
-          
-          <div className="trust-grid">
-            <div className="trust-item">
-              <div className="trust-icon">
-                <Award className="icon" />
-              </div>
-              <h4>Proven Results</h4>
-              <p>Thousands of success stories and testimonials</p>
-            </div>
-            
-            <div className="trust-item">
-              <div className="trust-icon">
-                <Shield className="icon" />
-              </div>
-              <h4>Money-Back Guarantee</h4>
-              <p>30-day guarantee with no questions asked</p>
-            </div>
-            
-            <div className="trust-item">
-              <div className="trust-icon">
-                <Users className="icon" />
-              </div>
-              <h4>Expert Content</h4>
-              <p>Carefully researched and professionally written</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Social Proof CTA */}
+        {/* Compact Social Proof CTA */}
         <div className="social-proof-cta">
           <div className="cta-content">
             <h3>Join the Success Stories</h3>
             <p>Start your transformation journey today</p>
             <button 
               className="cta-button"
-              onClick={() => {
-                window.history.pushState({}, '', '/payment');
-                window.dispatchEvent(new PopStateEvent('popstate'));
-              }}
+              onClick={handleCTAClick}
             >
-              <Zap className="icon" />
-              <span>Get Started Now</span>
+              <span>Get My Guide at ₹99</span>
               <ArrowRight className="icon" />
             </button>
           </div>

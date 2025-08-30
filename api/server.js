@@ -112,7 +112,7 @@ const config = {
   mode: process.env.APP_MODE || (process.env.NODE_ENV === 'production' ? 'prod' : 'dev'),
   environment: process.env.NODE_ENV || 'development',
   cors: {
-    origin: process.env.CORS_ORIGIN || (process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://samadhanhub.com'),
+    origin: process.env.CORS_ORIGIN || (process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://samadhaanhub.co.in'),
     credentials: process.env.NODE_ENV === 'development',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
@@ -505,7 +505,7 @@ app.get('/api/payments/config', async (req, res) => {
         console.log(`🏠 Using localhost: ${domain}`);
       } else {
         // Production fallback
-        domain = 'samadhanhub.com';
+        domain = 'samadhaanhub.co.in';
         console.log(`🌍 Using production fallback: ${domain}`);
       }
 
@@ -622,7 +622,7 @@ app.post('/api/payments/initiate', async (req, res) => {
         console.log(`🏠 Using localhost: ${domain}`);
       } else {
         // Production fallback
-        domain = 'samadhanhub.com';
+        domain = 'samadhaanhub.co.in';
         console.log(`🌍 Using production fallback: ${domain}`);
       }
 
@@ -649,7 +649,7 @@ app.post('/api/payments/initiate', async (req, res) => {
       console.log(`🏠 Using localhost for notify: ${notifyDomain}`);
     } else {
       // Production fallback
-      notifyDomain = 'samadhanhub.com';
+      notifyDomain = 'samadhaanhub.co.in';
       console.log(`🌍 Using production fallback for notify: ${notifyDomain}`);
     }
 

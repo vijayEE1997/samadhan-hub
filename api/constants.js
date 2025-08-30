@@ -34,7 +34,7 @@ const API = {
 
 // CORS Configuration Constants
 const CORS = {
-  origin: process.env.CORS_ORIGIN || (ENV.IS_DEV ? 'http://localhost:3000' : 'https://samadhanhub.com'),
+  origin: process.env.CORS_ORIGIN || (ENV.IS_DEV ? 'http://localhost:3000' : 'https://samadhaanhub.co.in'),
   credentials: ENV.IS_DEV,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
@@ -43,7 +43,7 @@ const CORS = {
 
 // Deployment Configuration Constants
 const DEPLOYMENT = {
-  DOMAIN: process.env.PROD_DOMAIN || 'samadhanhub.com',
+  DOMAIN: process.env.PROD_DOMAIN || 'samadhaanhub.co.in',
   IS_VERCEL: ENV.IS_VERCEL,
   IS_PRODUCTION: ENV.IS_PROD
 };
