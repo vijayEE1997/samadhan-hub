@@ -259,25 +259,7 @@ app.get('/api/payments/test', (req, res) => {
   });
 });
 
-// Favicon endpoint - ensure it's always served correctly
-app.get('/favicon.ico', (req, res) => {
-  const faviconPath = path.join(__dirname, '..', 'client-agnivirya', 'public', 'favicon.ico');
-  if (fs.existsSync(faviconPath)) {
-    res.setHeader('Content-Type', 'image/x-icon');
-    res.setHeader('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
-    res.sendFile(faviconPath);
-  } else {
-    // Fallback to dist assets
-    const distFaviconPath = path.join(__dirname, '..', 'client-agnivirya', 'dist', 'favicon.ico');
-    if (fs.existsSync(distFaviconPath)) {
-      res.setHeader('Content-Type', 'image/x-icon');
-      res.setHeader('Cache-Control', 'public, max-age=31536000');
-      res.sendFile(distFaviconPath);
-    } else {
-      res.status(404).send('Favicon not found');
-    }
-  }
-});
+
 
 // Build paths - define these BEFORE using them
 const mainDistPath = path.join(__dirname, '..', 'client-agnivirya', 'dist');
@@ -1048,6 +1030,64 @@ app.get('/download', (req, res) => {
   }
 });
 
+// ============================================================================
+// IMAGE SERVING API - Serve images from server-side directory
+// ============================================================================
+
+// Serve images from server-side images directory
+app.get('/api/images/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const imagePath = path.join(__dirname, 'images', filename);
+  
+  console.log(`🖼️ Image request: ${filename} -> ${imagePath}`);
+  
+  if (fs.existsSync(imagePath)) {
+    // Set appropriate MIME type based on file extension
+    const ext = path.extname(filename).toLowerCase();
+    let contentType = 'image/png'; // Default
+    
+    if (ext === '.png') contentType = 'image/png';
+    else if (ext === '.jpg' || ext === '.jpeg') contentType = 'image/jpeg';
+    else if (ext === '.gif') contentType = 'image/gif';
+    else if (ext === '.webp') contentType = 'image/webp';
+    else if (ext === '.svg') contentType = 'image/svg+xml';
+    else if (ext === '.ico') contentType = 'image/x-icon';
+    
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
+    res.sendFile(imagePath);
+    console.log(`✅ Image served successfully: ${filename} (${contentType})`);
+  } else {
+    console.log(`❌ Image not found: ${imagePath}`);
+    res.status(404).json({ 
+      error: 'Image not found', 
+      filename,
+      requestedPath: imagePath,
+      availableImages: fs.readdirSync(path.join(__dirname, 'images'))
+    });
+  }
+});
+
+// Serve favicon from server-side images directory
+app.get('/favicon.ico', (req, res) => {
+  const faviconPath = path.join(__dirname, 'images', 'favicon.ico');
+  console.log(`🔍 Favicon request: ${faviconPath}`);
+  
+  if (fs.existsSync(faviconPath)) {
+    res.setHeader('Content-Type', 'image/x-icon');
+    res.setHeader('Cache-Control', 'public, max-age=31536000');
+    res.sendFile(faviconPath);
+    console.log(`✅ Favicon served successfully`);
+  } else {
+    console.log(`❌ Favicon not found: ${faviconPath}`);
+    res.status(404).json({ error: 'Favicon not found' });
+  }
+});
+
+// ============================================================================
+// ASSET SERVING ROUTES - Serve images, favicon, and other assets
+// ============================================================================
+
 // PDF Download API endpoint
 app.get('/api/download', (req, res) => {
   try {
@@ -1325,51 +1365,7 @@ if (mainDistExists && clientDistExists) {
 // In development: redirects to Vite dev server
 // In production: served by static file middleware
 
-// ============================================================================
-// IMAGE SERVING API - Serve images from server-side directory
-// ============================================================================
 
-// Serve images from server-side images directory
-app.get('/api/images/:filename', (req, res) => {
-  const filename = req.params.filename;
-  const imagePath = path.join(__dirname, 'images', filename);
-  
-  if (fs.existsSync(imagePath)) {
-    // Set appropriate MIME type based on file extension
-    const ext = path.extname(filename).toLowerCase();
-    let contentType = 'image/png'; // Default
-    
-    if (ext === '.png') contentType = 'image/png';
-    else if (ext === '.jpg' || ext === '.jpeg') contentType = 'image/jpeg';
-    else if (ext === '.gif') contentType = 'image/gif';
-    else if (ext === '.webp') contentType = 'image/webp';
-    else if (ext === '.svg') contentType = 'image/svg+xml';
-    else if (ext === '.ico') contentType = 'image/x-icon';
-    
-    res.setHeader('Content-Type', contentType);
-    res.setHeader('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
-    res.sendFile(imagePath);
-  } else {
-    console.log(`❌ Image not found: ${imagePath}`);
-    res.status(404).json({ error: 'Image not found', filename });
-  }
-});
-
-// Serve favicon from server-side images directory
-app.get('/favicon.ico', (req, res) => {
-  const faviconPath = path.join(__dirname, 'images', 'favicon.ico');
-  if (fs.existsSync(faviconPath)) {
-    res.setHeader('Content-Type', 'image/x-icon');
-    res.setHeader('Cache-Control', 'public, max-age=31536000');
-    res.sendFile(faviconPath);
-  } else {
-    res.status(404).json({ error: 'Favicon not found' });
-  }
-});
-
-// ============================================================================
-// ASSET SERVING ROUTES - Serve images, favicon, and other assets
-// ============================================================================
 
 // ============================================================================
 // ERROR HANDLING
