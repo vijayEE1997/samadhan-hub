@@ -40,8 +40,9 @@ const {
   LOGGING
 } = require('./constants');
 
-// Import visitor tracker
+// Import visitor tracker (production-ready)
 const VisitorTracker = require('./visitor-tracker');
+const VisitorTrackerProduction = require('./visitor-tracker-prod');
 
 // Create local copies of constants with fallback values
 const localSecurity = {
@@ -134,9 +135,28 @@ if (missingConfig.length > 0) {
   process.exit(1);
 }
 
-// Initialize visitor tracker
-const visitorTracker = new VisitorTracker();
-console.log('📊 Visitor tracking system initialized');
+// Initialize visitor tracker (production-ready)
+let visitorTracker;
+try {
+  if (process.env.VERCEL === '1' || process.env.NODE_ENV === 'production') {
+    visitorTracker = new VisitorTrackerProduction();
+    console.log('🚀 Production visitor tracking system initialized (Vercel/Production)');
+  } else {
+    visitorTracker = new VisitorTracker();
+    console.log('📊 Development visitor tracking system initialized (Local)');
+  }
+} catch (error) {
+  console.error('❌ Error initializing visitor tracker:', error);
+  // Fallback to basic tracking
+  visitorTracker = {
+    trackVisit: (req) => ({ ip: 'unknown', error: 'Tracking system unavailable' }),
+    getStats: () => ({ overall: { totalVisits: 0, uniqueVisitors: 0 }, error: 'Stats unavailable' }),
+    getVisitors: () => ({ visitors: [], error: 'Visitor list unavailable' }),
+    resetData: () => console.log('Reset not available'),
+    getDataFilePath: () => 'Not available',
+    getSystemStatus: () => ({ error: 'System status unavailable' })
+  };
+}
 
 const app = express();
 
@@ -446,6 +466,7 @@ app.use((req, res, next) => {
     '/api/visitors/list',
     '/api/visitors/reset',
     '/api/visitors/data-file',
+    '/api/visitors/status',
     '/health',
     '/favicon.ico',
     '/assets/',
@@ -458,10 +479,20 @@ app.use((req, res, next) => {
     try {
       // Track the visit asynchronously to not block the request
       setImmediate(() => {
-        visitorTracker.trackVisit(req);
+        try {
+          if (visitorTracker && visitorTracker.trackVisit) {
+            const result = visitorTracker.trackVisit(req);
+            if (result && result.error) {
+              console.error('❌ Visitor tracking error:', result.error);
+            }
+          }
+        } catch (trackingError) {
+          console.error('❌ Visitor tracking middleware error:', trackingError);
+          // Don't block the request if tracking fails
+        }
       });
     } catch (error) {
-      console.error('❌ Visitor tracking middleware error:', error);
+      console.error('❌ Visitor tracking middleware setup error:', error);
       // Don't block the request if tracking fails
     }
   }
@@ -1160,8 +1191,8 @@ app.get('/api/visitors/data-file', (req, res) => {
       message: 'Data file path retrieved successfully',
       data: {
         dataFilePath,
-        exists: require('fs').existsSync(dataFilePath),
-        size: require('fs').existsSync(dataFilePath) ? require('fs').statSync(dataFilePath).size : 0
+        exists: typeof dataFilePath === 'string' && dataFilePath !== 'Not available' ? require('fs').existsSync(dataFilePath) : false,
+        size: typeof dataFilePath === 'string' && dataFilePath !== 'Not available' && require('fs').existsSync(dataFilePath) ? require('fs').statSync(dataFilePath).size : 0
       },
       timestamp: new Date().toISOString(),
       server: 'unified-server'
@@ -1176,10 +1207,39 @@ app.get('/api/visitors/data-file', (req, res) => {
   }
 });
 
+// Get system status and configuration
+app.get('/api/visitors/status', (req, res) => {
+  try {
+    const status = visitorTracker.getSystemStatus ? visitorTracker.getSystemStatus() : { error: 'Status not available' };
+    
+    res.json({
+      success: true,
+      message: 'System status retrieved successfully',
+      data: status,
+      timestamp: new Date().toISOString(),
+      server: 'unified-server'
+    });
+  } catch (error) {
+    console.error('System status error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to retrieve system status',
+      details: error.message
+    });
+  }
+});
+
 // Serve visitor tracking demo page
 app.get('/visitor-demo', (req, res) => {
   try {
-    const demoPath = path.join(__dirname, 'visitor-demo.html');
+    // Choose demo page based on environment
+    let demoPath;
+    if (process.env.VERCEL === '1' || process.env.NODE_ENV === 'production') {
+      demoPath = path.join(__dirname, 'visitor-demo-prod.html');
+    } else {
+      demoPath = path.join(__dirname, 'visitor-demo.html');
+    }
+    
     if (fs.existsSync(demoPath)) {
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.sendFile(demoPath);
@@ -1187,7 +1247,10 @@ app.get('/visitor-demo', (req, res) => {
       res.status(404).json({
         success: false,
         error: 'Demo page not found',
-        message: 'Visitor demo page is not available'
+        message: 'Visitor demo page is not available',
+        requestedPath: demoPath,
+        environment: process.env.NODE_ENV,
+        isVercel: process.env.VERCEL === '1'
       });
     }
   } catch (error) {
