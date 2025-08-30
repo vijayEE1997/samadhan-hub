@@ -1,10 +1,4 @@
 import React from 'react';
-import {
-  Leaf,
-  Award,
-  TrendingUp,
-  Heart
-} from 'lucide-react';
 import { getImagePath } from '@/utils/assetUtils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import './HeroSection.css';
@@ -14,7 +8,7 @@ interface HeroSectionProps {
 }
 
 const HeroSection: React.FC<HeroSectionProps> = ({ onPaymentClick }) => {
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
 
   return (
     <section className="hero-section">
