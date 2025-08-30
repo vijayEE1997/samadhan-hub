@@ -6,8 +6,8 @@ const isProduction = (import.meta as any).env?.PROD || false;
 export const SERVER_CONFIG = {
   // In development, the client runs on port 3000 and server on port 5000
   // In production, they might be on the same domain
-  BASE_URL: isDevelopment ? 'http://localhost:5000' : 'https://samadhaanhub-git-master-vijay-dhakads-projects.vercel.app',
-  API_BASE_URL: isDevelopment ? 'http://localhost:5000/api' : 'https://samadhaanhub-git-master-vijay-dhakads-projects.vercel.app/api',
+  BASE_URL: isDevelopment ? 'http://localhost:5000' : 'https://samadhaanhub.co.in',
+  API_BASE_URL: isDevelopment ? 'http://localhost:5000/api' : 'https://samadhaanhub.co.in/api',
   PORT: isDevelopment ? 5000 : undefined,
 } as const;
 
