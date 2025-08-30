@@ -178,6 +178,7 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
       }
 
       const orderData = await orderResponse.json();
+
       console.log('📋 Order data received:', orderData);
 
       // Initialize Cashfree payment
@@ -192,7 +193,7 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
           const checkoutOptions = {
             paymentSessionId: orderData.sessionId, // Use sessionId from backend response
             sessionId: orderData.sessionId, // Alternative parameter name
-            returnUrl: `${window.location.origin}/download?payment_status=SUCCESS`,
+            returnUrl: `${window.location.origin}/download`,
             onSuccess: (data: any) => {
               console.log('Payment successful:', data);
               // Handle success - redirect to success page
