@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Shield,
   Lock,
@@ -9,8 +9,6 @@ import {
   ArrowLeft,
   Loader2,
   AlertTriangle,
-  Check,
-  XCircle,
   CreditCard
 } from 'lucide-react';
 
@@ -26,17 +24,6 @@ interface PaymentPageProps {
 }
 
 const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
-  const [formData, setFormData] = useState({
-    // No form fields needed - all handled in backend
-  });
-
-  const [errors, setErrors] = useState({
-    // No validation needed
-  });
-
-  const [touched, setTouched] = useState({
-    // No validation needed
-  });
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
