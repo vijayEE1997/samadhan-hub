@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/', // Use absolute paths for assets - this works in both dev and production
+  base: '/agnivirya/', // Use subdirectory path for production deployment
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
