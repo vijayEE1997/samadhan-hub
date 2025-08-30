@@ -76,6 +76,8 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
         script.async = true;
         script.onload = () => {
           console.log('✅ Cashfree SDK loaded successfully');
+          console.log('Cashfree global object:', window.Cashfree);
+          console.log('Available methods:', Object.getOwnPropertyNames(window.Cashfree || {}));
           setCashfreeSDKReady(true);
         };
         script.onerror = () => {
@@ -185,18 +187,20 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
         setIsRedirecting(true);
         
         try {
-          // Use the correct Cashfree SDK v3 API
-          const cashfree = new window.Cashfree({
-            mode: paymentConfig.mode || 'sandbox'
-          });
-
+          // Check what methods are available on the Cashfree global object
+          console.log('Available Cashfree methods:', Object.getOwnPropertyNames(window.Cashfree));
+          console.log('Cashfree prototype methods:', Object.getOwnPropertyNames(Object.getPrototypeOf(window.Cashfree)));
+          
+          // Try to use the Cashfree SDK directly without creating a new instance
+          const cashfree = window.Cashfree;
+          
           const paymentOptions = {
             sessionId: orderData.paymentSessionId,
             returnUrl: `${window.location.origin}/payment-success`,
             onSuccess: (data: any) => {
               console.log('Payment successful:', data);
               // Handle success - redirect to success page
-              window.location.href = '/payment-success';
+              window.location.href = '/download?payment_status=SUCCESS';
             },
             onFailure: (data: any) => {
               console.log('Payment failed:', data);
@@ -210,16 +214,44 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
             }
           };
 
-          // Use the correct method for Cashfree SDK v3
-          if (typeof cashfree.initiatePayment === 'function') {
+          // For v2.0.0, we might need to create a payment instance
+          let paymentInstance;
+          if (typeof cashfree.create === 'function') {
+            console.log('Using create method to create payment instance');
+            paymentInstance = cashfree.create({
+              mode: paymentConfig.mode || 'sandbox'
+            });
+          }
+
+          // Try different methods based on what's available
+          if (paymentInstance && typeof paymentInstance.initiatePayment === 'function') {
+            console.log('Using paymentInstance.initiatePayment method');
+            paymentInstance.initiatePayment(paymentOptions);
+          } else if (paymentInstance && typeof paymentInstance.init === 'function') {
+            console.log('Using paymentInstance.init method');
+            paymentInstance.init(paymentOptions);
+          } else if (typeof cashfree.initiatePayment === 'function') {
+            console.log('Using initiatePayment method directly');
             cashfree.initiatePayment(paymentOptions);
           } else if (typeof cashfree.init === 'function') {
+            console.log('Using init method directly');
             cashfree.init(paymentOptions);
           } else if (typeof cashfree.render === 'function') {
+            console.log('Using render method');
             cashfree.render(paymentOptions);
+          } else if (typeof cashfree.checkout === 'function') {
+            console.log('Using checkout method');
+            cashfree.checkout(paymentOptions);
+          } else if (typeof cashfree.pay === 'function') {
+            console.log('Using pay method');
+            cashfree.pay(paymentOptions);
           } else {
-            console.error('Cashfree SDK methods not found:', Object.getOwnPropertyNames(cashfree));
-            throw new Error('Cashfree SDK methods not available');
+            // Log all available methods for debugging
+            console.error('Available methods on Cashfree:', Object.getOwnPropertyNames(cashfree));
+            if (paymentInstance) {
+              console.error('Available methods on paymentInstance:', Object.getOwnPropertyNames(paymentInstance));
+            }
+            throw new Error('No suitable Cashfree payment method found');
           }
         } catch (sdkError: any) {
           console.error('Cashfree SDK initialization error:', sdkError);
