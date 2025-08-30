@@ -219,11 +219,14 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
           console.error('Cashfree SDK checkout error:', sdkError);
           
           // Fallback: redirect to Cashfree hosted checkout
+          // Note: Cashfree hosted checkout will always redirect to returnUrl regardless of success/failure
+          // We need to handle payment status verification on our side
           const checkoutUrl = paymentConfig?.mode === 'production'
             ? `https://checkout.cashfree.com/pg/view/sessions/${orderData.sessionId}`
             : `https://sandbox.cashfree.com/pg/view/sessions/${orderData.sessionId}`;
           
           console.log('🔄 Redirecting to hosted checkout:', checkoutUrl);
+          console.log('⚠️ Note: Hosted checkout will redirect to /download regardless of payment status');
           window.location.href = checkoutUrl;
         }
       } else {
