@@ -22,24 +22,8 @@
       "destination": "/api/server.js"
     },
     {
-      "source": "/agnivirya/assets/(.*)",
-      "destination": "/client-agnivirya/dist/assets/$1"
-    },
-    {
-      "source": "/agnivirya/favicon.ico",
-      "destination": "/client-agnivirya/dist/favicon.ico"
-    },
-    {
-      "source": "/agnivirya/manifest.json",
-      "destination": "/client-agnivirya/dist/manifest.json"
-    },
-    {
-      "source": "/agnivirya/(.*)",
-      "destination": "/client-agnivirya/dist/index.html"
-    },
-    {
       "source": "/(.*)",
-      "destination": "/client-agnivirya/dist/index.html"
+      "destination": "/index.html"
     }
   ],
   "env": {

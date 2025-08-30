@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/agnivirya/', // Use /agnivirya/ base path to match production
+  base: '/', // Use root path - Vercel will serve from outputDirectory root
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
