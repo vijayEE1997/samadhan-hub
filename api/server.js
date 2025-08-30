@@ -87,7 +87,7 @@ const config = {
   cashfreeClientId: process.env.CASHFREE_CLIENT_ID,
   cashfreeClientSecret: process.env.CASHFREE_CLIENT_SECRET,
   productName: process.env.PRODUCT_NAME || 'Samadhan Hub - Wellness Guide',
-  productPrice: process.env.PRODUCT_PRICE,
+  productPrice: process.env.PRODUCT_PRICE || '99',
   productCurrency: process.env.PRODUCT_CURRENCY || 'INR',
   productPdfFileName: process.env.PRODUCT_PDF_FILENAME || 'samadhan-wellness-guide-2025.pdf',
   productDescription: process.env.PRODUCT_DESCRIPTION || 'Complete wellness guide with ancient and modern wellness practices',
@@ -538,11 +538,11 @@ app.get('/api/payments/config', async (req, res) => {
   }
 });
 
-app.post('/api/payments/initiate', async (req, res) => {
+app.get('/api/payments/initiate', async (req, res) => {
   try {
     // Set CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     res.setHeader('Content-Type', 'application/json');
 
@@ -551,34 +551,13 @@ app.post('/api/payments/initiate', async (req, res) => {
       return;
     }
 
-    const { amount, currency, email, customerName, customerPhone, customerEmail, productName, returnUrl } = req.body;
+    // Use default values for all customer information
+    const finalCustomerEmail = 'abc@gmail.com';
+    const finalCustomerName = 'Customer';
+    const finalCustomerPhone = '8305940684';
+    const amount = config.productPrice;
+    const currency = config.productCurrency;
 
-    // Support both customerEmail and email fields
-    const finalCustomerEmail = customerEmail || email;
-
-    // Auto-populate missing customer information
-    let finalCustomerName = customerName;
-    let finalCustomerPhone = customerPhone;
-    
-    // Extract name from email if customerName is missing
-    if (!finalCustomerName && finalCustomerEmail) {
-      const emailName = finalCustomerEmail.split('@')[0];
-      finalCustomerName = emailName.charAt(0).toUpperCase() + emailName.slice(1);
-      console.log(`🔍 Auto-populated customer name from email: ${finalCustomerName}`);
-    }
-    
-    // Use default phone number if customerPhone is missing
-    if (!finalCustomerPhone) {
-      finalCustomerPhone = '8305940684';
-      console.log(`🔍 Using default phone number: ${finalCustomerPhone}`);
-    }
-
-    // Validate input - only email is truly required now
-    if (!finalCustomerEmail) {
-      return res.status(400).json({ error: 'Missing required customer email' });
-    }
-
-    // Log the final customer information
     console.log(`👤 Customer Info - Name: ${finalCustomerName}, Email: ${finalCustomerEmail}, Phone: ${finalCustomerPhone}`);
 
     // Get Cashfree credentials from configuration
@@ -601,64 +580,35 @@ app.post('/api/payments/initiate', async (req, res) => {
     // Generate unique order ID
     const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-    // Dynamic return URL - prioritize returnUrl from request, then config.returnUrl, then build from domain
-    let dynamicReturnUrl;
-    if (returnUrl) {
-      dynamicReturnUrl = returnUrl;
-    } else if (config.returnUrl) {
-      dynamicReturnUrl = config.returnUrl;
-    } else {
-      // Build return URL using the same domain logic
-      const isVercel = process.env.VERCEL === '1';
-      const isLocal = config.nodeEnv === 'development';
-
-      let domain;
-      if (config.domain) {
-        // Use explicitly set DOMAIN from environment (highest priority)
-        domain = config.domain;
-        console.log(`🔒 Using explicit DOMAIN: ${domain}`);
-      } else if (isVercel && process.env.VERCEL_URL) {
-        // Fallback to VERCEL_URL only if DOMAIN is not set
-        domain = process.env.VERCEL_URL;
-        console.log(`🔄 Using VERCEL_URL: ${domain}`);
-      } else if (isLocal) {
-        // Local development
-        domain = 'localhost:5000';
-        console.log(`🏠 Using localhost: ${domain}`);
-      } else {
-        // Production fallback
-        domain = 'samadhaanhub.co.in';
-        console.log(`🌍 Using production fallback: ${domain}`);
-      }
-
-      const protocol = isVercel ? 'https' : (isLocal ? 'http' : 'https');
-      dynamicReturnUrl = `${protocol}://${domain}/download`;
-    }
-
-    // Build notify URL using the same domain logic
+    // Build return URL using domain logic
     const isVercel = process.env.VERCEL === '1';
     const isLocal = config.nodeEnv === 'development';
 
-    let notifyDomain;
+    let domain;
     if (config.domain) {
       // Use explicitly set DOMAIN from environment (highest priority)
-      notifyDomain = config.domain;
-      console.log(`🔒 Using explicit DOMAIN for notify: ${notifyDomain}`);
+      domain = config.domain;
+      console.log(`🔒 Using explicit DOMAIN: ${domain}`);
     } else if (isVercel && process.env.VERCEL_URL) {
       // Fallback to VERCEL_URL only if DOMAIN is not set
-      notifyDomain = process.env.VERCEL_URL;
-      console.log(`🔄 Using VERCEL_URL for notify: ${notifyDomain}`);
+      domain = process.env.VERCEL_URL;
+      console.log(`🔄 Using VERCEL_URL: ${domain}`);
     } else if (isLocal) {
       // Local development
-      notifyDomain = 'localhost:5000';
-      console.log(`🏠 Using localhost for notify: ${notifyDomain}`);
+      domain = 'localhost:5000';
+      console.log(`🏠 Using localhost: ${domain}`);
     } else {
       // Production fallback
-      notifyDomain = 'samadhaanhub.co.in';
-      console.log(`🌍 Using production fallback for notify: ${notifyDomain}`);
+      domain = 'samadhaanhub.co.in';
+      console.log(`🌍 Using production fallback: ${domain}`);
     }
 
-    const notifyProtocol = isVercel ? 'https' : (isLocal ? 'http' : 'https');
+    const protocol = isVercel ? 'https' : (isLocal ? 'http' : 'https');
+    const dynamicReturnUrl = `${protocol}://${domain}/download`;
+
+    // Build notify URL using the same domain logic
+    const notifyDomain = domain;
+    const notifyProtocol = protocol;
     const dynamicNotifyUrl = `${notifyProtocol}://${notifyDomain}/api/payments/webhook`;
 
     // Create payment session with Cashfree

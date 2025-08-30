@@ -10,7 +10,8 @@ import {
   Loader2,
   AlertTriangle,
   Check,
-  XCircle
+  XCircle,
+  CreditCard
 } from 'lucide-react';
 
 // Import constants
@@ -26,15 +27,15 @@ interface PaymentPageProps {
 
 const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
   const [formData, setFormData] = useState({
-    email: ''
+    // No form fields needed - all handled in backend
   });
 
   const [errors, setErrors] = useState({
-    email: ''
+    // No validation needed
   });
 
   const [touched, setTouched] = useState({
-    email: false
+    // No validation needed
   });
 
   const [isProcessing, setIsProcessing] = useState(false);
@@ -44,16 +45,11 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
   const [configError, setConfigError] = useState<string>('');
   const [cashfreeSDK, setCashfreeSDK] = useState<any>(null);
   const [isSDKLoading, setIsSDKLoading] = useState(true);
-  const emailInputRef = useRef<HTMLInputElement>(null);
+  // emailInputRef removed since email field is no longer needed
 
-  // Manage body class for padding override and auto-focus email field
+  // Manage body class for padding override
   useEffect(() => {
     document.body.classList.add('payment-page-active');
-
-    // Auto-focus on email field when component mounts
-    if (emailInputRef.current) {
-      emailInputRef.current.focus();
-    }
 
     return () => {
       document.body.classList.remove('payment-page-active');
@@ -110,67 +106,18 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
     }
   }, [paymentConfig, cashfreeSDK]);
 
-  // Handle form input changes
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    
-    // Clear error when user starts typing
-    if (errors[name as keyof typeof errors]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
-    }
-  };
-
-  // Handle input blur for validation
-  const handleInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    const { name } = e.target;
-    setTouched(prev => ({ ...prev, [name]: true }));
-    
-    // Validate on blur
-    validateField(name, formData[name as keyof typeof formData]);
-  };
-
-  // Validate individual field
-  const validateField = (name: string, value: string) => {
-    let error = '';
-    
-    if (name === 'email') {
-      if (!value.trim()) {
-        error = 'Email is required';
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-        error = 'Please enter a valid email address';
-      }
-    }
-    
-    setErrors(prev => ({ ...prev, [name]: error }));
-    return !error;
-  };
-
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate all fields
-    const isEmailValid = validateField('email', formData.email);
+    // No validation needed since email is handled in backend
     
-    if (!isEmailValid) {
-      return;
-    }
-
     try {
       setIsProcessing(true);
       
       // Create order
       const orderResponse = await fetch(API_ENDPOINTS.PAYMENT.INITIATE, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          amount: 99,
-          currency: 'INR'
-        }),
+        method: 'GET'
       });
 
       if (!orderResponse.ok) {
@@ -374,68 +321,33 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
 
                 {/* Payment Form */}
                 <form className="payment-form" onSubmit={handleSubmit}>
-                  <div className="form-group">
-                    <label className={`form-label ${errors.email ? 'error' : ''}`}>
-                      Email Address
-                    </label>
-                    <div className="input-wrapper">
-                      <input
-                        ref={emailInputRef}
-                        type="email"
-                        name="email"
-                        className={`form-input ${errors.email ? 'error' : ''}`}
-                        placeholder="Enter your email address"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        onBlur={handleInputBlur}
-                        required
-                      />
-                      {touched.email && !errors.email && (
-                        <div className="input-icon success">
-                          <Check className="icon" />
-                        </div>
-                      )}
-                    </div>
-                    {errors.email && (
-                      <div className="error-message">
-                        <XCircle className="icon" />
-                        <span>{errors.email}</span>
-                      </div>
-                    )}
-                    <div className="form-help">
-                      We'll send your guide to this email address
-                    </div>
-                  </div>
-
                   {/* CTA Button */}
                   <button
                     type="submit"
-                    className="submit-button"
+                    className="payment-button"
                     disabled={isProcessing || isRedirecting}
                   >
                     {isProcessing ? (
                       <>
                         <Loader2 className="icon animate-spin" />
-                        <span>Creating Order...</span>
+                        Processing...
                       </>
                     ) : isRedirecting ? (
                       <>
                         <Loader2 className="icon animate-spin" />
-                        <span>Opening Payment Gateway...</span>
+                        Redirecting to Payment...
                       </>
                     ) : (
                       <>
-                        <Shield className="icon" />
-                        <span>Get My Guide - ₹99</span>
+                        <CreditCard className="icon" />
+                        Pay ₹99 & Get Your Guide
                       </>
                     )}
                   </button>
-
-                  {/* Trust & Security Badge */}
-                  <div className="security-badge">
-                    <Lock className="icon" />
-                    <span>256-bit SSL Encrypted • Secure Payment</span>
-                  </div>
+                    
+                                      <div className="form-help">
+                      Your guide will be sent to abc@gmail.com automatically
+                    </div>
                 </form>
               </>
             )}

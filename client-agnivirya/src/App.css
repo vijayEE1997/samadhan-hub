@@ -776,3 +776,52 @@ button:focus, .btn:focus, .cta-button:focus, .hero-cta-button:focus {
     border: 2px solid var(--text-white) !important;
   }
 }
+
+/* =============================
+   HINDI FONT SUPPORT & TYPOGRAPHY
+   ============================= */
+
+/* Enhanced Hindi Typography with proper spacing for matras */
+.hindi-text, 
+[lang="hi"], 
+[lang="hi-IN"],
+.hindi-title,
+.hindi-subtitle,
+.hindi-content {
+  font-family: 'Noto Sans Devanagari', 'Arial Unicode MS', 'Devanagari MT', 'Mangal', sans-serif !important;
+  font-feature-settings: 'liga' 1, 'kern' 1;
+  text-rendering: optimizeLegibility;
+  
+  /* Increased padding and spacing for Hindi text */
+  padding: 0.75rem 1rem !important;
+  line-height: 1.8 !important;
+  letter-spacing: 0.02em !important;
+  
+  /* Ensure proper vertical spacing for matras */
+  min-height: 2.5em !important;
+  display: inline-block !important;
+}
+
+/* Hindi headings with extra padding */
+.hindi-title,
+h1.hindi,
+h2.hindi,
+h3.hindi {
+  font-family: 'Noto Sans Devanagari', 'Arial Unicode MS', 'Devanagari MT', 'Mangal', sans-serif !important;
+  font-weight: 700 !important;
+  font-size: clamp(1.5rem, 4vw, 3rem) !important;
+  line-height: 1.4 !important;
+  padding: 1rem 1.5rem !important;
+  margin: 1.5rem 0 !important;
+  
+  /* Ensure matras are not cut off */
+  min-height: 3em !important;
+  display: block !important;
+}
+
+/* Global Hindi font application */
+body {
+  font-family: 'Noto Sans Devanagari', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Ensure all text elements can accommodate Hindi characters */
