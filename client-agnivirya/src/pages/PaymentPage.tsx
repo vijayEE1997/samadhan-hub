@@ -9,7 +9,10 @@ import {
   ArrowLeft,
   Loader2,
   AlertTriangle,
-  CreditCard
+  CreditCard,
+  ArrowRight,
+  Check,
+  Clock
 } from 'lucide-react';
 
 // Import constants
@@ -296,45 +299,88 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
                   </div>
                   
                   {/* Pricing */}
-                  <div className="pricing-section">
+                  <div className="price-section">
                     <div className="price-display">
                       <div className="current-price">₹99</div>
                       <div className="original-price">₹1980</div>
                       <div className="discount-badge">95% OFF</div>
                     </div>
                     <div className="savings-text">You save ₹1881</div>
+                    <div className="price-guarantee">
+                      <Check className="icon" />
+                      <span>30-Day Money Back Guarantee</span>
+                    </div>
                   </div>
                 </div>
 
                 {/* Payment Form */}
                 <form className="payment-form" onSubmit={handleSubmit}>
-                  {/* CTA Button */}
-                  <button
-                    type="submit"
-                    className="payment-button"
-                    disabled={isProcessing || isRedirecting}
-                  >
-                    {isProcessing ? (
-                      <>
-                        <Loader2 className="icon animate-spin" />
-                        Processing...
-                      </>
-                    ) : isRedirecting ? (
-                      <>
-                        <Loader2 className="icon animate-spin" />
-                        Redirecting to Payment...
-                      </>
-                    ) : (
-                      <>
-                        <CreditCard className="icon" />
-                        Pay ₹99 & Get Your Guide
-                      </>
-                    )}
-                  </button>
+                  {/* Enhanced CTA Button */}
+                  <div className="cta-container">
+                    <button
+                      type="submit"
+                      className="payment-button enhanced-cta"
+                      disabled={isProcessing || isRedirecting}
+                    >
+                      {isProcessing ? (
+                        <>
+                          <Loader2 className="icon animate-spin" />
+                          <span className="button-text">Processing Payment...</span>
+                        </>
+                      ) : isRedirecting ? (
+                        <>
+                          <Loader2 className="icon animate-spin" />
+                          <span className="button-text">Opening Payment Gateway...</span>
+                        </>
+                      ) : (
+                        <>
+                          <div className="cta-icon-container">
+                            <CreditCard className="icon" />
+                            <Zap className="icon sparkle" />
+                          </div>
+                          <div className="cta-text-container">
+                            <span className="button-text">Get Your Guide Now</span>
+                            <span className="button-subtext">Instant Access • Secure Payment</span>
+                          </div>
+                          <div className="cta-arrow">
+                            <ArrowRight className="icon" />
+                          </div>
+                        </>
+                      )}
+                    </button>
                     
-                                      <div className="form-help">
-                      Your guide will be sent to abc@gmail.com automatically
+                    {/* Trust Indicators Below CTA */}
+                    <div className="trust-indicators">
+                      <div className="trust-item">
+                        <Shield className="icon" />
+                        <span>256-bit SSL Encrypted</span>
+                      </div>
+                      <div className="trust-item">
+                        <Lock className="icon" />
+                        <span>100% Secure Payment</span>
+                      </div>
+                      <div className="trust-item">
+                        <Check className="icon" />
+                        <span>Instant Download</span>
+                      </div>
                     </div>
+                    
+                    {/* Urgency & Scarcity Elements */}
+                    <div className="urgency-container">
+                      <div className="urgency-badge">
+                        <Clock className="icon" />
+                        <span>Limited Time Offer</span>
+                      </div>
+                      <div className="scarcity-text">
+                        Only <strong>47 copies</strong> remaining at this price
+                      </div>
+                    </div>
+                  </div>
+                    
+                  <div className="form-help">
+                    <Check className="icon" />
+                    <span>Your guide will be sent to abc@gmail.com automatically</span>
+                  </div>
                 </form>
               </>
             )}
