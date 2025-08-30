@@ -13,7 +13,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import './SolutionOverviewSection.css';
 
 const SolutionOverviewSection: React.FC = () => {
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
   
   const handleCTAClick = () => {
     window.history.pushState({}, '', '/payment');

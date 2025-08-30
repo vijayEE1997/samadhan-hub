@@ -16,33 +16,6 @@ interface HeroSectionProps {
 const HeroSection: React.FC<HeroSectionProps> = ({ onPaymentClick }) => {
   const { language, t } = useLanguage();
 
-  const keyBenefits = [
-    {
-      icon: Leaf,
-      title: t('hero.benefits.natural.title'),
-      description: t('hero.benefits.natural.description'),
-      highlight: "100% Natural"
-    },
-    {
-      icon: Award,
-      title: t('hero.benefits.scientific.title'),
-      description: t('hero.benefits.scientific.description'),
-      highlight: "Scientifically Backed"
-    },
-    {
-      icon: TrendingUp,
-      title: t('hero.benefits.results.title'),
-      description: t('hero.benefits.results.description'),
-      highlight: "3-4 Weeks"
-    },
-    {
-      icon: Heart,
-      title: t('hero.benefits.price.title'),
-      description: t('hero.benefits.price.description'),
-      highlight: "₹99"
-    }
-  ];
-
   return (
     <section className="hero-section">
       <div className="hero-container">

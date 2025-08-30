@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import MobileHeader from './MobileHeader';
 import './MobileHomepage.css';
 
@@ -8,7 +7,6 @@ interface MobileHomepageProps {
 }
 
 const MobileHomepage: React.FC<MobileHomepageProps> = ({ onPaymentClick }) => {
-  const { t } = useTranslation();
 
   const handlePaymentClick = () => {
     if (onPaymentClick) {

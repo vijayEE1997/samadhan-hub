@@ -133,7 +133,6 @@ export default function Header({ }: HeaderProps) {
 
   // Get current language display name
   const currentLanguageName = language === 'en' ? 'हिंदी' : 'English'
-  const currentLanguageFlag = language === 'en' ? '🇮🇳' : '🇺🇸'
 
   return (
     <header className={`agnivirya-header ${isScrolled ? 'scrolled' : ''}`}>

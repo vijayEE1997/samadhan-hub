@@ -10,14 +10,13 @@ import {
   Shield,
   Crown,
   BookOpen,
-  Target,
-  BookMarked
+  Target
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import './RecipePreviewSection.css';
 
 const RecipePreviewSection: React.FC = () => {
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
   
   // Navigation handler for payment page
   const handleCTAClick = () => {
@@ -171,7 +170,7 @@ const RecipePreviewSection: React.FC = () => {
 
         {/* Premium Recipe Cards */}
         <div className="recipes-grid">
-          {recipes.map((recipe, index) => {
+          {recipes.map((recipe) => {
             return (
               <div key={recipe.id} className="recipe-card premium">
                 <div className="recipe-header">

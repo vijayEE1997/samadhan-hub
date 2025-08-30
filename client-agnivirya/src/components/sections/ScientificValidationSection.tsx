@@ -9,7 +9,6 @@ import {
   Heart,
   Shield,
   ArrowRight,
-  Star,
   Clock,
   Users,
   BookMarked,
@@ -21,7 +20,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import './ScientificValidationSection.css';
 
 const ScientificValidationSection: React.FC = () => {
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
   
   const researchCitations = [
     {

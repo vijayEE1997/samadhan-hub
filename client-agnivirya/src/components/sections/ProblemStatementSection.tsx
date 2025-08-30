@@ -15,7 +15,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import './ProblemStatementSection.css';
 
 const ProblemStatementSection: React.FC = () => {
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
   
   const handleCTAClick = () => {
     window.history.pushState({}, '', '/payment');

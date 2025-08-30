@@ -166,7 +166,7 @@ function App({ initialState }: AppProps) {
   return (
     <div className="app">
       <main className="app-main">
-        renderRouteContent()
+        {renderRouteContent()}
       </main>
     </div>
   );

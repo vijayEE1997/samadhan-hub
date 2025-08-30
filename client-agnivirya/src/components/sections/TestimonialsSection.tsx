@@ -2,15 +2,12 @@ import React from 'react';
 import { 
   Star, 
   Quote, 
-  Zap, 
   CheckCircle,
   ArrowRight
 } from 'lucide-react';
-import { useLanguage } from '@/contexts/LanguageContext';
 import './TestimonialsSection.css';
 
 const TestimonialsSection: React.FC = () => {
-  const { language } = useLanguage();
   
   const handleCTAClick = () => {
     window.history.pushState({}, '', '/payment');

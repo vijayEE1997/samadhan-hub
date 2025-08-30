@@ -12,16 +12,12 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 const translations = {
   en: {
     // Hero Section
-    'hero.title': 'Agnivirya Ancient Modern Wellness',
+    'hero.title': 'AgniVirya',
     'hero.subtitle.sanskrit': 'प्राचीन ज्ञान, आधुनिक बल',
-    'hero.subtitle.english': 'Ancient Ayurvedic wisdom for modern wellness. Transform your health naturally with time-tested formulations.',
-    'hero.cta': '🔥 Get Complete eBook Now',
-    'hero.guarantee': '60-Day Money Back Guarantee • No Questions Asked',
-    
-    // Hero Section - English specific keys
-    'hero.title.english': 'AgniVirya',
     'hero.subtitle.english': 'Ancient Wisdom, Modern Strength',
     'hero.description.english': 'Transform Your Sexual Health Naturally with Ancient Ayurvedic Wisdom',
+    'hero.cta': '🔥 Get Complete eBook Now',
+    'hero.guarantee': '60-Day Money Back Guarantee • No Questions Asked',
     
     // Problem Section - Basic keys (detailed keys moved to Hindi section)
     
@@ -197,7 +193,7 @@ const translations = {
   },
   hi: {
     // Hindi translations
-    'hero.title': 'अग्निवीर्य प्राचीन आधुनिक कल्याण',
+    'hero.title': 'अग्निवीर्य',
     'hero.subtitle.sanskrit': 'प्राचीन ज्ञान, आधुनिक बल',
     'hero.subtitle.english': 'आधुनिक कल्याण के लिए प्राचीन आयुर्वेदिक ज्ञान। समय-परीक्षित सूत्रों के साथ स्वाभाविक रूप से अपने स्वास्थ्य को बदलें।',
     'hero.cta': '🔥 अब पूरी ईबुक प्राप्त करें',

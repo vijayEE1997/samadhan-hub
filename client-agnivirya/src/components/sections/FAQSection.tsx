@@ -10,11 +10,9 @@ import {
   FileText,
   Crown,
   Shield,
-  CheckCircle,
   ArrowRight,
   Clock
 } from 'lucide-react';
-import { useLanguage } from '@/contexts/LanguageContext';
 import './FAQSection.css';
 
 const FAQSection: React.FC = () => {

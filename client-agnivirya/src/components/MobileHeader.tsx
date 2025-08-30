@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import './MobileHeader.css';
 
 interface MobileHeaderProps {
@@ -7,7 +6,6 @@ interface MobileHeaderProps {
 }
 
 const MobileHeader: React.FC<MobileHeaderProps> = ({ onPaymentClick }) => {
-  const { t } = useTranslation();
 
   return (
     <header className="mobile-header">

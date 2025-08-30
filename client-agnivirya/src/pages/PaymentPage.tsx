@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Shield,
   Lock,
@@ -49,8 +49,6 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
   const [paymentConfig, setPaymentConfig] = useState<any>(null);
   const [isLoadingConfig, setIsLoadingConfig] = useState(true);
   const [configError, setConfigError] = useState<string>('');
-  const [orderId, setOrderId] = useState<string | null>(null);
-  const [paymentSessionId, setPaymentSessionId] = useState<string | null>(null);
   const [cashfreeSDKReady, setCashfreeSDKReady] = useState(false);
   const emailInputRef = useRef<HTMLInputElement>(null);
 
@@ -181,8 +179,6 @@ const PaymentPage = ({ onBackToHome }: PaymentPageProps) => {
       }
 
       const orderData = await orderResponse.json();
-      setOrderId(orderData.orderId);
-      setPaymentSessionId(orderData.paymentSessionId);
 
       // Initialize Cashfree payment
       if (window.Cashfree && cashfreeSDKReady) {

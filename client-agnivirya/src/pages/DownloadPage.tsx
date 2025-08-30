@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { Button } from "@/components/ui/button";
-import { Download as DownloadIcon, CheckCircle, Star, AlertCircle, Loader2, ArrowLeft, Gift, RefreshCw, XCircle, Home } from 'lucide-react';
+import { Download as DownloadIcon, CheckCircle, AlertCircle, Loader2, ArrowLeft, RefreshCw, XCircle, Home } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { usePayment } from "@/hooks/usePayment";
 import { getImagePath, getPdfPath } from "@/utils/assetUtils";
@@ -26,7 +25,6 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
 
   const [orderDetails, setOrderDetails] = useState<any>(null);
   const [pdfFileName, setPdfFileName] = useState('agnivirya-complete-wellness-guide-2025.pdf');
-  const [productName, setProductName] = useState('AgniVirya - Complete Ancient Modern Wellness Guide');
   const [verificationState, setVerificationState] = useState<PaymentVerificationState>({
     status: 'pending',
     message: 'Initializing payment verification...',
@@ -62,7 +60,6 @@ const DownloadPage = ({ onBackToHome, onBackToPayment }: DownloadPageProps) => {
         if (response.ok) {
           const config = await response.json();
           if (config.product?.pdfFileName) setPdfFileName(config.product.pdfFileName);
-          if (config.product?.name) setProductName(config.product.name);
         }
       } catch (error) {
         console.log('Using default product values');
