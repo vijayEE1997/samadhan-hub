@@ -1,0 +1,32 @@
+# Ignore development files
+node_modules
+.env
+.env.local
+.env.development
+.env.test
+
+# Ignore build artifacts from other projects
+agnivarya-ancient-modern-wellness/
+thinkverse-ai-solutions/
+dhriti-vidyotama-foundation/
+
+# Ignore git files
+.git
+.gitignore
+
+# Ignore documentation
+*.md
+!README.md
+
+# Ignore development scripts
+start.bat
+start.sh
+deploy-vercel.bat
+vercel-deploy.json
+
+# Keep important files
+!api/
+!client-agnivirya/
+!package.json
+!vercel.json
+!vercel-build.js

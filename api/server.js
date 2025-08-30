@@ -1211,8 +1211,6 @@ if (mainDistExists && clientDistExists) {
     }));
   }
 
-// ... existing code ...
-
   // Serve assets from the dist/assets folder (where Vite builds them)
   const distAssetsPath = path.join(__dirname, '..', 'client-agnivirya', 'dist', 'assets');
   if (fs.existsSync(distAssetsPath)) {
@@ -1369,3 +1367,22 @@ app.listen(config.port, () => {
 
 // Export the app for Vercel
 module.exports = app;
+
+// Vercel serverless function wrapper
+if (process.env.VERCEL) {
+  // Export as a serverless function for Vercel
+  module.exports = (req, res) => {
+    // Handle CORS for Vercel
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    
+    if (req.method === 'OPTIONS') {
+      res.status(200).end();
+      return;
+    }
+    
+    // Use the Express app to handle the request
+    return app(req, res);
+  };
+}

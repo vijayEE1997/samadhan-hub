@@ -5,8 +5,8 @@
     "samadhaanhub.co.in"
   ],
   "buildCommand": "npm run vercel-build",
-  "outputDirectory": "client-agnivirya/dist",
   "installCommand": "npm run install:all",
+  "outputDirectory": "client-agnivirya/dist",
   "functions": {
     "api/server.js": {
       "maxDuration": 30
@@ -22,20 +22,8 @@
       "destination": "/api/server.js"
     },
     {
-      "source": "/agnivirya/assets/(.*)",
-      "destination": "/agnivirya/assets/$1"
-    },
-    {
-      "source": "/agnivirya/favicon.ico",
-      "destination": "/agnivirya/favicon.ico"
-    },
-    {
-      "source": "/agnivirya/manifest.json",
-      "destination": "/agnivirya/manifest.json"
-    },
-    {
-      "source": "/agnivirya/(.*)",
-      "destination": "/agnivirya/index.html"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ],
   "env": {
